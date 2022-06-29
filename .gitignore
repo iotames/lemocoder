@@ -1,0 +1,8 @@
+*.exe
+*.db
+.idea/
+.env
+*.log
+/venv
+/requirements.txt
+__pycache__/

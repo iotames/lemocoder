@@ -2,6 +2,7 @@
 *.db
 .idea/
 .env
+/go.sum
 *.log
 /venv
 /requirements.txt

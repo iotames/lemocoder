@@ -1,25 +1,34 @@
 package generator
 
 import (
-	"bytes"
 	"io"
-	"lemocoder/util"
+	"os"
 	"text/template"
 )
 
-func setContentByTpl(tplFilepath string, buff io.Writer, data interface{}) error {
+// GetContentByTpl
+// f, err := os.OpenFile(value.autoCodePath, os.O_CREATE|os.O_WRONLY, 0o755)
+// GetContentByTpl(tplFilepath, f, data)
+// f.Close()
+func GetContentByTpl(tplFilepath string, wr io.Writer, data interface{}) error {
 	t, err := template.ParseFiles(tplFilepath)
 	if err != nil {
 		return err
 	}
-	return t.Execute(buff, data)
+	return t.Execute(wr, data)
 }
 
-func CreateFileByTpl(tplFilepath, targetPath string, data interface{}) error {
-	var bf bytes.Buffer
-	err := setContentByTpl(tplFilepath, &bf, data)
+func CreateFile(targetPath string, content []byte) (n int, err error) {
+	var file *os.File
+	file, err = os.Create(targetPath)
 	if err != nil {
-		return err
+		return 0, err
 	}
-	return util.CreateFileByString(bf.String(), targetPath)
+	n, err = file.Write(content)
+	if err != nil {
+		file.Close()
+		return n, err
+	}
+	err = file.Close()
+	return n, err
 }

@@ -3,22 +3,25 @@ import RightContent from '@/components/RightContent';
 import { LinkOutlined } from '@ant-design/icons';
 import type { Settings as LayoutSettings } from '@ant-design/pro-components';
 import { SettingDrawer } from '@ant-design/pro-components';
-import { createBrowserHistory, RunTimeLayoutConfig } from 'umi';
+import type { RunTimeLayoutConfig } from 'umi';
 import { history, Link } from 'umi';
 import defaultSettings from '../config/defaultLayoutSetting';
 import { currentUser as queryCurrentUser } from './services/antdprodemo/api';
+import { getClientConfig } from './services/api/init';
 
 const isDev = process.env.NODE_ENV === 'developmentNOT';
-const loginPath = '/user/login';
+const loginPath = '/public/login';
 
 /**
  * @see  https://umijs.org/zh-CN/plugins/plugin-initial-state
  * */
 export async function getInitialState(): Promise<{
   settings?: Partial<LayoutSettings>;
+  config?: API.ClientConfig;
   currentUser?: API.CurrentUser;
   loading?: boolean;
   fetchUserInfo?: () => Promise<API.CurrentUser | undefined>;
+  fetchConfig?: () => Promise<API.ClientConfig | undefined>;
 }> {
   const fetchUserInfo = async () => {
     try {
@@ -30,17 +33,28 @@ export async function getInitialState(): Promise<{
     }
     return undefined;
   };
+  const fetchConfig = async () => {
+    try{
+      return (await getClientConfig()).data;
+    }catch(error){
+      console.log("fetchConfig", error)
+    }
+  }  
+  const config = (await getClientConfig()).data
   // 如果不是登录页面，执行
   if (history.location.pathname !== loginPath) {
     const currentUser = await fetchUserInfo();
     return {
       fetchUserInfo,
+      fetchConfig,
       currentUser,
+      config,
       settings: defaultSettings,
     };
   }
   return {
     fetchUserInfo,
+    config,
     settings: defaultSettings,
   };
 }

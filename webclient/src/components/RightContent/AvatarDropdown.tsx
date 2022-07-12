@@ -23,9 +23,9 @@ const loginOut = async () => {
   /** 此方法会跳转到 redirect 参数所在的位置 */
   const redirect = urlParams.get('redirect');
   // Note: There may be security issues, please note
-  if (window.location.pathname !== '/user/login' && !redirect) {
+  if (window.location.pathname !== '/public/login' && !redirect) {
     history.replace({
-      pathname: '/user/login',
+      pathname: '/public/login',
       search: stringify({
         redirect: pathname + search,
       }),
@@ -72,23 +72,23 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu }) => {
   }
 
   const menuItems: ItemType[] = [
-    ...(menu
-      ? [
-          {
-            key: 'center',
-            icon: <UserOutlined />,
-            label: '个人中心',
-          },
-          {
-            key: 'settings',
-            icon: <SettingOutlined />,
-            label: '个人设置',
-          },
-          {
-            type: 'divider' as const,
-          },
-        ]
-      : []),
+    // ...(menu
+    //   ? [
+    //       {
+    //         key: 'center',
+    //         icon: <UserOutlined />,
+    //         label: '个人中心',
+    //       },
+    //       {
+    //         key: 'settings',
+    //         icon: <SettingOutlined />,
+    //         label: '个人设置',
+    //       },
+    //       {
+    //         type: 'divider' as const,
+    //       },
+    //     ]
+    //   : []),
     {
       key: 'logout',
       icon: <LogoutOutlined />,

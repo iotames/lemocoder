@@ -41,11 +41,10 @@
  
    return response;
  };
- 
- var prefix = 'http://127.0.0.1:8888';
- if (process.env.NODE_ENV == 'production') {
-   prefix = 'http://127.0.0.1:8888';
- }
+
+//  const devApiBaseUrl = "http://127.0.0.1:8888"
+ const prodApiBaseUrl = "http://127.0.0.1:8888"
+ const prefix = process.env.NODE_ENV == "production" ? prodApiBaseUrl : prodApiBaseUrl;
  
  const request = extend({
    errorHandler,
@@ -56,8 +55,8 @@
  });
  
  // request拦截器, 改变url 或 options.
-//  request.interceptors.request.use(async (url: string, options: RequestOptionsInit) => {
-  request.interceptors.request.use(async (url, options) => {
+ request.interceptors.request.use(async (url: string, options: RequestOptionsInit) => {
+  // request.interceptors.request.use(async (url, options) => {
    // console.log(options);
    let c_token = localStorage.getItem('AuthToken');
    // 设置请求头可以解决跨域问题
@@ -82,6 +81,8 @@
      options: { ...options },
    };
  });
+
+ 
  
  // response拦截器, 处理response
  // request.interceptors.response.use((response, options) => {
@@ -95,4 +96,3 @@
  // });
  
  export default request;
- 

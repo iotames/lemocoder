@@ -8,7 +8,7 @@ func GetUserInfo(c *gin.Context) {
 	result := map[string]interface{}{
 		"success": true,
 		"data": map[string]interface{}{
-			"name":        "Serati Ma",
+			"name":        "QingCoder",
 			"avatar":      "https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png",
 			"userid":      "00000001",
 			"email":       "antdesign@alipay.com",

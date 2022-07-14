@@ -3,11 +3,20 @@
 // import { request } from 'umi';
 import request from "@/utils/request";
 
-/** 获取当前的用户 GET /api/currentUser */
+/** 获取当前的用户 GET /api/user/info */
 export async function currentUser(options?: { [key: string]: any }) {
   return request<{
-    data: API.CurrentUser;
-  }>('/api/currentUser', {
+    Data: API.CurrentUser;
+  }>('/api/user/info', {
+    method: 'GET',
+    ...(options || {}),
+  });
+}
+
+export async function getMenuData(options?: { [key: string]: any }) {
+  return request<{
+    Data: API.MenuData;
+  }>('/api/user/menu', {
     method: 'GET',
     ...(options || {}),
   });
@@ -23,7 +32,7 @@ export async function outLogin(options?: { [key: string]: any }) {
 
 /** 登录接口 POST /api/login/account */
 export async function login(body: API.LoginParams, options?: { [key: string]: any }) {
-  return request<{Code: number; Data: API.LoginResult; Msg: string}>('/api/login/account', {
+  return request<{Code: number; Data: API.LoginResult; Msg: string}>('/api/public/login', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

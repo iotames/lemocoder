@@ -6,6 +6,7 @@
  */
  import { extend, RequestOptionsInit } from 'umi-request';
  import { notification } from 'antd';
+ import webserverConf from "../../config/webserver";
  
  const codeMessage: {[key: number]: string} = {
    200: '服务器成功返回请求的数据。',
@@ -41,16 +42,12 @@
  
    return response;
  };
-
-//  const devApiBaseUrl = "http://127.0.0.1:8888"
- const prodApiBaseUrl = "http://127.0.0.1:8888"
- const prefix = process.env.NODE_ENV == "production" ? prodApiBaseUrl : prodApiBaseUrl;
  
  const request = extend({
    errorHandler,
    // 默认错误处理
    // credentials: 'include', // 跨域去除 include 。默认请求是否带上cookie
-   prefix: prefix,
+   prefix: webserverConf.baseUrl,
    // getResponse: true,
  });
  

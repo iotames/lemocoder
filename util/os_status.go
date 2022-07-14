@@ -48,7 +48,7 @@ func GetPidByPort(portNumber int) int {
 	cmd.Run()
 	resStr := outBytes.String()
 	log.Printf("----Executed---For---GetPidByPort---%s----", cmdStr)
-	log.Printf("----Result-----outBytes:%v----outString:%s-------", outBytes, resStr)
+	log.Printf("----Result--outString:%s-------", resStr)
 	if len(outBytes.Bytes()) == 0 {
 		return res
 	}

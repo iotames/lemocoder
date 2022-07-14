@@ -15,11 +15,14 @@ func setRouters(g *gin.Engine) {
 	// g.Static("/client", "resource/client") // OK
 	g.Use(prepare.HandlerCORS())
 	g.GET("/debug", debug)
-	g.GET("/api/currentUser", handler.GetUserInfo)
+	g.POST("/api/public/login", handler.Login)
 	g.GET("/api/client/config", handler.GetClientConfig)
+
+	g.GET("/api/user/info", handler.GetUserInfo)
 	g.POST("/api/user/logout", handler.Logout)
+	g.GET("/api/user/menu", handler.GetMenu)
 }
 
 func debug(c *gin.Context) {
-	c.String(200, fmt.Sprintf("---Success--Debug-----\n\n---os.Getenv(\"DB_HOST\"):(%v)----os.Getenv(\"DB_TYPE\"):(%v)---", os.Getenv("DB_HOST"), os.Getenv("DB_TYPE")))
+	c.String(200, fmt.Sprintf("---Success--Debug-----\n\n---os.Getenv(\"DB_HOST\"):(%v)----os.Getenv(\"DB_DRIVER\"):(%v)---", os.Getenv("DB_HOST"), os.Getenv("DB_DRIVER")))
 }

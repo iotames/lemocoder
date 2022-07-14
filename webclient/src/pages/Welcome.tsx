@@ -18,7 +18,7 @@ const Welcome: React.FC = () => {
     <PageContainer>
       <Card>
         <Alert
-          message={"Faster and stronger heavy-duty components have been released."}
+          message={"开发神器: 代码自动生成工具"}
           type="success"
           showIcon
           banner
@@ -29,14 +29,27 @@ const Welcome: React.FC = () => {
         />
         <Typography.Text strong>
           <a
-            href="https://procomponents.ant.design/components/table"
+            href="#"
             rel="noopener noreferrer"
             target="__blank"
           >
             Welcome
           </a>
         </Typography.Text>
-        <CodePreview>yarn add @ant-design/pro-components</CodePreview>
+        <Card>
+        编译客户端
+        <CodePreview>cd webclient</CodePreview>
+        <CodePreview>yarn</CodePreview>
+        <CodePreview>yarn build</CodePreview>
+        移动编译好的客户端文件至客户端资源目录
+        <CodePreview>cd ..</CodePreview>
+        <CodePreview>mv webclien/dist/* resource/client/</CodePreview>
+        编译并运行服务端
+        <CodePreview>go mod tidy</CodePreview>
+        <CodePreview>go build</CodePreview>
+        <CodePreview>./lemocoder</CodePreview>
+        </Card>
+
       </Card>
     </PageContainer>
   );

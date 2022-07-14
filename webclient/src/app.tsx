@@ -6,7 +6,7 @@ import { SettingDrawer } from '@ant-design/pro-components';
 import type { RunTimeLayoutConfig } from 'umi';
 import { history, Link } from 'umi';
 import defaultSettings from '../config/defaultLayoutSetting';
-import { currentUser as queryCurrentUser } from './services/antdprodemo/api';
+import { currentUser as queryCurrentUser, getMenuData } from './services/antdprodemo/api';
 import { getClientConfig } from './services/api/init';
 
 const isDev = process.env.NODE_ENV === 'developmentNOT';
@@ -19,6 +19,7 @@ export async function getInitialState(): Promise<{
   settings?: Partial<LayoutSettings>;
   config?: API.ClientConfig;
   currentUser?: API.CurrentUser;
+  menuItems?: API.MenuItem[];
   loading?: boolean;
   fetchUserInfo?: () => Promise<API.CurrentUser | undefined>;
   fetchConfig?: () => Promise<API.ClientConfig | undefined>;
@@ -39,14 +40,16 @@ export async function getInitialState(): Promise<{
     }catch(error){
       console.log("fetchConfig", error)
     }
-  }  
+  }
   const config = (await getClientConfig()).data
   // 如果不是登录页面，执行
   if (history.location.pathname !== loginPath) {
     const currentUser = await fetchUserInfo();
+    const menuItems = (await getMenuData()).Data.Items
     return {
       fetchUserInfo,
       fetchConfig,
+      menuItems,
       currentUser,
       config,
       settings: defaultSettings,
@@ -62,6 +65,13 @@ export async function getInitialState(): Promise<{
 // ProLayout 支持的api https://procomponents.ant.design/components/layout
 export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) => {
   return {
+    // menu: {
+    //   // 每当 initialState?.currentUser?.userid 发生修改时重新执行 request
+    //   params: initialState,
+    //   request: async (params, defaultMenuData) => {
+    //     return initialState?.menuItems;
+    //   },
+    // },
     rightContentRender: () => <RightContent />,
     disableContentMargin: false,
     waterMarkProps: {

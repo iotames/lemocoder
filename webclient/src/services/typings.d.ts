@@ -33,6 +33,19 @@ declare namespace API {
       Desc?: string;
   }
 
+  type MenuItem = {
+    component:string; 
+    layout?:boolean; 
+    name:string;
+    icon?:string;
+    path?:string;
+    redirect?:string; 
+  }
+
+  type MenuData = {
+    Items: MenuItem[]
+  }
+
   type PageParams = {
     current?: number;
     pageSize?: number;
@@ -66,9 +79,9 @@ declare namespace API {
   };
 
   type LoginParams = {
-    username?: string;
-    password?: string;
-    autoLogin?: boolean;
+    Username?: string;
+    Password?: string;
+    AutoLogin?: boolean;
     LoginWay?: string;
   };
 

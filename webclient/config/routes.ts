@@ -12,6 +12,11 @@ export default [
         icon: 'smile',
         component: './Welcome',
     },
+    {
+        path: '/formgen',
+        name: '表单生成器',
+        component: './Formgen',
+    },
     { path: '/', redirect: '/welcome' },
     { component: './404' },
 ];

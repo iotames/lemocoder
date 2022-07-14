@@ -42,7 +42,7 @@ const Login: React.FC = () => {
   const handleSubmit = async (values: API.LoginParams) => {
     try {
       // 登录
-      const msg = await login({ ...values, LoginWay });
+      const msg = await login({ ...values, LoginWay});
       if (msg.Code === 200) {
         if (msg.Data.Token) {
           localStorage.setItem('AuthToken', msg.Data.Token);
@@ -64,6 +64,7 @@ const Login: React.FC = () => {
 
       // 如果失败去设置用户错误信息
       setUserLoginState(msg);
+      message.error(msg.Msg);
     } catch (error) {
       const defaultLoginFailureMessage = "登录失败，请重试！";
       message.error(defaultLoginFailureMessage);
@@ -82,7 +83,7 @@ const Login: React.FC = () => {
     <div className={styles.container}>
       <div className={styles.content}>
         <LoginForm
-          logo={<img alt="logo" src="/logo.svg" />}
+          logo={<img alt="logo" src="logo.svg" />}
           title="LemoCoder"
           subTitle="代码生成器"
           initialValues={{
@@ -104,15 +105,13 @@ const Login: React.FC = () => {
             />
           </Tabs>
 
-          {Code === 200 && Msg === 'account' && (
-            <LoginMessage
-              content={"账户或密码错误(admin/ant.design)"}
-            />
+          {Code == 400 && Msg === 'account' && (
+            <LoginMessage content="账户或密码错误(admin/ant.design)" />
           )}
           {LoginWay === 'account' && (
             <>
               <ProFormText
-                name="username"
+                name="Username"
                 fieldProps={{
                   size: 'large',
                   prefix: <UserOutlined className={styles.prefixIcon} />,
@@ -126,7 +125,7 @@ const Login: React.FC = () => {
                 ]}
               />
               <ProFormText.Password
-                name="password"
+                name="Password"
                 fieldProps={{
                   size: 'large',
                   prefix: <LockOutlined className={styles.prefixIcon} />,
@@ -202,16 +201,10 @@ const Login: React.FC = () => {
               marginBottom: 24,
             }}
           >
-            <ProFormCheckbox noStyle name="autoLogin">
+            <ProFormCheckbox noStyle name="AutoLogin">
             自动登录
             </ProFormCheckbox>
-            <a
-              style={{
-                float: 'right',
-              }}
-            >
-              忘记密码
-            </a>
+            {/* <a style={{float: 'right'}}>忘记密码</a> */}
           </div>
         </LoginForm>
       </div>

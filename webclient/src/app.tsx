@@ -27,7 +27,7 @@ export async function getInitialState(): Promise<{
   const fetchUserInfo = async () => {
     try {
       const msg = await queryCurrentUser();
-      return msg.data;
+      return msg.Data;
     } catch (error) {
       console.log("queryCurrentUser", error)
       // history.push(loginPath);
@@ -66,7 +66,7 @@ export async function getInitialState(): Promise<{
 export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) => {
   return {
     // menu: {
-    //   // 每当 initialState?.currentUser?.userid 发生修改时重新执行 request
+    //   // 每当 initialState?.currentUser?.id 发生修改时重新执行 request
     //   params: initialState,
     //   request: async (params, defaultMenuData) => {
     //     return initialState?.menuItems;

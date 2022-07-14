@@ -5,24 +5,14 @@ import (
 )
 
 func GetUserInfo(c *gin.Context) {
-	result := map[string]interface{}{
-		"success": true,
-		"data": map[string]interface{}{
-			"name":        "QingCoder",
-			"avatar":      "https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png",
-			"userid":      "00000001",
-			"email":       "antdesign@alipay.com",
-			"signature":   "海纳百川，有容乃大",
-			"title":       "交互专家",
-			"group":       "蚂蚁金服－某某某事业群－某某平台部－某某技术部－UED",
-			"notifyCount": 12,
-			"unreadCount": 11,
-			"country":     "China",
-			"address":     "西湖区工专路 77 号",
-			"phone":       "0752-268888888",
-		},
+	userInfo := map[string]interface{}{
+		"id":      123568736363656353,
+		"account": "QingCoder",
+		"name":    "QingCoder",
+		"avatar":  "https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png",
+		"email":   "qing@qingcoder.com",
 	}
-	c.JSON(200, result)
+	c.JSON(200, Response(userInfo, "success", 200))
 }
 
 func Logout(g *gin.Context) {

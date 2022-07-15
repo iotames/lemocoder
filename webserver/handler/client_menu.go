@@ -16,6 +16,8 @@ type ClientMenuItem struct {
 func GetClientMenu(c *gin.Context) {
 	items := []ClientMenuItem{
 		{Path: "/welcome", Name: "首页", Component: "./Welcome", Layout: true},
+		{Path: "/forms", Name: "表单管理", Component: "./FormsList"},
+		{Path: "/formgen", Name: "表单生成器", Component: "./Formgen"},
 		{Path: "/", Redirect: "/"},
 	}
 	c.JSON(200, ResponseItems(items))

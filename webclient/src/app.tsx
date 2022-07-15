@@ -65,13 +65,13 @@ export async function getInitialState(): Promise<{
 // ProLayout 支持的api https://procomponents.ant.design/components/layout
 export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) => {
   return {
-    // menu: {
-    //   // 每当 initialState?.currentUser?.id 发生修改时重新执行 request
-    //   params: initialState,
-    //   request: async (params, defaultMenuData) => {
-    //     return initialState?.menuItems;
-    //   },
-    // },
+    menu: {
+      // 每当 initialState?.currentUser?.id 发生修改时重新执行 request
+      params: initialState,
+      request: async (params, defaultMenuData) => {
+        return initialState?.menuItems;
+      },
+    },
     rightContentRender: () => <RightContent />,
     disableContentMargin: false,
     waterMarkProps: {

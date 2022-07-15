@@ -1,5 +1,6 @@
 import { InfoCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { Button, message, Space, Tag, Tooltip, Modal } from 'antd';
+import type { UploadProps, UploadFile } from 'antd';
 import { Search, Table, useTable, withTable } from 'table-render';
 import FormRender, { useForm } from 'form-render';
 import request from 'umi-request';
@@ -33,6 +34,9 @@ const searchSchema = {
   labelWidth: 80,
 };
 
+
+
+
 const formSchema = {
   type: 'object',
   properties: {
@@ -40,13 +44,42 @@ const formSchema = {
       title: '标题',
       type: 'string',
       required: true,
+      default: ""
     },
-    status: {
-      title: '状态',
+    upfile: {
+      title: "上传文件",
+      type: "string",
+      format: "upload",
+      props: {
+        action: "http://127.0.0.1:8888/api/public/upload",
+        onChange: (info) => {console.log("onChange----upfile", info.file.status)}
+      },
+      displayType: "row",
+    },
+    upfilepath: {
+      hidden: true,
+      type: "string",
+    },
+    url: {
+      required: true,
+      title: '提交地址',
       type: 'string',
-      enum: ['a', 'b', 'c'],
-      enumNames: ['早', '中', '晚'],
+      default: ""
     },
+    formSchema: {
+      required: true,
+      title: "表单结构",
+      type: "string",
+      format: "textarea",
+      default: ""
+    },
+    // status: {
+    //   title: '状态',
+    //   default: "b",
+    //   type: 'string',
+    //   enum: ['a', 'b', 'c'],
+    //   enumNames: ['早', '中', '晚'],
+    // },
   },
 };
 

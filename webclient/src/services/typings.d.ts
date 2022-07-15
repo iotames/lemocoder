@@ -8,29 +8,18 @@ declare namespace API {
     name?: string;
     avatar?: string;
     mobile?: string;
-
-    // userid?: string;
-    // email?: string;
-    // signature?: string;
-    // title?: string;
-    // group?: string;
-    // tags?: { key?: string; label?: string }[];
-    // notifyCount?: number;
-    // unreadCount?: number;
-    // country?: string;
-    // access?: string;
-    // geographic?: {
-    //   province?: { label?: string; key?: string };
-    //   city?: { label?: string; key?: string };
-    // };
-    // address?: string;
-    // phone?: string;
   };
 
   type LoginResult = {
     Token?: string;
     ExpiresIn?: number;
   };
+
+  type OptResult = {
+    Code: number;
+    Msg: string;
+    Data?: {};
+  }
 
   type ClientConfig = {
       Title?: string;

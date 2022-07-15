@@ -1,12 +1,14 @@
 import Generator from 'fr-generator';
-import React from 'react';
 import './index.less';
+import FormsList from "@/pages/FormsList"
 
 const { Provider, Sidebar, Canvas, Settings } = Generator;
 
 const Demo = () => {
   return (
-    <div className="fr-generator-playground" style={{ height: '40vh' }}>
+    <div>
+        <div><FormsList /></div>
+    <div className="fr-generator-playground" style={{ height: '80vh' }}>
       <Provider
         onChange={data => console.log('data:change', data)}
         onSchemaChange={schema => console.log('schema:change', schema)}
@@ -16,8 +18,11 @@ const Demo = () => {
           <Canvas />
           <Sidebar fixedName />
         </div>
-      </Provider>
+        </Provider>
     </div>
+    
+    </div>
+
   );
 };
 

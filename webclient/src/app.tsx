@@ -7,7 +7,7 @@ import type { RunTimeLayoutConfig } from 'umi';
 import { history, Link } from 'umi';
 import defaultSettings from '../config/defaultLayoutSetting';
 import { currentUser as queryCurrentUser, getMenuData } from './services/antdprodemo/api';
-import { getClientConfig } from './services/api/init';
+import { getClientConfig } from '@/services/api';
 
 const isDev = process.env.NODE_ENV === 'developmentNOT';
 const loginPath = '/public/login';
@@ -75,7 +75,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     rightContentRender: () => <RightContent />,
     disableContentMargin: false,
     waterMarkProps: {
-      content: initialState?.currentUser?.name,
+      content: initialState?.currentUser?.account,
     },
     // footerRender: () => <Footer />,
     onPageChange: () => {

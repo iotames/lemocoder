@@ -22,6 +22,11 @@ export default [
         name: '表单生成器',
         component: './Formgen',
     },
+    {
+        path: '/excelspider',
+        name: 'Excel爬虫',
+        component: './ExcelSpider',
+    },
     { path: '/', redirect: '/welcome' },
     { component: './404' },
 ];

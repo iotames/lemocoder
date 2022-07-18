@@ -2,7 +2,9 @@ package handler
 
 import (
 	"lemocoder/database"
+	"lemocoder/util"
 	"log"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -59,4 +61,20 @@ func setLoginResponse(c *gin.Context, u *database.User) {
 		"expiresin": jwtInfo.Expiresin,
 	}
 	c.JSON(200, Response(dt, "success", 200))
+}
+
+type UploadFileInfo struct {
+	Url, Path string
+}
+
+func UploadFile(c *gin.Context) {
+	file, _ := c.FormFile("files")
+	fileSplit := strings.Split(file.Filename, `.`)
+	fileExt := fileSplit[len(fileSplit)-1]
+
+	log.Println(file.Filename)
+	dst := "runtime/uploads/" + util.GetRandString(32) + "." + fileExt
+	c.SaveUploadedFile(file, dst)
+	upf := UploadFileInfo{Url: getUploadsUrl() + "/" + file.Filename}
+	c.JSON(200, Response(upf, "success", 200))
 }

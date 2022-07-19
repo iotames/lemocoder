@@ -25,7 +25,6 @@
     "fr-generator": "^2.7.8",
     "react": "17.x",
     "react-dom": "17.x",
-    "table-render": "^1.3.6",
     "umi": "^3.5.28"
   },
   "devDependencies": {

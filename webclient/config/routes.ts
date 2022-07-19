@@ -13,16 +13,6 @@ export default [
         component: './Welcome',
     },
     {
-        path: '/forms',
-        name: '表单管理',
-        component: './FormsList',
-    },
-    {
-        path: '/formgen',
-        name: '表单生成器',
-        component: './Formgen',
-    },
-    {
         path: '/excelspider',
         name: 'Excel爬虫',
         component: './ExcelSpider',

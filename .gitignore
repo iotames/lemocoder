@@ -4,6 +4,7 @@
 .env
 /go.sum
 *.log
+*.lock
 /venv
 /requirements.txt
 __pycache__/

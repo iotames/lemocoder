@@ -5,7 +5,6 @@ import { Search, Table, useTable, withTable } from 'table-render';
 import FormRender, { useForm } from 'form-render';
 import request from 'umi-request';
 import { useState } from 'react';
-import { post } from '@/services/api';
 import FormModal from "@/components/FormModal";
 
 const searchSchema = {

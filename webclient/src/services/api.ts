@@ -11,8 +11,8 @@ export async function getClientConfig(options?: { [key: string]: any }) {
   });
 }
 
-export async function post(url: string, body: API.OptResult, options?: { [key: string]: any }) {
-    return request<{Code: number; Data: API.LoginResult; Msg: string}>(url, {
+export async function post(url: string, body: {[key: string]: any}, options?: { [key: string]: any }) {
+    return request<{Code: number; Data: API.OptResult; Msg: string}>(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -20,4 +20,4 @@ export async function post(url: string, body: API.OptResult, options?: { [key: s
       data: body,
       ...(options || {}),
     });
-  }
+}

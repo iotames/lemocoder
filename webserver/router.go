@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"lemocoder/webserver/handler"
 	"lemocoder/webserver/prepare"
+	"log"
 	"net/http"
 	"os"
 
@@ -16,7 +17,10 @@ func setRouters(g *gin.Engine) {
 	g.Use(prepare.HandlerCORS())
 	g.GET("/debug", debug)
 	g.MaxMultipartMemory = 8 << 20 // 8M
-	g.POST("/api/public/upload", handler.UploadFile)
+
+	g.POST("/api/local/excelspider", handler.ExcelSpider)
+	g.POST("/api/local/upload", handler.UploadFile)
+
 	g.POST("/api/public/login", handler.Login)
 	g.GET("/api/client/config", handler.GetClientConfig)
 	g.GET("/api/user/info", handler.GetUserInfo)
@@ -25,5 +29,7 @@ func setRouters(g *gin.Engine) {
 }
 
 func debug(c *gin.Context) {
+	log.Println("----Request--", c.RemoteIP(), c.Request.RemoteAddr)
+	c.String(200, "RemoteIP():%s--Request.Host:%s--", c.RemoteIP(), c.Request.Host)
 	c.String(200, fmt.Sprintf("---Success--Debug-----\n\n---os.Getenv(\"DB_HOST\"):(%v)----os.Getenv(\"DB_DRIVER\"):(%v)---", os.Getenv("DB_HOST"), os.Getenv("DB_DRIVER")))
 }

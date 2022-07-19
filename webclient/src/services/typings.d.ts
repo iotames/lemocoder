@@ -18,7 +18,7 @@ declare namespace API {
   type OptResult = {
     Code: number;
     Msg: string;
-    Data?: {};
+    Data?: {} |  {[key: string]: any };
   }
 
   type ClientConfig = {

@@ -6,6 +6,13 @@ export default [
         // name: 'ligin',
         component: './public/Login',
     },
+
+    {
+        layout: false,
+        path: '/public/init',
+        component: './public/AppInit',
+    },
+
     {
         path: '/welcome',
         name: 'welcome',

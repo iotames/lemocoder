@@ -1,16 +1,32 @@
 package handler
 
 import (
+	"lemocoder/config"
 	"net/http"
+	"os"
 
 	"github.com/gin-gonic/gin"
 )
 
 type ClientConfig struct {
-	Title, Desc string
+	Title, Logo, DbDriver, DbHost, DbName, DbPassword, DbUsername string
+	DbNodeId, DbPort, WebPort                                     int
 }
 
 func GetClientConfig(c *gin.Context) {
-	conf := ClientConfig{Title: "LemoCoder", Desc: "代码自动生成工具"}
+	d := config.GetDatabase()
+	s := config.GetWebServer()
+	conf := ClientConfig{
+		Title:      os.Getenv("APP_TITLE"),
+		Logo:       os.Getenv("APP_LOGO"),
+		DbDriver:   d.Driver,
+		DbHost:     d.Host,
+		DbName:     d.Name,
+		DbUsername: d.Username,
+		DbPassword: d.Password,
+		DbNodeId:   d.NodeID,
+		DbPort:     d.Port,
+		WebPort:    s.Port,
+	}
 	c.JSON(http.StatusOK, Response(conf, "success", 200))
 }

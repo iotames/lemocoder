@@ -72,6 +72,9 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
         return initialState?.menuItems;
       },
     },
+    // title: 'Coder',
+    // logo: 'https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg',
+    
     rightContentRender: () => <RightContent />,
     disableContentMargin: false,
     waterMarkProps: {

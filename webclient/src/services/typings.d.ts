@@ -23,7 +23,7 @@ declare namespace API {
 
   type ClientConfig = {
       Title?: string;
-      Desc?: string;
+      Logo?: string;
   }
 
   type MenuItem = {

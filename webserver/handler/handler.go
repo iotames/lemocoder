@@ -1,11 +1,12 @@
 package handler
 
 import (
-	"os"
+	"lemocoder/config"
 )
 
 func getBaseUrl() string {
-	return os.Getenv("WEB_SERVER_URL")
+	w := config.GetWebServer()
+	return w.GetAddr()
 }
 
 func getUploadsUrl() string {

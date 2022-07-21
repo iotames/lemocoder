@@ -2,8 +2,7 @@ package database
 
 import (
 	"fmt"
-	"os"
-	"strconv"
+	"lemocoder/config"
 	"sync"
 	"time"
 
@@ -21,9 +20,8 @@ var (
 )
 
 func getNodeId() int64 {
-	nidstr := os.Getenv("DB_NODE_ID")
-	nodeId, _ := strconv.ParseInt(nidstr, 10, 64)
-	return nodeId
+	d := config.GetDatabase()
+	return int64(d.NodeID)
 }
 
 func GetEngine() *xorm.Engine {
@@ -34,18 +32,13 @@ func GetEngine() *xorm.Engine {
 }
 
 func newEngine() *xorm.Engine {
-	dbDriver := os.Getenv("DB_DRIVER")
-	username := os.Getenv("DB_USERNAME")
-	password := os.Getenv("DB_PASSWORD")
-	host := os.Getenv("DB_HOST")
-	port := os.Getenv("DB_PORT")
-	dbname := os.Getenv("DB_NAME")
+	db := config.GetDatabase()
 	var err error
-	if dbDriver == "mysql" {
-		engine, err = xorm.NewEngine(dbDriver, fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local", username, password, host, port, dbname))
+	if db.Driver == config.DRIVER_MYSQL {
+		engine, err = xorm.NewEngine(db.Driver, db.GetDSN())
 	}
-	if dbDriver == "sqlite" {
-		engine, err = xorm.NewEngine("sqlite3", "./sqlite3.db")
+	if db.Driver == config.DRIVER_SQLITE3 {
+		engine, err = xorm.NewEngine(db.Driver, config.SQLITE_FILENAME)
 	}
 	if err != nil {
 		panic(err)

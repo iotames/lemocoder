@@ -1,6 +1,8 @@
 package handler
 
 import (
+	"lemocoder/database"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -9,7 +11,7 @@ func GetUserInfo(c *gin.Context) {
 		"id":      123568736363656353,
 		"account": "QingCoder",
 		"name":    "QingCoder",
-		"avatar":  "https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png",
+		"avatar":  database.GetDefaultAvatar(),
 		"email":   "qing@qingcoder.com",
 	}
 	c.JSON(200, Response(userInfo, "success", 200))

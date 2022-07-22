@@ -6,6 +6,8 @@ import (
 	"strconv"
 )
 
+const EnvFilepath = ".env"
+const TplFilepath = "resource/templates"
 const DRIVER_SQLITE3 = "sqlite3"
 const DRIVER_MYSQL = "mysql"
 
@@ -58,4 +60,15 @@ func GetWebServer() *WebServer {
 
 func (s WebServer) GetAddr() string {
 	return fmt.Sprintf("http://127.0.0.1:%d", s.Port)
+}
+
+type App struct {
+	Title, Logo string
+}
+
+func GetApp() *App {
+	return &App{
+		Title: os.Getenv("APP_TITLE"),
+		Logo:  os.Getenv("APP_LOGO"),
+	}
 }

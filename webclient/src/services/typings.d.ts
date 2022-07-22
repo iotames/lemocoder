@@ -22,8 +22,19 @@ declare namespace API {
   }
 
   type ClientConfig = {
-      Title?: string;
-      Logo?: string;
+      IsLocked: boolean;
+      Title: string;
+      Logo: string;
+      DbDriver: string;
+      DbHost: string;
+      DbName: string;
+      DbUsername: string;
+      DbPassword: string;
+      LoginAccount: string;
+      LoginPassword: string;
+      DbNodeId: number;
+      DbPort: number;
+      WebServerPort: number;
   }
 
   type MenuItem = {

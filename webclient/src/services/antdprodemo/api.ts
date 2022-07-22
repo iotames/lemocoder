@@ -3,44 +3,8 @@
 // import { request } from 'umi';
 import request from "@/utils/request";
 
-/** 获取当前的用户 GET /api/user/info */
-export async function currentUser(options?: { [key: string]: any }) {
-  return request<{
-    Data: API.CurrentUser;
-  }>('/api/user/info', {
-    method: 'GET',
-    ...(options || {}),
-  });
-}
 
-export async function getMenuData(options?: { [key: string]: any }) {
-  return request<{
-    Data: API.MenuData;
-  }>('/api/user/menu', {
-    method: 'GET',
-    ...(options || {}),
-  });
-}
 
-/** 退出登录接口 POST /api/user/logout */
-export async function outLogin(options?: { [key: string]: any }) {
-  return request<Record<string, any>>('/api/user/logout', {
-    method: 'POST',
-    ...(options || {}),
-  });
-}
-
-/** 登录接口 POST /api/login/account */
-export async function login(body: API.LoginParams, options?: { [key: string]: any }) {
-  return request<{Code: number; Data: API.LoginResult; Msg: string}>('/api/public/login', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    data: body,
-    ...(options || {}),
-  });
-}
 
 /** 此处后端没有提供注释 GET /api/notices */
 export async function getNotices(options?: { [key: string]: any }) {

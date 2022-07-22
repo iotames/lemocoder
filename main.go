@@ -2,6 +2,7 @@ package main
 
 import (
 	"lemocoder/database"
+	"lemocoder/util"
 	"lemocoder/webserver"
 	"log"
 	"os"
@@ -59,5 +60,15 @@ func main() {
 }
 
 func init() {
-	godotenv.Load(".env", "env.default")
+	if !util.IsPathExists(".env") {
+		f, err := os.Create(".env")
+		if err != nil {
+			panic("Create .env Error: " + err.Error())
+		}
+		f.Close()
+	}
+	err := godotenv.Load(".env", "env.default")
+	if err != nil {
+		panic("godotenv Error: " + err.Error())
+	}
 }

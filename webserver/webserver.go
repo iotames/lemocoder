@@ -1,9 +1,10 @@
 package webserver
 
 import (
+	"fmt"
+	"lemocoder/config"
 	"log"
 	"net/http"
-	"os"
 
 	"github.com/gin-gonic/gin"
 )
@@ -16,8 +17,9 @@ func New() WebServer {
 	log.Println("====Begin---webserver--Run")
 	h := gin.Default()
 	setRouters(h)
-	portStr := os.Getenv("WEB_SERVER_PORT")
-	server := http.Server{Addr: ":" + portStr, Handler: h}
+	conf := config.GetWebServer()
+	log.Println("----WebServerPort:", conf.Port)
+	server := http.Server{Addr: fmt.Sprintf(":%d", conf.Port), Handler: h}
 	// http.HandleFunc("/debug", debug)
 	return &server
 }

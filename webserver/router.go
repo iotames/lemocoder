@@ -23,6 +23,7 @@ func setRouters(g *gin.Engine) {
 
 	g.POST("/api/public/login", handler.Login)
 	g.GET("/api/client/config", handler.GetClientConfig)
+	g.POST("/api/client/init", handler.ClientInit)
 	g.GET("/api/user/info", handler.GetUserInfo)
 	g.POST("/api/user/logout", handler.Logout)
 	g.GET("/api/user/menu", handler.GetClientMenu)

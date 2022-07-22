@@ -3,6 +3,7 @@ package database
 import (
 	"fmt"
 	"lemocoder/config"
+	"log"
 	"sync"
 	"time"
 
@@ -56,15 +57,21 @@ func engineInit(engine *xorm.Engine) {
 }
 
 func getSnowflakeNode() *snowflake.Node {
-	once.Do(func() {
+	if snode == nil {
 		node, err := snowflake.NewNode(getNodeId())
 		if err != nil {
 			fmt.Println(err)
 			snode = nil
 		}
 		snode = node
-	})
+	}
+	log.Println("---getSnowflakeNode---", snode)
 	return snode
+}
+
+type IModel interface {
+	GenerateID() int64
+	ParseID() snowflake.ID
 }
 
 type BaseModel struct {
@@ -95,4 +102,9 @@ func CreateTables() {
 
 func SyncTables() {
 	GetEngine().Sync(new(User))
+}
+
+func CreateModel(m IModel) (int64, error) {
+	m.GenerateID()
+	return GetEngine().Insert(m)
 }

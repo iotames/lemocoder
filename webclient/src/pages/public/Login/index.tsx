@@ -4,9 +4,7 @@ import React, { useState } from 'react';
 import { ProFormCaptcha, ProFormCheckbox, ProFormText, LoginForm } from '@ant-design/pro-form';
 import { history, useModel } from 'umi';
 import Footer from '@/components/Footer';
-import { login } from '@/services/antdprodemo/api';
-import { getFakeCaptcha } from '@/services/antdprodemo/login';
-
+import {login, getFakeCaptcha, getCurrentUser} from "@/services/api"
 import styles from './index.less';
 
 const LoginMessage: React.FC<{
@@ -25,19 +23,7 @@ const LoginMessage: React.FC<{
 const Login: React.FC = () => {
   const [userLoginState, setUserLoginState] = useState<{Code: number; Msg: string; Data: API.LoginResult}>({Code: 500, Msg: "unknown", Data:{}});
   const [LoginWay, setLoginWay] = useState<string>('account');
-  const { initialState, setInitialState } = useModel('@@initialState');
-
-  const fetchUserInfo = async () => {
-    const userInfo = await initialState?.fetchUserInfo?.();
-    console.log('----fetchUserInfo-----------');
-    console.log(userInfo);
-    if (userInfo) {
-      await setInitialState((s) => ({
-        ...s,
-        currentUser: userInfo,
-      }));
-    }
-  };
+  const {initialState, setInitialState } = useModel('@@initialState');
 
   const handleSubmit = async (values: API.LoginParams) => {
     try {
@@ -50,10 +36,11 @@ const Login: React.FC = () => {
           message.error('AuthToken error');
           return;
         }
-
         const defaultLoginSuccessMessage = "登录成功";
         message.success(defaultLoginSuccessMessage);
-        await fetchUserInfo();
+        const currentUser = (await getCurrentUser()).Data
+        setInitialState({...initialState, currentUser})
+
         /** 此方法会跳转到 redirect 参数所在的位置 */
         if (!history) return;
         const { query } = history.location;
@@ -77,7 +64,6 @@ const Login: React.FC = () => {
   //   config = initialState.fetchConfig()
   // }
 
-  console.log(initialState?.config)
 
   return (
     <div className={styles.container}>

@@ -23,6 +23,10 @@ type User struct {
 	Avatar       string `xorm:"varchar(500) notnull comment('用户头像')"`
 }
 
+func GetDefaultAvatar() string {
+	return "https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png"
+}
+
 func (u User) getJwt(expiresin int) string {
 	jwt := util.NewJwt(u.Salt)
 	info := map[string]interface{}{
@@ -96,7 +100,9 @@ func (u User) Register(password string) (User, error) {
 		return User{}, fmt.Errorf("error: Regiser Fail. User password can not be empty")
 	}
 	user.SetPasswordHash(password)
-	return *user, nil
+	affected, err := CreateModel(user)
+	log.Println("affected: ", affected)
+	return *user, err
 }
 
 func (u *User) ResetSalt() {

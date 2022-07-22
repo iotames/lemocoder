@@ -2,53 +2,33 @@
 import RightContent from '@/components/RightContent';
 import { LinkOutlined } from '@ant-design/icons';
 import type { Settings as LayoutSettings } from '@ant-design/pro-components';
-import { SettingDrawer } from '@ant-design/pro-components';
+import { SettingDrawer, PageLoading } from '@ant-design/pro-components';
 import type { RunTimeLayoutConfig } from 'umi';
 import { history, Link } from 'umi';
 import defaultSettings from '../config/defaultLayoutSetting';
-import { currentUser as queryCurrentUser, getMenuData } from './services/antdprodemo/api';
-import { getClientConfig } from '@/services/api';
+
+import { getClientConfig, getMenuData, getCurrentUser } from '@/services/api';
 
 const isDev = process.env.NODE_ENV === 'developmentNOT';
 const loginPath = '/public/login';
+const initPath = "/public/init";
 
 /**
  * @see  https://umijs.org/zh-CN/plugins/plugin-initial-state
  * */
 export async function getInitialState(): Promise<{
-  settings?: Partial<LayoutSettings>;
-  config?: API.ClientConfig;
+  settings: Partial<LayoutSettings>;
+  config: API.ClientConfig;
   currentUser?: API.CurrentUser;
   menuItems?: API.MenuItem[];
   loading?: boolean;
-  fetchUserInfo?: () => Promise<API.CurrentUser | undefined>;
-  fetchConfig?: () => Promise<API.ClientConfig | undefined>;
 }> {
-  const fetchUserInfo = async () => {
-    try {
-      const msg = await queryCurrentUser();
-      return msg.Data;
-    } catch (error) {
-      console.log("queryCurrentUser", error)
-      // history.push(loginPath);
-    }
-    return undefined;
-  };
-  const fetchConfig = async () => {
-    try{
-      return (await getClientConfig()).data;
-    }catch(error){
-      console.log("fetchConfig", error)
-    }
-  }
-  const config = (await getClientConfig()).data
-  // 如果不是登录页面，执行
+  const config = (await getClientConfig()).Data
   if (history.location.pathname !== loginPath) {
-    const currentUser = await fetchUserInfo();
+    // 如果不是登录页面，执行
+    const currentUser = (await getCurrentUser()).Data
     const menuItems = (await getMenuData()).Data.Items
     return {
-      fetchUserInfo,
-      fetchConfig,
       menuItems,
       currentUser,
       config,
@@ -56,7 +36,6 @@ export async function getInitialState(): Promise<{
     };
   }
   return {
-    fetchUserInfo,
     config,
     settings: defaultSettings,
   };
@@ -86,7 +65,13 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
       console.log(history);
       // 如果没有登录，重定向到 login
       if (!initialState?.currentUser && location.pathname !== loginPath) {
-        // history.push(loginPath);
+        history.push(loginPath);
+      }
+      if (initialState?.config && initialState.config.IsLocked && location.pathname == initPath){
+        history.push("/")
+      }
+      if (initialState?.config && !initialState.config.IsLocked) {
+        history.push(initPath);
       }
     },
     links: isDev
@@ -102,7 +87,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     // unAccessible: <div>unAccessible</div>,
     // 增加一个 loading 的状态
     childrenRender: (children, props) => {
-      // if (initialState?.loading) return <PageLoading />;
+      if (initialState?.loading) return <PageLoading />;
       return (
         <>
           {children}

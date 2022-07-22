@@ -29,3 +29,12 @@ func TestTemplate(t *testing.T) {
 		}
 	}
 }
+
+func TestEnv(t *testing.T) {
+	title := os.Getenv("APP_TITLE")
+	dbHost := os.Getenv("DB_HOST")
+	dbPort := os.Getenv("DB_PORT")
+	webServerPort := os.Getenv("WEB_SERVER_PORT")
+
+	log.Printf("--title:%s--dbHost:%s----dbPort:%s--webServerPort:%s--", title, dbHost, dbPort, webServerPort)
+}

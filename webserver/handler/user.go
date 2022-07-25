@@ -41,7 +41,8 @@ type ClientMenuItem struct {
 
 func GetClientMenu(c *gin.Context) {
 	items := []ClientMenuItem{
-		{Path: "/welcome", Name: "首页Wel", Component: "./Welcome", Layout: true},
+		{Path: "/welcome", Name: "首页", Component: "./Welcome"},
+		{Path: "/codemaker", Name: "代码生成器", Component: "./CodeMaker"},
 		{Path: "/excelspider", Name: "Excel爬虫", Component: "./ExcelSpider"},
 		{Path: "/", Redirect: "/"},
 	}

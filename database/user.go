@@ -60,7 +60,7 @@ func (u User) GetUserByJwt(jwtStr string) (user User, err error) {
 }
 
 func (u User) GetJwtInfo() JwtInfo {
-	expiresin := 600 // 3600 * 24 * 7 // 有效期 7 天
+	expiresin := 3600 * 24 * 7 // 有效期 7 天
 	return JwtInfo{
 		Token:     u.getJwt(expiresin),
 		Expiresin: expiresin,

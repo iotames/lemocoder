@@ -20,6 +20,11 @@ export default [
         component: './Welcome',
     },
     {
+        path: '/codemaker',
+        name: '代码生成器',
+        component: './CodeMaker',
+    },
+    {
         path: '/excelspider',
         name: 'Excel爬虫',
         component: './ExcelSpider',

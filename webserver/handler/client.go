@@ -39,39 +39,67 @@ func GetClientConfig(c *gin.Context) {
 }
 
 func ClientInit(c *gin.Context) {
+	var err error
 	conf := new(ClientConfig)
 	c.Bind(conf)
 	if conf.Logo == "" {
 		a := config.GetApp()
 		conf.Logo = a.Logo
 	}
+	if len(conf.LoginPassword) < 6 {
+		c.JSON(http.StatusOK, ResponseFail("密码长度过短", 400))
+		return
+	}
 	lockFile := "app.lock"
 	if util.IsPathExists(lockFile) {
 		c.JSON(http.StatusOK, ResponseFail("请不要重复初始化", 400))
 		return
 	}
-	if len(conf.LoginPassword) < 6 {
-		c.JSON(http.StatusOK, ResponseFail("密码长度过短", 400))
+	err = createInitFile(*conf)
+	if err != nil {
+		c.JSON(http.StatusOK, ResponseFail("配置文件初始化失败: "+err.Error(), 500))
 		return
 	}
-	u := database.User{Account: conf.LoginAccount}
-	u, err := u.Register(conf.LoginPassword)
+	err = databaseInit(*conf)
 	if err != nil {
 		c.JSON(http.StatusOK, ResponseFail("用户注册失败: "+err.Error(), 500))
 		return
 	}
+	f, _ := os.Create(lockFile)
+	f.Close()
+	config.LoadEnv()
+	c.JSON(http.StatusOK, ResponseOk("success"))
+}
+
+func createInitFile(conf ClientConfig) error {
 	f, err := os.OpenFile(config.EnvFilepath, os.O_RDWR, 0644)
 	if err != nil {
-		c.JSON(http.StatusOK, ResponseFail("open .env File Error: "+err.Error(), 500))
-		return
+		// open .env File Error
+		return err
 	}
-	defer f.Close()
 	err = generator.GetContentByTpl(config.TplFilepath+"/env.tpl", f, conf)
 	if err != nil {
-		c.JSON(http.StatusOK, ResponseFail("create .env File Error: "+err.Error(), 500))
-		return
+		// create .env File Error
+		return err
 	}
-	f, _ = os.Create(lockFile)
 	f.Close()
-	c.JSON(http.StatusOK, ResponseOk("success"))
+	return nil
+}
+
+func databaseInit(conf ClientConfig) error {
+	database.SetEngine(config.Database{
+		Driver:   conf.DbDriver,
+		Host:     conf.DbHost,
+		Username: conf.DbUsername,
+		Password: conf.DbPassword,
+		Name:     conf.DbName,
+		Port:     conf.DbPort,
+		NodeID:   conf.DbNodeId,
+	})
+
+	database.CreateTables()
+	var err error
+	u := database.User{Account: conf.LoginAccount}
+	u, err = u.Register(conf.LoginPassword)
+	return err
 }

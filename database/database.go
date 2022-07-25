@@ -26,14 +26,23 @@ func getNodeId() int64 {
 }
 
 func GetEngine() *xorm.Engine {
+	if engine != nil {
+		return engine
+	}
 	once.Do(func() {
-		engine = newEngine()
+		engine = newEngine(nil)
 	})
 	return engine
 }
 
-func newEngine() *xorm.Engine {
-	db := config.GetDatabase()
+func SetEngine(db config.Database) {
+	engine = newEngine(&db)
+}
+
+func newEngine(db *config.Database) *xorm.Engine {
+	if db == nil {
+		db = config.GetDatabase()
+	}
 	var err error
 	if db.Driver == config.DRIVER_MYSQL {
 		engine, err = xorm.NewEngine(db.Driver, db.GetDSN())
@@ -51,6 +60,7 @@ func newEngine() *xorm.Engine {
 func engineInit(engine *xorm.Engine) {
 	ormMap := names.GonicMapper{}
 	engine.SetMapper(ormMap)
+	// engine.TZLocation, _ = time.LoadLocation("Asia/Shanghai")
 	engine.SetTableMapper(ormMap)
 	engine.SetColumnMapper(ormMap)
 	engine.ShowSQL(true)
@@ -107,4 +117,12 @@ func SyncTables() {
 func CreateModel(m IModel) (int64, error) {
 	m.GenerateID()
 	return GetEngine().Insert(m)
+}
+
+func UpdateModel(m IModel, dt map[string]interface{}) (int64, error) {
+	modelID := m.ParseID().Int64()
+	if dt == nil {
+		return GetEngine().ID(modelID).Update(m)
+	}
+	return GetEngine().Table(m).ID(modelID).Update(dt)
 }

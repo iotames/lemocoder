@@ -57,15 +57,38 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     rightContentRender: () => <RightContent />,
     disableContentMargin: false,
     waterMarkProps: {
-      content: initialState?.currentUser?.account,
+      content: initialState?.currentUser?.Account,
     },
     // footerRender: () => <Footer />,
     onPageChange: () => {
       const { location } = history;
       console.log(history);
+      console.log("initialState?.currentUser?.Account---", initialState?.currentUser?.Account)
       // 如果没有登录，重定向到 login
-      if (!initialState?.currentUser && location.pathname !== loginPath) {
-        history.push(loginPath);
+      if (location.pathname != loginPath && location.pathname != initPath){
+        if (!initialState?.currentUser?.Account){
+          history.push(loginPath);
+          return
+          // if (!initialState){
+          //   history.push(loginPath);
+          //   return
+          // }
+
+          // getCurrentUser().then((resp)=>{
+          //   if (resp.Code!=200){
+          //     history.push(loginPath);
+          //     return
+          //   }
+          //   const currentUser = resp.Data;
+          //   initialState.currentUser = currentUser
+          //   getMenuData().then((res)=>{
+          //     const menuItems = res.Data.Items
+          //     initialState.menuItems = menuItems
+          //     setInitialState(initialState)
+          //   })
+          // })
+
+        }
       }
       if (initialState?.config && initialState.config.IsLocked && location.pathname == initPath){
         history.push("/")

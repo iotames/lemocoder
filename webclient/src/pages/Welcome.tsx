@@ -27,6 +27,8 @@ const Welcome: React.FC = () => {
             marginBottom: 24,
           }}
         />
+
+{/* 
         <Typography.Text strong>
           <a
             href="#"
@@ -49,6 +51,7 @@ const Welcome: React.FC = () => {
         <CodePreview>go build</CodePreview>
         <CodePreview>./lemocoder</CodePreview>
         </Card>
+*/}
 
       </Card>
     </PageContainer>

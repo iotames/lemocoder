@@ -2,8 +2,11 @@ package config
 
 import (
 	"fmt"
+	"lemocoder/util"
 	"os"
 	"strconv"
+
+	"github.com/joho/godotenv"
 )
 
 const EnvFilepath = ".env"
@@ -12,6 +15,20 @@ const DRIVER_SQLITE3 = "sqlite3"
 const DRIVER_MYSQL = "mysql"
 
 const SQLITE_FILENAME = "sqlite3.db"
+
+func LoadEnv() {
+	if !util.IsPathExists(".env") {
+		f, err := os.Create(".env")
+		if err != nil {
+			panic("Create .env Error: " + err.Error())
+		}
+		f.Close()
+	}
+	err := godotenv.Load(".env", "env.default")
+	if err != nil {
+		panic("godotenv Error: " + err.Error())
+	}
+}
 
 type Database struct {
 	Driver, Host, Username, Password, Name string

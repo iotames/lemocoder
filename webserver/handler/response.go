@@ -1,5 +1,9 @@
 package handler
 
+import (
+	"github.com/gin-gonic/gin"
+)
+
 type JsonObject map[string]interface{}
 
 func Response(data interface{}, msg string, code int) interface{} {
@@ -34,4 +38,12 @@ func ResponseItems(items interface{}) interface{} {
 	}{Msg: "success", Code: 200, Data: map[string]interface{}{
 		"Items": items,
 	}}
+}
+
+func ErrorNoPermission(c *gin.Context) {
+	c.JSON(200, ResponseFail("NoPermission.您没有权限访问此页面", 400))
+}
+
+func ErrorUserNotFound(c *gin.Context) {
+	c.JSON(200, ResponseFail("user not found", 500))
 }

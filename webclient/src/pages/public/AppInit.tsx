@@ -50,7 +50,7 @@ export default () => {
             message.success('提交成功');
             initialState.config.IsLocked = true
             setInitialState({...initialState})
-            history.push("/public/login")
+            history.push("/")
           }else{
             message.error(resp.Msg);
           }

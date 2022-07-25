@@ -3,11 +3,12 @@
 
 declare namespace API {
   type CurrentUser = {
-    id: number,
-    account: string;
-    name?: string;
-    avatar?: string;
-    mobile?: string;
+    Id: number,
+    Account: string;
+    Name?: string;
+    Avatar?: string;
+    Mobile?: string;
+    Email?: string;
   };
 
   type LoginResult = {

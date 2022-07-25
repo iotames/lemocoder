@@ -1,15 +1,13 @@
 package main
 
 import (
+	"lemocoder/config"
 	"lemocoder/database"
-	"lemocoder/util"
 	"lemocoder/webserver"
 	"log"
 	"os"
 	"os/exec"
 	"time"
-
-	"github.com/joho/godotenv"
 )
 
 func main() {
@@ -60,15 +58,6 @@ func main() {
 }
 
 func init() {
-	if !util.IsPathExists(".env") {
-		f, err := os.Create(".env")
-		if err != nil {
-			panic("Create .env Error: " + err.Error())
-		}
-		f.Close()
-	}
-	err := godotenv.Load(".env", "env.default")
-	if err != nil {
-		panic("godotenv Error: " + err.Error())
-	}
+	// time.LoadLocation("Asia/Shanghai")
+	config.LoadEnv()
 }

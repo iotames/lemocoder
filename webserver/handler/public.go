@@ -40,7 +40,7 @@ func Login(c *gin.Context) {
 	if user.ID == 0 {
 		c.JSON(200, ResponseFail("Not found User", 400))
 	} else {
-		if user.CheckPassword(loginForm.Password) {
+		if !user.CheckPassword(loginForm.Password) {
 			c.JSON(200, ResponseFail("密码不正确", 400))
 			return
 		}
@@ -53,10 +53,10 @@ func setLoginResponse(c *gin.Context, u *database.User) {
 	dt := map[string]interface{}{
 		// "department": u.GetDepartment().Name, //resp.Data.Department,
 		// "position":   u.GetPosition().Name,
-		"account":   u.Account,
-		"avatar":    u.Avatar,
-		"token":     jwtInfo.Token,
-		"expiresin": jwtInfo.Expiresin,
+		"Account":   u.Account,
+		"Avatar":    u.Avatar,
+		"Token":     jwtInfo.Token,
+		"ExpiresIn": jwtInfo.Expiresin,
 	}
 	c.JSON(200, Response(dt, "success", 200))
 }

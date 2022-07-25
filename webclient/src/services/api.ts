@@ -26,6 +26,8 @@ export async function post(url: string, body: {[key: string]: any}, options?: { 
 export async function getCurrentUser(options?: { [key: string]: any }) {
   return request<{
     Data: API.CurrentUser;
+    Code: number;
+    Msg: string;
   }>('/api/user/info', {
     method: 'GET',
     ...(options || {}),

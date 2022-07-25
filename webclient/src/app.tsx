@@ -51,8 +51,8 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
         return initialState?.menuItems;
       },
     },
-    // title: 'Coder',
-    // logo: 'https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg',
+    title: initialState?.config.Title,
+    logo: initialState?.config.Logo,
     
     rightContentRender: () => <RightContent />,
     disableContentMargin: false,

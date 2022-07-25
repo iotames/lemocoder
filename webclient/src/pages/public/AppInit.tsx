@@ -12,13 +12,6 @@ import { useRef, useState } from 'react';
 import { useModel, history } from 'umi';
 import { post } from "@/services/api"
 
-const waitTime = (time: number = 100) => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(true);
-    }, time);
-  });
-};
 
 export default () => {
   const { initialState, loading, setInitialState } = useModel('@@initialState');
@@ -27,7 +20,7 @@ export default () => {
     return <Spin />
   }
   const initConf = initialState.config
-  const [isSqlite, setIsSqlite] = useState(true)
+  const [isSqlite, setIsSqlite] = useState(initConf.DbDriver=="sqlite3")
   const formRef = useRef<ProFormInstance>();
   const dbDrivers = [{value: 'sqlite3', label: 'Sqlite3'},{value: 'mysql', label: 'Mysql'}]
   const changeDbDriver = (val: any) => {
@@ -43,11 +36,10 @@ export default () => {
       }>
         formRef={formRef}
         onFinish={async (values) => {
-          await waitTime(1000);
           console.log(values)
           const resp = (await post("/api/client/init", values))
           if (resp.Code == 200){
-            message.success('提交成功');
+            message.success('初始化成功');
             initialState.config.IsLocked = true
             setInitialState({...initialState})
             history.push("/")
@@ -68,9 +60,7 @@ export default () => {
           stepProps={{
             description: 'XORM引擎',
           }}
-          onChange={(values) => {
-            console.log(values)
-          }}
+          // onChange={(values) => {}}
         >
           <ProFormSelect label="数据库类型" width="sm" name="DbDriver" rules={[{required: true}]} initialValue={initConf.DbDriver} options={dbDrivers} onChange={changeDbDriver} />
           
@@ -90,22 +80,20 @@ export default () => {
           {/* <ProFormTextArea name="remark" label="备注" width="lg" placeholder="请输入备注" /> */}
         </StepsForm.StepForm>
 
-
+{/*
         <StepsForm.StepForm<{}>
           name="webserver"
           title="Web服务器"
           stepProps={{
             description: '基于Gin框架',
           }}
-          // onFinish={async () => {
-          //   console.log(formRef.current?.getFieldsValue());
-          //   return true;
-          // }}
+          // onFinish={async (val) => {}}
         >
           <ProFormDigit name="WebServerPort" min={1000} max={9999} label="Web端口号" width="xs" tooltip="填数字" initialValue={initConf.WebServerPort} rules={[{ required: true }]} />
 
-          {/* <ProFormCheckbox.Group name="checkbox" label="迁移类型" width="lg" options={['结构迁移', '全量迁移', '增量迁移', '全量校验']} /> */}
+          <ProFormCheckbox.Group name="checkbox" label="迁移类型" width="lg" options={['结构迁移', '全量迁移', '增量迁移', '全量校验']} /> 
         </StepsForm.StepForm>
+*/}
 
 
         <StepsForm.StepForm

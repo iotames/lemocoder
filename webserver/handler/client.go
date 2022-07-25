@@ -42,10 +42,7 @@ func ClientInit(c *gin.Context) {
 	var err error
 	conf := new(ClientConfig)
 	c.Bind(conf)
-	if conf.Logo == "" {
-		a := config.GetApp()
-		conf.Logo = a.Logo
-	}
+	setDefaultInit(conf)
 	if len(conf.LoginPassword) < 6 {
 		c.JSON(http.StatusOK, ResponseFail("密码长度过短", 400))
 		return
@@ -69,6 +66,16 @@ func ClientInit(c *gin.Context) {
 	f.Close()
 	config.LoadEnv()
 	c.JSON(http.StatusOK, ResponseOk("success"))
+}
+
+func setDefaultInit(conf *ClientConfig) {
+	if conf.Logo == "" {
+		a := config.GetApp()
+		conf.Logo = a.Logo
+	}
+	if conf.WebServerPort == 0 {
+		conf.WebServerPort = config.DEFAULT_WEB_SERVER_PORT
+	}
 }
 
 func createInitFile(conf ClientConfig) error {

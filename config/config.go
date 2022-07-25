@@ -9,6 +9,7 @@ import (
 	"github.com/joho/godotenv"
 )
 
+const DEFAULT_WEB_SERVER_PORT = 8888
 const EnvFilepath = ".env"
 const TplFilepath = "resource/templates"
 const DRIVER_SQLITE3 = "sqlite3"

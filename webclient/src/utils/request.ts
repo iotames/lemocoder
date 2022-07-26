@@ -6,7 +6,7 @@
  */
  import { extend, RequestOptionsInit } from 'umi-request';
  import { notification } from 'antd';
- import config from "./config"
+ import config from "../../config/webconf"
  
  const codeMessage: {[key: number]: string} = {
    200: '服务器成功返回请求的数据。',

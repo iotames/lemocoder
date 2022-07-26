@@ -1,7 +1,8 @@
-import webserverConf from "../../config/webserver";
+import config from "@/utils/config"
 import { post } from '@/services/api';
-import { ProFormInstance, ProFormSelect } from '@ant-design/pro-components';
 import {
+  ProFormInstance,
+  ProFormSelect,
   ProForm,
   ProFormText,
   ProFormUploadDragger,
@@ -10,6 +11,7 @@ import { message, Col, Row } from 'antd';
 import { useRef } from 'react';
 
 export default () => {
+  const baseApiUrl = config.BaseApiUrl
   const formRef = useRef<
     ProFormInstance<{
       spider: string;
@@ -19,7 +21,7 @@ export default () => {
       uploadfile: string;
     }>
   >();
-  const uploadUrl = webserverConf.baseUrl + "/api/local/upload"
+  const uploadUrl = baseApiUrl + "/api/local/upload"
   return (
     <Row>
       <Col span={8}>

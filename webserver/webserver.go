@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"lemocoder/config"
 	"lemocoder/util"
-	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -20,7 +19,6 @@ func (w BaseWebServer) ListenAndServe() error {
 }
 
 func New() WebServer {
-	log.Println("====Begin---webserver--Run")
 	conf := config.GetWebServer()
 	pid := util.GetPidByPort(conf.Port)
 	if pid > 0 {
@@ -29,12 +27,23 @@ func New() WebServer {
 	h := gin.Default()
 	setRouters(h)
 
-	log.Println("----WebServerPort:", conf.Port)
-	server := http.Server{Addr: fmt.Sprintf(":%d", conf.Port), Handler: h}
-	// http.HandleFunc("/debug", debug)
+	addr := fmt.Sprintf(":%d", conf.Port)
+	server := http.Server{
+		Addr:           addr,
+		Handler:        h,
+		MaxHeaderBytes: 1 << 20,
+	}
+
+	fmt.Printf(`
+	欢迎使用 LemoCoder
+	当前版本:V0.1.0
+	服务端接口运行地址:http://127.0.0.1%s
+	客户端资源运行地址:http://127.0.0.1%s/client
+`, addr, addr)
+
+	if !util.IsPathExists(config.ClientFilepath) {
+		fmt.Println("警告! 缺少客户端资源文件: " + config.ClientFilepath)
+	}
+
 	return &server
 }
-
-// func debug(w http.ResponseWriter, r *http.Request) {
-// 	fmt.Fprintf(w, "---Success--Debug----r:%+v--\n\n---os.Getenv(\"DB_HOST\"):(%v)---", *r, os.Getenv("DB_HOST"))
-// }

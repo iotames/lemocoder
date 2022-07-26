@@ -31,3 +31,7 @@ yarn
 # 开发模式启动
 yarn start
 ```
+
+## 笔记
+
+webpack5 新特性: `experiments.topLevelAwait`

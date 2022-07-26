@@ -6,7 +6,7 @@
  */
  import { extend, RequestOptionsInit } from 'umi-request';
  import { notification } from 'antd';
- import webserverConf from "../../config/webserver";
+ import config from "./config"
  
  const codeMessage: {[key: number]: string} = {
    200: '服务器成功返回请求的数据。',
@@ -47,7 +47,7 @@
    errorHandler,
    // 默认错误处理
    // credentials: 'include', // 跨域去除 include 。默认请求是否带上cookie
-   prefix: webserverConf.baseUrl,
+   prefix: config.BaseApiUrl,
    // getResponse: true,
  });
  

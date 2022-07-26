@@ -11,7 +11,8 @@ import (
 
 const DEFAULT_WEB_SERVER_PORT = 8888
 const EnvFilepath = ".env"
-const TplFilepath = "resource/templates"
+const ClientFilepath = "resource/client/index.html"
+const TplDirPath = "resource/templates"
 const DRIVER_SQLITE3 = "sqlite3"
 const DRIVER_MYSQL = "mysql"
 

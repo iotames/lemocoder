@@ -3,6 +3,7 @@ package main
 import (
 	"lemocoder/config"
 	"lemocoder/database"
+	"lemocoder/util"
 	"lemocoder/webserver"
 	"log"
 	"os"
@@ -46,15 +47,18 @@ func main() {
 		cmd.Start()
 		return
 	}
-	go func() {
-		time.Sleep(1 * time.Second)
-		err := startBrowser()
-		if err != nil {
-			log.Println("startBrowser Error:", err)
-		}
-	}()
 
-	webserver.New().ListenAndServe()
+	if util.IsPathExists(config.ClientFilepath) {
+		go func() {
+			time.Sleep(1 * time.Second)
+			err := startBrowser()
+			if err != nil {
+				log.Println("startBrowser Error:", err)
+			}
+		}()
+	}
+
+	log.Println("WebServer Run Error:", webserver.New().ListenAndServe().Error())
 }
 
 func init() {

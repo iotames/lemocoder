@@ -59,7 +59,7 @@ const columns: ProColumns<GithubIssueItem>[] = [
       closed: {
         text: '已解决',
         status: 'Success',
-        disabled: true,
+        // disabled: true,
       },
       processing: {
         text: '解决中',
@@ -125,7 +125,10 @@ const columns: ProColumns<GithubIssueItem>[] = [
       </a>,
       <TableDropdown
         key="actionGroup"
-        onSelect={() => action?.reload()}
+        onSelect={(akey:string) => {
+          console.log("select-----", akey)
+          action?.reload()
+        }}
         menus={[
           { key: 'copy', name: '复制' },
           { key: 'delete', name: '删除' },
@@ -189,9 +192,9 @@ export default () => {
         },
       }}
       rowKey="id"
-      search={{
-        labelWidth: 'auto',
-      }}
+      // search={{
+      //   labelWidth: 'auto',
+      // }}
       options={{
         setting: {
           listsHeight: 400,

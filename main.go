@@ -12,6 +12,7 @@ import (
 )
 
 func main() {
+	var err error
 	args := os.Args
 	daemon := false
 	for k, v := range args {
@@ -21,7 +22,7 @@ func main() {
 			args[k] = ""
 		}
 		if v == "stop" {
-			err := killWebServer()
+			err = killWebServer()
 			if err != nil {
 				log.Println("killWebServer Error:", err)
 			}
@@ -51,14 +52,16 @@ func main() {
 	if util.IsPathExists(config.ClientFilepath) {
 		go func() {
 			time.Sleep(1 * time.Second)
-			err := startBrowser()
+			err = startBrowser()
 			if err != nil {
 				log.Println("startBrowser Error:", err)
 			}
 		}()
 	}
-
-	log.Println("WebServer Run Error:", webserver.New().ListenAndServe().Error())
+	err = webserver.New().ListenAndServe()
+	if err != nil {
+		log.Println("WebServer Run Error:", err)
+	}
 }
 
 func init() {

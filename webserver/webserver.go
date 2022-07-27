@@ -12,9 +12,14 @@ import (
 type WebServer interface {
 	ListenAndServe() error
 }
-type BaseWebServer struct{}
+type BaseWebServer struct {
+	Pid, Port int
+}
 
 func (w BaseWebServer) ListenAndServe() error {
+	if w.Pid > 0 {
+		return fmt.Errorf("端口%d已被进程%d占用", w.Port, w.Pid)
+	}
 	return nil
 }
 
@@ -22,7 +27,7 @@ func New() WebServer {
 	conf := config.GetWebServer()
 	pid := util.GetPidByPort(conf.Port)
 	if pid > 0 {
-		return BaseWebServer{}
+		return BaseWebServer{Pid: pid, Port: conf.Port}
 	}
 	h := gin.Default()
 	setRouters(h)

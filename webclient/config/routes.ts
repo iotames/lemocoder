@@ -20,6 +20,11 @@ export default [
         component: './Welcome',
     },
     {
+        path: '/tabledemo',
+        name: '数据表格示例',
+        component: './TableDemo',
+    },
+    {
         path: '/codemaker',
         name: '代码生成器',
         component: './CodeMaker',

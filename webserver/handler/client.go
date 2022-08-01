@@ -110,3 +110,28 @@ func databaseInit(conf ClientConfig) error {
 	u, err = u.Register(conf.LoginPassword)
 	return err
 }
+
+type TableItemSchema struct {
+	Order, ColSize                                                          int64
+	DataName, DataType, Title, ValueType                                    string
+	Editable, Copyable, Ellipsis, Sorter, Search, HideInSearch, HideInTable bool
+}
+
+func CreateCode(c *gin.Context) {
+	data := generator.TableSchema{
+		ItemDataTypeName: "TestTableItem",
+		ItemsDataUrl:     "/api/table/demodata",
+		ItemUpdateUrl:    "/api/demo/post",
+		Items: []generator.TableItemSchema{
+			{DataName: "id", Title: "ID", ColSize: 0.7, Copyable: true, ValueType: "valueType"},
+			{DataName: "title", Title: "标题", ColSize: 1, Editable: true, Copyable: true, ValueType: "valueType"},
+			{DataName: "created_at", Title: "创建时间", ValueType: "dateTime", Sorter: true},
+		},
+	}
+	err := generator.CreateFile(config.ClientSrcPagesDir+"/test.tsx", config.TplDirPath+"/table.tsx.tpl", data)
+	if err != nil {
+		c.JSON(200, ResponseFail(err.Error(), 500))
+		return
+	}
+	c.JSON(200, ResponseOk("SUCCESS"))
+}

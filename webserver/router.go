@@ -54,6 +54,7 @@ func setRouters(g *gin.Engine) {
 	g.GET("/debug", debug)
 
 	api := g.Group("/api")
+	api.GET("/client/createcoder", handler.CreateCode)
 	api.POST("/public/login", handler.Login)
 	api.GET("/client/config", handler.GetClientConfig)
 	api.POST("/client/init", handler.ClientInit)

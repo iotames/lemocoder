@@ -18,17 +18,30 @@ func GetContentByTpl(tplFilepath string, wr io.Writer, data interface{}) error {
 	return t.Execute(wr, data)
 }
 
-func CreateFile(targetPath string, content []byte) (n int, err error) {
-	var file *os.File
-	file, err = os.Create(targetPath)
+// func CreateFile(targetPath string, content []byte) (n int, err error) {
+// 	var file *os.File
+// 	file, err = os.Create(targetPath)
+// 	if err != nil {
+// 		return 0, err
+// 	}
+// 	n, err = file.Write(content)
+// 	if err != nil {
+// 		file.Close()
+// 		return n, err
+// 	}
+// 	err = file.Close()
+// 	return n, err
+// }
+
+func CreateFile(targetFilepath, tplFilepath string, data interface{}) error {
+	f, err := os.OpenFile(targetFilepath, os.O_RDWR, 0644)
 	if err != nil {
-		return 0, err
+		return err
 	}
-	n, err = file.Write(content)
+	err = GetContentByTpl(tplFilepath, f, data)
 	if err != nil {
-		file.Close()
-		return n, err
+		return err
 	}
-	err = file.Close()
-	return n, err
+	f.Close()
+	return nil
 }

@@ -2,8 +2,7 @@ import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { ProTable, TableDropdown, ModalForm, ProFormText, PageContainer } from '@ant-design/pro-components';
 import { Button, Space, Tag, message, Dropdown, Menu } from 'antd';
 import { useRef } from 'react';
-// import request from 'umi-request';
-import request from '@/utils/request';
+import {get} from "@/services/api";
 
 type GithubIssueItem = {
   url: string;
@@ -175,11 +174,15 @@ export default () => {
       cardBordered
       request={async (params = {}, sort, filter) => {
         console.log(sort, filter);
-        return request<{
-          data: GithubIssueItem[];
-        }>('/api/table/demodata', {
-          params,
-        });
+        const resp = await get<{data: GithubIssueItem[]}>("/api/table/demodata", {
+          page: params.current,
+          limit: params.pageSize,
+        })
+        return {
+          data: resp.data,
+          success: true,
+          total: 30
+        }
       }}
       editable={{
         type: 'multiple',
@@ -216,7 +219,7 @@ export default () => {
       }}
       pagination={{
         showSizeChanger: true,
-        pageSize: 5,
+        pageSize: 10,
         onChange: (page) => console.log(page),
       }}
       dateFormatter="string"

@@ -4,52 +4,32 @@ import { Button, message } from 'antd';
 import { useRef } from 'react';
 import {get, post} from "@/services/api"
 
-type GithubIssueItem = {
-  url: string;
-  id: number;
-  number: number;
-  title: string;
-  labels: {name: string;color: string;}[];
-  state: string;
-  comments: number;
-  created_at: string;
-  updated_at: string;
-  closed_at?: string;
+type {{.ItemDataTypeName}} = {
+    {{range .Items}}
+    {{.DataName}}: {{.DataType}};
+    {{end}}
+//  labels: {name: string; color: string;}[]; number
 };
 
-const columns: ProColumns<GithubIssueItem>[] = [
-  {
-    title: 'ID',
-    dataIndex: 'id',
-    colSize:0.7,
-    editable:false,
-    copyable: true,
-  },
-  {
-    title: '标题',
-    dataIndex: 'title',
-    copyable: true,
-    ellipsis: true,
-    colSize: 1,
-    tip: '标题过长会自动收缩',
-    formItemProps: {
-      rules: [
-        {
-          required: true,
-          message: '此项为必填项',
-        },
-      ],
-    },
-  },
-  {
-    title: '创建时间',
-    editable:false,
-    key: 'showTime',
-    dataIndex: 'created_at',
-    valueType: 'dateTime',
-    sorter: true,
-    hideInSearch: true,
-  },
+const columns: ProColumns<{{.ItemDataTypeName}}>[] = [
+    {{range .Items}}
+    {
+      title: "{{.Title}}",
+      dataIndex: "{{.DataName}}",
+      editable: "{{.Editable}}",
+      copyable: "{{.Copyable}}",
+      valueType: "{{.ValueType}}",
+      ellipsis: "{{.Ellipsis}}",
+      {{if .ColSize > 0}} colSize: "{{.ColSize}}", {{end}}
+      order: "{{.Order}}", // number
+      sorter: "{{.Sorter}}", // boolean
+      search: "{{.Search}}", // false | { transform: (value: any) => any }
+      hideInSearch: "{{.HideInSearch}}",
+      hideInTable: "{{.HideInTable}}",
+      // filters,
+      // renderText, (text: any,record: T,index: number,action: UseFetchDataAction<T>) => string
+    }
+    {{end}}
 
   {
     title: '操作',
@@ -107,13 +87,13 @@ export default () => {
 
   return (
     <PageContainer>
-    <ProTable<GithubIssueItem>
+    <ProTable<{{.ItemDataTypeName}}>
       columns={columns}
       actionRef={actionRef}
       cardBordered
       request={async (params = {}, sort, filter) => {
         console.log(sort, filter);
-        const resp = await get<{data: GithubIssueItem[]}>("/api/table/demodata", {
+        const resp = await get<{data: {{.ItemDataTypeName}}[]}>("{{.ItemsDataUrl}}", {
           page: params.current,
           limit: params.pageSize,
         })
@@ -129,7 +109,7 @@ export default () => {
         // onChange: setEditableRowKeys,
         onSave: async (k, update, origin) => {
           console.log(update, origin);
-          await post("/api/demo/post", update)
+          await post("{{.ItemUpdateUrl}}", update)
         }
       }}
       columnsState={{

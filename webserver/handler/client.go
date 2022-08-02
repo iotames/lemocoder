@@ -84,7 +84,7 @@ func createInitFile(conf ClientConfig) error {
 		// open .env File Error
 		return err
 	}
-	err = generator.GetContentByTpl(config.TplDirPath+"/env.tpl", f, conf)
+	err = generator.SetContentByTplFile(config.TplDirPath+"/env.tpl", f, conf)
 	if err != nil {
 		// create .env File Error
 		return err

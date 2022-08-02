@@ -4,32 +4,30 @@ import { Button, message } from 'antd';
 import { useRef } from 'react';
 import {get, post} from "@/services/api"
 
-type {{.ItemDataTypeName}} = {
-    {{range .Items}}
-    {{.DataName}}: {{.DataType}};
-    {{end}}
+type <%{.ItemDataTypeName}%> = {
+    <%{range .Items}%> <%{.DataName}%>: <%{.DataType}%>; <%{end}%>
 //  labels: {name: string; color: string;}[]; number
 };
 
-const columns: ProColumns<{{.ItemDataTypeName}}>[] = [
-    {{range .Items}}
+const columns: ProColumns<<%{.ItemDataTypeName}%>>[] = [
+    <%{range .Items}%>
     {
-      title: "{{.Title}}",
-      dataIndex: "{{.DataName}}",
-      editable: "{{.Editable}}",
-      copyable: "{{.Copyable}}",
-      valueType: "{{.ValueType}}",
-      ellipsis: "{{.Ellipsis}}",
-      {{if .ColSize > 0}} colSize: "{{.ColSize}}", {{end}}
-      order: "{{.Order}}", // number
-      sorter: "{{.Sorter}}", // boolean
-      search: "{{.Search}}", // false | { transform: (value: any) => any }
-      hideInSearch: "{{.HideInSearch}}",
-      hideInTable: "{{.HideInTable}}",
+      title: "<%{.Title}%>",
+      dataIndex: "<%{.DataName}%>",
+     <%{if not .Editable}%> editable: <%{.Editable}%>, <%{end}%>
+      copyable: <%{.Copyable}%>,
+     <%{if ne .ValueType "" }%> valueType: "<%{.ValueType}%>", <%{end}%>
+      ellipsis: <%{.Ellipsis}%>,
+      colSize: <%{.ColSize}%>,
+      order: <%{.Order}%>, // number
+      sorter: <%{.Sorter}%>, // boolean
+      search: <%{.Search}%>, // false | { transform: (value: any) => any }
+      hideInSearch: <%{.HideInSearch}%>,
+      hideInTable: <%{.HideInTable}%>,
       // filters,
       // renderText, (text: any,record: T,index: number,action: UseFetchDataAction<T>) => string
-    }
-    {{end}}
+    },
+    <%{end}%>
 
   {
     title: '操作',
@@ -44,7 +42,7 @@ const columns: ProColumns<{{.ItemDataTypeName}}>[] = [
         e.currentTarget.setAttribute("disabled", "true");
       }} >Hello</Button>,
       
-      <a href={record.url} target="_blank" onClick={()=>{
+      <a href="#" target="_blank" onClick={()=>{
         console.log("查看看看", record.id, record.title)
         message.success("hello wordd"+record.id)
         }} rel="noopener noreferrer" key="view">
@@ -64,9 +62,15 @@ const createBtn = (<ModalForm
       resetText: '取消',
     },
   }}
+
   onFinish={async (values) => {
     console.log(values);
-    message.success('提交成功');
+    const resp = await post("<%{.ItemCreateUrl}%>", values)
+    if (resp.Code == 200) {
+      message.success(resp.Msg);
+    }else{
+      message.error(resp.Msg);
+    }
     return true;
   }}
 >
@@ -87,13 +91,13 @@ export default () => {
 
   return (
     <PageContainer>
-    <ProTable<{{.ItemDataTypeName}}>
+    <ProTable<<%{.ItemDataTypeName}%>>
       columns={columns}
       actionRef={actionRef}
       cardBordered
       request={async (params = {}, sort, filter) => {
         console.log(sort, filter);
-        const resp = await get<{data: {{.ItemDataTypeName}}[]}>("{{.ItemsDataUrl}}", {
+        const resp = await get<{data: <%{.ItemDataTypeName}%>[]}>("<%{.ItemsDataUrl}%>", {
           page: params.current,
           limit: params.pageSize,
         })
@@ -109,7 +113,10 @@ export default () => {
         // onChange: setEditableRowKeys,
         onSave: async (k, update, origin) => {
           console.log(update, origin);
-          await post("{{.ItemUpdateUrl}}", update)
+          await post("<%{.ItemUpdateUrl}%>", update)
+        },
+        onDelete: async (k, row) => {
+          await post("<%{.ItemDeleteUrl}%>", row) // url must begin with /
         }
       }}
       columnsState={{

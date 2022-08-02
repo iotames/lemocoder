@@ -86,7 +86,12 @@ const createBtn = (<ModalForm
   }}
   onFinish={async (values) => {
     console.log(values);
-    message.success('提交成功');
+    const resp = await post("/api/demo/post", values)
+    if (resp.Code == 200) {
+      message.success(resp.Msg);
+    }else{
+      message.error(resp.Msg);
+    }
     return true;
   }}
 >
@@ -130,6 +135,10 @@ export default () => {
         onSave: async (k, update, origin) => {
           console.log(update, origin);
           await post("/api/demo/post", update)
+        },
+        onDelete: async (k, row) => {
+          console.log("----delete-----", row)
+          await post("/api/demo/post", row)
         }
       }}
       columnsState={{

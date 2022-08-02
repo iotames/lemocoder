@@ -5,8 +5,8 @@
         <title>Go Web</title>
     </head>
     <body>
-        {{.}}-----
-        Name: {{.Name}}------
-        IsWin: {{.IsWin}}
+        <%{.}%>-----
+        Name: <%{.Name}%>------
+        IsWin: <%{.IsWin}%>
     </body>
 </html>

@@ -123,9 +123,9 @@ func CreateCode(c *gin.Context) {
 		ItemsDataUrl:     "/api/table/demodata",
 		ItemUpdateUrl:    "/api/demo/post",
 		Items: []generator.TableItemSchema{
-			{DataName: "id", Title: "ID", ColSize: 0.7, Copyable: true, ValueType: "valueType"},
-			{DataName: "title", Title: "标题", ColSize: 1, Editable: true, Copyable: true, ValueType: "valueType"},
-			{DataName: "created_at", Title: "创建时间", ValueType: "dateTime", Sorter: true},
+			{DataName: "id", Title: "ID", ColSize: 0.7, Copyable: true, DataType: "number"},
+			{DataName: "title", Title: "标题", ColSize: 1, Editable: true, Copyable: true, DataType: "string"},
+			{DataName: "created_at", Title: "创建时间", ValueType: "dateTime", Sorter: true, DataType: "string"},
 		},
 	}
 	err := generator.CreateFile(config.ClientSrcPagesDir+"/test.tsx", config.TplDirPath+"/table.tsx.tpl", data)

@@ -8,6 +8,6 @@ type TableItemSchema struct {
 }
 
 type TableSchema struct {
-	ItemDataTypeName, ItemsDataUrl, ItemUpdateUrl string
-	Items                                         []TableItemSchema
+	ItemDataTypeName, ItemsDataUrl, ItemUpdateUrl, ItemDeleteUrl, ItemCreateUrl string
+	Items                                                                       []TableItemSchema
 }

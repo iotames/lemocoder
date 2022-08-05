@@ -27,14 +27,13 @@ func Login(c *gin.Context) {
 	}
 
 	user := new(database.User)
-	engine := database.GetEngine()
 	if loginForm.Username != "" && loginForm.LoginWay == "account" {
 		user.Account = loginForm.Username
-		engine.Get(user)
+		database.GetModel(user)
 	}
 	if loginForm.Mobile != "" && loginForm.LoginWay == "mobile" {
 		user.Mobile = loginForm.Mobile
-		engine.Get(user)
+		database.GetModel(user)
 	}
 
 	if user.ID == 0 {

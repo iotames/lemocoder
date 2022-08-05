@@ -48,9 +48,8 @@ func (u User) GetUserByJwt(jwtStr string) (user User, err error) {
 	}
 	jsUid := segInfo["id"].(json.Number)
 	uid, _ := jsUid.Int64()
-	engine := GetEngine()
 	user.ID = uid
-	engine.Get(&user) // user.Department, user.Position empty
+	GetModel(&user) // user.Department, user.Position empty
 	log.Println("---FoundUser--By--Jwt---user.Salt------", user.Salt)
 	jwt = util.NewJwt(user.Salt)
 	_, err = jwt.Parse(jwtStr)
@@ -84,11 +83,11 @@ func (u User) Register(password string) (User, error) {
 	user := new(User)
 	if u.Account != "" {
 		user.Account = u.Account
-		GetEngine().Get(user)
+		GetModel(user)
 	}
 	if u.Mobile != "" {
 		user.Mobile = u.Mobile
-		GetEngine().Get(user)
+		GetModel(user)
 	}
 	if user.ID > 0 {
 		return User{}, fmt.Errorf("error: Regiser Fail. User exists")

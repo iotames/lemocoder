@@ -26,7 +26,7 @@ func getNodeId() int64 {
 	return int64(d.NodeID)
 }
 
-func GetEngine() *xorm.Engine {
+func getEngine() *xorm.Engine {
 	if engine != nil {
 		return engine
 	}
@@ -86,6 +86,7 @@ func getSnowflakeNode() *snowflake.Node {
 type IModel interface {
 	GenerateID() int64
 	ParseID() snowflake.ID
+	GetID() int64
 }
 
 type BaseModel struct {
@@ -110,26 +111,34 @@ func (b BaseModel) ParseID() snowflake.ID {
 	return snowflake.ParseInt64(b.ID)
 }
 
+func (b BaseModel) GetID() int64 {
+	return b.ID
+}
+
 func CreateTables() {
-	err := GetEngine().CreateTables(new(User))
+	err := getEngine().CreateTables(new(User))
 	if err != nil {
 		panic(fmt.Errorf("xorm Error: CreateTables Fail %v", err))
 	}
 }
 
 func SyncTables() {
-	GetEngine().Sync(new(User))
+	getEngine().Sync(new(User))
+}
+
+func GetModel(m IModel) {
+	getEngine().Get(m)
 }
 
 func CreateModel(m IModel) (int64, error) {
 	m.GenerateID()
-	return GetEngine().Insert(m)
+	return getEngine().Insert(m)
 }
 
 func UpdateModel(m IModel, dt map[string]interface{}) (int64, error) {
-	modelID := m.ParseID().Int64()
+	modelID := m.GetID() // m.ParseID().Int64()
 	if dt == nil {
-		return GetEngine().ID(modelID).Update(m)
+		return getEngine().ID(modelID).Update(m)
 	}
-	return GetEngine().Table(m).ID(modelID).Update(dt)
+	return getEngine().Table(m).ID(modelID).Update(dt)
 }

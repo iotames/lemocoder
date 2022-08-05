@@ -1,7 +1,7 @@
 APP_TITLE = "<%{.Title}%>"
 APP_LOGO = "<%{.Logo}%>"
 
-# support: mysql,sqlite3
+# support: mysql,sqlite3,postgres
 DB_DRIVER = "<%{.DbDriver}%>"
 DB_HOST = "<%{.DbHost}%>"
 DB_PORT = <%{.DbPort}%>

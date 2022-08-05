@@ -16,6 +16,7 @@ const ClientFilepath = "resource/client/index.html"
 const TplDirPath = "resource/templates"
 const DRIVER_SQLITE3 = "sqlite3"
 const DRIVER_MYSQL = "mysql"
+const DRIVER_POSTGRES = "postgres"
 
 const SQLITE_FILENAME = "sqlite3.db"
 
@@ -62,7 +63,21 @@ func (d Database) GetAddr() string {
 }
 
 func (d Database) GetDSN() string {
-	return fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local", d.Username, d.Password, d.Host, d.Port, d.Name)
+	dsnMap := map[string]string{
+		DRIVER_MYSQL:    fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local", d.Username, d.Password, d.Host, d.Port, d.Name),
+		DRIVER_POSTGRES: fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%d sslmode=disable TimeZone=Asia/Shanghai", d.Host, d.Username, d.Password, d.Name, d.Port),
+	}
+	dsn, ok := dsnMap[d.Driver]
+	if !ok {
+		dsnLen := len(dsnMap)
+		ds := make([]string, dsnLen)
+		for k, _ := range dsnMap {
+			ds = append(ds, k)
+		}
+		errMsg := fmt.Sprintf("ENV error: DB_DRIVER only Support: %v", ds)
+		panic(errMsg)
+	}
+	return dsn
 }
 
 type WebServer struct {

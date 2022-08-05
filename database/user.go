@@ -14,14 +14,15 @@ type JwtInfo struct {
 }
 
 type User struct {
-	BaseModel    `xorm:"extends"`
-	Salt         string `xorm:"varchar(64) notnull comment('加密盐')"`
-	PasswordHash string `xorm:"varchar(64) notnull 'password_hash' comment('密码哈希')"`
-	Account      string `xorm:"varchar(64) notnull unique comment('用户名')"`
-	Name         string `xorm:"varchar(32) notnull comment('真实姓名')"`
-	Mobile       string `xorm:"varchar(32) notnull unique comment('手机号')"`
-	Email        string `xorm:"varchar(32) notnull unique comment('电子邮箱')"`
-	Avatar       string `xorm:"varchar(500) notnull comment('用户头像')"`
+	BaseModel `xorm:"extends"`
+	// xorm Error: CreateTables Fail pq: 语法错误 在 "COMMENT" 或附近的
+	Salt         string `xorm:"varchar(64) notnull"`                 //  comment('加密盐')
+	PasswordHash string `xorm:"varchar(64) notnull 'password_hash'"` //  comment('密码哈希')
+	Account      string `xorm:"varchar(64) notnull unique"`          //  comment('用户名')
+	Name         string `xorm:"varchar(32) notnull"`                 //  comment('真实姓名')
+	Mobile       string `xorm:"varchar(32) notnull unique"`          // comment('手机号')
+	Email        string `xorm:"varchar(32) notnull unique"`          //  comment('电子邮箱')
+	Avatar       string `xorm:"varchar(500) notnull"`                // comment('用户头像')
 }
 
 func GetDefaultAvatar() string {

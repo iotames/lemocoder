@@ -9,6 +9,7 @@ import (
 
 	"github.com/bwmarrin/snowflake"
 	_ "github.com/go-sql-driver/mysql"
+	_ "github.com/lib/pq"
 	_ "github.com/mattn/go-sqlite3"
 	"xorm.io/xorm"
 	"xorm.io/xorm/names"
@@ -40,30 +41,33 @@ func SetEngine(db config.Database) {
 }
 
 func newEngine(db *config.Database) *xorm.Engine {
+	log.Println("Init newEngine Begin")
 	if db == nil {
 		db = config.GetDatabase()
 	}
 	var err error
-	if db.Driver == config.DRIVER_MYSQL {
-		engine, err = xorm.NewEngine(db.Driver, db.GetDSN())
-	}
 	if db.Driver == config.DRIVER_SQLITE3 {
 		engine, err = xorm.NewEngine(db.Driver, config.SQLITE_FILENAME)
+	} else {
+		engine, err = xorm.NewEngine(db.Driver, db.GetDSN())
 	}
 	if err != nil {
 		panic(err)
 	}
 	engineInit(engine)
+	log.Println("Init newEngine End")
 	return engine
 }
 
 func engineInit(engine *xorm.Engine) {
+	log.Println("Init engineInit Begin")
 	ormMap := names.GonicMapper{}
 	engine.SetMapper(ormMap)
 	// engine.TZLocation, _ = time.LoadLocation("Asia/Shanghai")
 	engine.SetTableMapper(ormMap)
 	engine.SetColumnMapper(ormMap)
 	engine.ShowSQL(true)
+	log.Println("Init engineInit End")
 }
 
 func getSnowflakeNode() *snowflake.Node {
@@ -107,7 +111,10 @@ func (b BaseModel) ParseID() snowflake.ID {
 }
 
 func CreateTables() {
-	GetEngine().CreateTables(new(User))
+	err := GetEngine().CreateTables(new(User))
+	if err != nil {
+		panic(fmt.Errorf("xorm Error: CreateTables Fail %v", err))
+	}
 }
 
 func SyncTables() {

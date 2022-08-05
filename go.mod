@@ -1,13 +1,14 @@
 module lemocoder
 
-go 1.17
+go 1.19
 
 require (
 	github.com/bwmarrin/snowflake v0.3.0
 	github.com/gin-gonic/gin v1.8.1
 	github.com/go-sql-driver/mysql v1.6.0
 	github.com/joho/godotenv v1.4.0
-	github.com/mattn/go-sqlite3 v1.14.9
+	github.com/lib/pq v1.10.6
+	github.com/mattn/go-sqlite3 v1.14.14
 	xorm.io/xorm v1.3.1
 )
 

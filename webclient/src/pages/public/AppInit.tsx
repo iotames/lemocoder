@@ -19,13 +19,25 @@ export default () => {
   if (loading || initialState==undefined){
     return <Spin />
   }
+  // const [initConf, setInitConf] = useState(initialState.config)
   const initConf = initialState.config
   const [isSqlite, setIsSqlite] = useState(initConf.DbDriver=="sqlite3")
   const formRef = useRef<ProFormInstance>();
-  const dbDrivers = [{value: 'sqlite3', label: 'Sqlite3'},{value: 'mysql', label: 'Mysql'}]
+  const dbDrivers = [{value: 'sqlite3', label: 'Sqlite3'},{value: 'mysql', label: 'Mysql'},{value: 'postgres', label: 'PostgreSQL'}]
   const changeDbDriver = (val: any) => {
     const isSqlite = val == "sqlite3"
     setIsSqlite(isSqlite)
+    initConf.DbDriver = val
+    if (val == "mysql"){
+      initConf.DbPort = 3306
+      initConf.DbUsername = "root"
+      formRef.current?.setFieldsValue(initConf)
+    }
+    if (val == "postgres"){
+      initConf.DbPort = 5432
+      initConf.DbUsername = "postgres"
+      formRef.current?.setFieldsValue(initConf)
+    }
   }
 
   return (

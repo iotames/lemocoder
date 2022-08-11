@@ -1,8 +1,10 @@
 package main
 
 import (
+	"bytes"
 	"log"
 	"os"
+	"os/exec"
 	"testing"
 	"text/template"
 )
@@ -37,4 +39,22 @@ func TestEnv(t *testing.T) {
 	webServerPort := os.Getenv("WEB_SERVER_PORT")
 
 	log.Printf("--title:%s--dbHost:%s----dbPort:%s--webServerPort:%s--", title, dbHost, dbPort, webServerPort)
+}
+
+func TestExec(t *testing.T) {
+	var outBuffer bytes.Buffer
+
+	cmd := exec.Command("yarn", "--version")
+	// cmd := exec.Command("echo", "%myvar%")
+	// cmd.Env = append(os.Environ(), "myvar=hellomyvar")
+	cmd.Stdout = &outBuffer
+	cmd.Stderr = os.Stderr
+	err := cmd.Run()
+	log.Println("Exec.Stdout:", outBuffer.String())
+	log.Println("cmd.Path", cmd.Path)
+	// log.Println("os.Env:", os.Environ())
+	os.Stderr.Write(outBuffer.Bytes())
+	if err != nil {
+		log.Fatalf("failed to call cmd.Run(): %v", err)
+	}
 }

@@ -3,6 +3,7 @@ package main
 import (
 	"lemocoder/config"
 	"lemocoder/database"
+	"lemocoder/generator"
 	"lemocoder/util"
 	"lemocoder/webserver"
 	"log"
@@ -30,6 +31,10 @@ func main() {
 		}
 		if v == "init" {
 			database.CreateTables()
+			err = generator.BuildWebClient()
+			if err != nil {
+				log.Println("build Error:", err)
+			}
 			return
 		}
 		if v == "dbsync" {

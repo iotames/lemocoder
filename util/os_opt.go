@@ -1,7 +1,9 @@
 package util
 
 import (
+	"bytes"
 	"fmt"
+	"os"
 	"os/exec"
 	"runtime"
 )
@@ -32,4 +34,15 @@ func KillPid(pid string) error {
 		return fmt.Errorf("Do Not Support platform: %s", runtime.GOOS)
 	}
 	return cmd.Run()
+}
+
+func RunCmd(name string, arg ...string) ([]byte, error) {
+	var bf bytes.Buffer
+	cmd := exec.Command(name, arg...)
+	cmd.Stdout = &bf
+	cmd.Stderr = os.Stderr
+	err := cmd.Run()
+	result := bf.Bytes()
+	os.Stdout.Write(result)
+	return result, err
 }

@@ -1,7 +1,6 @@
 package generator
 
 import (
-	"bytes"
 	"fmt"
 	"lemocoder/util"
 	"os"
@@ -16,24 +15,14 @@ func runCmdInClient(name string, arg ...string) error {
 	return cmd.Run()
 }
 
-func runCmd(name string, arg ...string) (string, error) {
-	var bf bytes.Buffer
-	cmd := exec.Command(name, arg...)
-	cmd.Stdout = &bf
-	cmd.Stderr = os.Stderr
-	err := cmd.Run()
-	os.Stdout.Write(bf.Bytes())
-	return bf.String(), err
-}
-
 func BuildWebClient() error {
 	var err error
-	var result string
-	result, err = runCmd("yarn", "--version")
+	var result []byte
+	result, err = util.RunCmd("yarn", "--version")
 	if err != nil {
 		return err
 	}
-	fmt.Println("yarn version:", result)
+	fmt.Println("yarn version:", string(result))
 
 	err = runCmdInClient("yarn")
 	if err != nil {

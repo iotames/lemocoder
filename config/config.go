@@ -12,6 +12,7 @@ import (
 const DEFAULT_WEB_SERVER_PORT = 8888
 const EnvFilepath = ".env"
 const ClientSrcPagesDir = "webclient/src/pages"
+const ClientConfigDir = "webclient/config"
 const ClientFilepath = "resource/client/index.html"
 const TplDirPath = "resource/templates"
 const DRIVER_SQLITE3 = "sqlite3"

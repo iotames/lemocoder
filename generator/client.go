@@ -15,7 +15,7 @@ func runCmdInClient(name string, arg ...string) error {
 	return cmd.Run()
 }
 
-func BuildWebClient() error {
+func BuildWebClient(target string) error {
 	var err error
 	var result []byte
 	result, err = util.RunCmd("yarn", "--version")
@@ -33,5 +33,5 @@ func BuildWebClient() error {
 		return err
 	}
 
-	return util.CopyDir("webclient/dist", "resource/client")
+	return util.CopyDir("webclient/dist", target)
 }

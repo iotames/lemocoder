@@ -4,6 +4,7 @@ import (
 	"lemocoder/config"
 	"lemocoder/database"
 	"lemocoder/generator"
+	"lemocoder/initial"
 	"lemocoder/util"
 
 	"net/http"
@@ -128,7 +129,11 @@ func CreateCode(c *gin.Context) {
 			{DataName: "created_at", Title: "创建时间", ValueType: "dateTime", Sorter: true, DataType: "string"},
 		},
 	}
-	err := generator.CreateFile(config.ClientSrcPagesDir+"/test.tsx", config.TplDirPath+"/table.tsx.tpl", data)
+	err := generator.CreateFile(config.ClientSrcPagesDir+"/Test.tsx", config.TplDirPath+"/table.tsx.tpl", data)
+	cr := initial.ClientRoute{}
+	dt1 := map[string]interface{}{"Routes": cr.GetAllRoutes(initial.ClientRoute{Name: "test", Path: "/test", Component: "./Test", Layout: true})}
+
+	generator.CreateFile(config.ClientConfigDir+"/routes.ts", config.TplDirPath+"/routes.ts.tpl", dt1)
 	if err != nil {
 		c.JSON(200, ResponseFail(err.Error(), 500))
 		return

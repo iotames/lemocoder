@@ -31,7 +31,7 @@ func main() {
 		}
 		if v == "init" {
 			database.CreateTables()
-			err = generator.BuildWebClient()
+			err = generator.BuildWebClient("resource/client")
 			if err != nil {
 				log.Println("build Error:", err)
 			}

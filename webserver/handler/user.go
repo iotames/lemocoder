@@ -2,6 +2,7 @@ package handler
 
 import (
 	"lemocoder/database"
+	"lemocoder/initial"
 
 	"github.com/gin-gonic/gin"
 )
@@ -30,21 +31,13 @@ func Logout(g *gin.Context) {
 	g.JSON(200, ResponseOk("success"))
 }
 
-type ClientMenuItem struct {
-	// Layout    bool   `json:"layout"`
-	// Component string `json:"component"`
-	Name string `json:"name"`
-	Path string `json:"path"`
-	// Redirect string `json:"redirect"`
-	// Icon      string `json:"icon"`
-}
-
 func GetClientMenu(c *gin.Context) {
-	items := []ClientMenuItem{
-		{Path: "/welcome", Name: "首页"},          // , Component: "./Welcome"
-		{Path: "/tabledemo", Name: "数据表格示例"},    // , Component: "./TableDemo"
-		{Path: "/codemaker", Name: "代码生成器"},     // , Component: "./CodeMaker"
-		{Path: "/excelspider", Name: "Excel爬虫"}, // , Component: "./ExcelSpider"
+	items := []initial.ClientMenuItem{
+		{Path: "/welcome", Name: "首页"},
+		{Path: "/tabledemo", Name: "数据表格示例"},
+		{Path: "/codemaker", Name: "代码生成器"},
+		{Path: "/excelspider", Name: "Excel爬虫"},
+		{Path: "/test", Name: "测试"},
 	}
 	c.JSON(200, ResponseItems(items))
 }

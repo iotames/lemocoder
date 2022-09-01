@@ -4,7 +4,6 @@ import (
 	"lemocoder/config"
 	"lemocoder/database"
 	"lemocoder/generator"
-	"lemocoder/initial"
 	"lemocoder/util"
 
 	"net/http"
@@ -119,21 +118,19 @@ type TableItemSchema struct {
 }
 
 func CreateCode(c *gin.Context) {
-	data := generator.TableSchema{
+	t := generator.TableSchema{
 		ItemDataTypeName: "TestTableItem",
 		ItemsDataUrl:     "/api/table/demodata",
 		ItemUpdateUrl:    "/api/demo/post",
+		ItemCreateUrl:    "/api/demo/post",
+		ItemDeleteUrl:    "/api/demo/post",
 		Items: []generator.TableItemSchema{
 			{DataName: "id", Title: "ID", ColSize: 0.7, Copyable: true, DataType: "number"},
-			{DataName: "title", Title: "标题", ColSize: 1, Editable: true, Copyable: true, DataType: "string"},
+			{DataName: "title", Title: "标题", ColSize: 1, Editable: true, Copyable: true, DataType: "string", Search: true},
 			{DataName: "created_at", Title: "创建时间", ValueType: "dateTime", Sorter: true, DataType: "string"},
 		},
 	}
-	err := generator.CreateFile(config.ClientSrcPagesDir+"/Test.tsx", config.TplDirPath+"/table.tsx.tpl", data)
-	cr := initial.ClientRoute{}
-	dt1 := map[string]interface{}{"Routes": cr.GetAllRoutes(initial.ClientRoute{Name: "test", Path: "/test", Component: "./Test", Layout: true})}
-
-	generator.CreateFile(config.ClientConfigDir+"/routes.ts", config.TplDirPath+"/routes.ts.tpl", dt1)
+	err := t.Create()
 	if err != nil {
 		c.JSON(200, ResponseFail(err.Error(), 500))
 		return

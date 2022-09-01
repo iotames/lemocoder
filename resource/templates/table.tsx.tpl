@@ -21,7 +21,7 @@ const columns: ProColumns<<%{.ItemDataTypeName}%>>[] = [
       colSize: <%{.ColSize}%>,
       order: <%{.Order}%>, // number
       sorter: <%{.Sorter}%>, // boolean
-      search: <%{.Search}%>, // false | { transform: (value: any) => any }
+<%{if not .Search}%>      search: <%{.Search}%>, // false | { transform: (value: any) => any } <%{end}%>
       hideInSearch: <%{.HideInSearch}%>,
       hideInTable: <%{.HideInTable}%>,
       // filters,

@@ -13,7 +13,7 @@ type ClientRoute struct {
 	Path, Component, Name, Redirect string
 }
 
-func (c ClientRoute) GetAllRoutes(routes ...ClientRoute) []ClientRoute {
+func GetClientRoutes(routes ...ClientRoute) []ClientRoute {
 	// { path: '/', component: '@/pages/index' },
 	r1 := []ClientRoute{
 		{false, "/public/login", "./public/Login", "", ""},

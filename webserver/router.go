@@ -59,7 +59,7 @@ func setRouters(g *gin.Engine) {
 	api.GET("/client/config", handler.GetClientConfig)
 	api.POST("/client/init", handler.ClientInit)
 	api.GET("/table/demodata", getTableDataDemo)
-	api.POST("/demo/post", postDemo)
+	api.POST("/demo/post", handler.PostDemo)
 
 	local := api.Group("/local")
 	local.Use(localhostNetwork())
@@ -93,14 +93,4 @@ func getTableDataDemo(c *gin.Context) {
 		{"id":624592470,"number":6682,"title":"hideChildrenInMenu设置后，子路由找不到了","labels":[{"name":"bug","color":"error"}],"state":"open","locked":false,"comments":2,"created_at":"2020-05-26T04:25:59Z","updated_at":"2020-05-26T08:00:51Z","closed_at":null,"author_association":"NONE","user":"chenshuai2144","avatar":"https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png"}
 		],"page":1,"success":true,"total":30}`
 	c.String(200, resp)
-}
-
-func postDemo(c *gin.Context) {
-	data := new(map[string]interface{})
-	b := c.Bind(data)
-	if b != nil {
-		c.String(200, "-----------")
-		return
-	}
-	fmt.Println(data)
 }

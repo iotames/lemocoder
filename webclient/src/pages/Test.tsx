@@ -21,7 +21,7 @@ const columns: ProColumns<TestTableItem>[] = [
       colSize: 0.7,
       order: 0, // number
       sorter: false, // boolean
-      search: false, // false | { transform: (value: any) => any }
+      search: false, // false | { transform: (value: any) => any } 
       hideInSearch: false,
       hideInTable: false,
       // filters,
@@ -38,7 +38,7 @@ const columns: ProColumns<TestTableItem>[] = [
       colSize: 1,
       order: 0, // number
       sorter: false, // boolean
-      search: false, // false | { transform: (value: any) => any }
+
       hideInSearch: false,
       hideInTable: false,
       // filters,
@@ -55,7 +55,7 @@ const columns: ProColumns<TestTableItem>[] = [
       colSize: 0,
       order: 0, // number
       sorter: true, // boolean
-      search: false, // false | { transform: (value: any) => any }
+      search: false, // false | { transform: (value: any) => any } 
       hideInSearch: false,
       hideInTable: false,
       // filters,
@@ -99,7 +99,7 @@ const createBtn = (<ModalForm
 
   onFinish={async (values) => {
     console.log(values);
-    const resp = await post("", values)
+    const resp = await post("/api/demo/post", values)
     if (resp.Code == 200) {
       message.success(resp.Msg);
     }else{
@@ -150,7 +150,7 @@ export default () => {
           await post("/api/demo/post", update)
         },
         onDelete: async (k, row) => {
-          await post("", row) // url must begin with /
+          await post("/api/demo/post", row) // url must begin with /
         }
       }}
       columnsState={{

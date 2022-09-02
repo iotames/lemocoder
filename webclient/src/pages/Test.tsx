@@ -1,5 +1,9 @@
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
-import { ProTable, ModalForm, ProFormText, PageContainer } from '@ant-design/pro-components';
+import { PageContainer, ProTable, ModalForm, ProForm,
+  ProFormDateRangePicker,
+  ProFormSelect,
+  ProFormText,
+} from '@ant-design/pro-components';
 import { Button, message } from 'antd';
 import { useRef } from 'react';
 import {get, post} from "@/services/api"
@@ -87,15 +91,11 @@ const columns: ProColumns<TestTableItem>[] = [
 ];
 
 
-const createBtn = (<ModalForm
-  title="新建表单"
+
+const create = (<ModalForm
+  title="添加数据"
   trigger={<Button type="primary">创建</Button>}
-  submitter={{
-    searchConfig: {
-      submitText: '确认',
-      resetText: '取消',
-    },
-  }}
+  submitter={{searchConfig: {submitText: '确认',resetText: '取消',},}}
 
   onFinish={async (values) => {
     console.log(values);
@@ -108,16 +108,58 @@ const createBtn = (<ModalForm
     return true;
   }}
 >
-  <ProFormText
-    width="md"
-    name="name"
-    label="签约客户名称"
-    tooltip="最长为 24 位"
-    placeholder="请输入名称"
-  />
 
-  <ProFormText width="md" name="company" label="我方公司名称" placeholder="请输入名称" />
+
+
+
+<ProForm.Group>
+
+<ProFormSelect
+  name="useMode"
+  label="生效方式"
+  
+  request={async()=>[{value:"value1", label:"label1"},{value:"value2", label:"label2"}]}
+  placeholder=""
+/>
+
+<ProFormDateRangePicker
+  name="contractTime"
+  label="有效期"
+  
+  
+  placeholder=""
+/>
+
+</ProForm.Group>
+
+
+
+
+
+<ProFormText
+  name="name"
+  label="客户名称"
+  
+  
+  placeholder=""
+/>
+
+
+
+
+
+<ProFormText
+  name="company"
+  label="我方公司名称"
+  
+  
+  placeholder=""
+/>
+
+
+
 </ModalForm>)
+
 
 export default () => {
   const actionRef = useRef<ActionType>();
@@ -189,12 +231,7 @@ export default () => {
       }}
       dateFormatter="string"
       headerTitle="高级表格"
-      toolBarRender={() => [
-        createBtn,
-        // <Button type="primary" onClick={()=>{
-        //   setTableItemForm({visible: true, action:"/", title:"新建元素"})
-        // }}>新建</Button>
-      ]}
+      toolBarRender={() => [create,]}
     />
     </PageContainer>
   );

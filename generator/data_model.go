@@ -10,4 +10,23 @@ type TableItemSchema struct {
 type TableSchema struct {
 	ItemDataTypeName, ItemsDataUrl, ItemUpdateUrl, ItemDeleteUrl, ItemCreateUrl string
 	Items                                                                       []TableItemSchema
+	ModalForms                                                                  []ModalFormSchema
+}
+
+type ButtonSchema struct {
+	Title, Type, Size string
+}
+type FormSchema struct {
+	Title, SubmitUrl string
+	FormFields       []FormFieldSchema
+}
+type FormFieldSchema struct {
+	Group                                      []FormFieldSchema
+	Component, Name, Label, Width, Placeholder string
+}
+
+type ModalFormSchema struct {
+	Key    string
+	Button ButtonSchema
+	Form   FormSchema
 }

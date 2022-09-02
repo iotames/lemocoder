@@ -1,5 +1,9 @@
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
-import { ProTable, ModalForm, ProFormText, PageContainer } from '@ant-design/pro-components';
+import { PageContainer, ProTable, ModalForm, ProForm,
+  ProFormDateRangePicker,
+  ProFormSelect,
+  ProFormText,
+} from '@ant-design/pro-components';
 import { Button, message } from 'antd';
 import { useRef } from 'react';
 import {get, post} from "@/services/api"
@@ -52,20 +56,16 @@ const columns: ProColumns<<%{.ItemDataTypeName}%>>[] = [
   },
 ];
 
+<%{range .ModalForms}%>
 
-const createBtn = (<ModalForm
-  title="新建表单"
-  trigger={<Button type="primary">创建</Button>}
-  submitter={{
-    searchConfig: {
-      submitText: '确认',
-      resetText: '取消',
-    },
-  }}
+const <%{.Key}%> = (<ModalForm
+  title="<%{.Form.Title}%>"
+  trigger={<Button type="<%{.Button.Type}%>"><%{.Button.Title}%></Button>}
+  submitter={{searchConfig: {submitText: '确认',resetText: '取消',},}}
 
   onFinish={async (values) => {
     console.log(values);
-    const resp = await post("<%{.ItemCreateUrl}%>", values)
+    const resp = await post("<%{.Form.SubmitUrl}%>", values)
     if (resp.Code == 200) {
       message.success(resp.Msg);
     }else{
@@ -74,16 +74,34 @@ const createBtn = (<ModalForm
     return true;
   }}
 >
-  <ProFormText
-    width="md"
-    name="name"
-    label="签约客户名称"
-    tooltip="最长为 24 位"
-    placeholder="请输入名称"
-  />
 
-  <ProFormText width="md" name="company" label="我方公司名称" placeholder="请输入名称" />
+<%{range .Form.FormFields}%>
+
+<%{if eq (len .Group) 0}%>
+<<%{.Component}%>
+  name="<%{.Name}%>"
+  label="<%{.Label}%>"
+  <%{if ne .Width ""}%>width="<%{.Width}%>"<%{end}%>
+  <%{if eq .Component "ProFormSelect"}%>request={async()=>[{value:"value1", label:"label1"},{value:"value2", label:"label2"}]}<%{end}%>
+  placeholder="<%{.Placeholder}%>"
+/>
+<%{else}%>
+<ProForm.Group>
+<%{range .Group}%>
+<<%{.Component}%>
+  name="<%{.Name}%>"
+  label="<%{.Label}%>"
+  <%{if ne .Width ""}%>width="<%{.Width}%>"<%{end}%>
+  <%{if eq .Component "ProFormSelect"}%>request={async()=>[{value:"value1", label:"label1"},{value:"value2", label:"label2"}]}<%{end}%>
+  placeholder="<%{.Placeholder}%>"
+/>
+<%{end}%>
+</ProForm.Group>
+<%{end}%>
+
+<%{end}%>
 </ModalForm>)
+<%{end}%>
 
 export default () => {
   const actionRef = useRef<ActionType>();
@@ -155,12 +173,7 @@ export default () => {
       }}
       dateFormatter="string"
       headerTitle="高级表格"
-      toolBarRender={() => [
-        createBtn,
-        // <Button type="primary" onClick={()=>{
-        //   setTableItemForm({visible: true, action:"/", title:"新建元素"})
-        // }}>新建</Button>
-      ]}
+      toolBarRender={() => [<%{range .ModalForms}%><%{.Key}%>,<%{end}%>]}
     />
     </PageContainer>
   );

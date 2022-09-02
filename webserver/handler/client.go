@@ -3,7 +3,7 @@ package handler
 import (
 	"lemocoder/config"
 	"lemocoder/database"
-	"lemocoder/generator"
+	gen "lemocoder/generator"
 	"lemocoder/util"
 
 	"net/http"
@@ -84,7 +84,7 @@ func createInitFile(conf ClientConfig) error {
 		// open .env File Error
 		return err
 	}
-	err = generator.SetContentByTplFile(config.TplDirPath+"/env.tpl", f, conf)
+	err = gen.SetContentByTplFile(config.TplDirPath+"/env.tpl", f, conf)
 	if err != nil {
 		// create .env File Error
 		return err
@@ -111,24 +111,32 @@ func databaseInit(conf ClientConfig) error {
 	return err
 }
 
-type TableItemSchema struct {
-	Order, ColSize                                                          int64
-	DataName, DataType, Title, ValueType                                    string
-	Editable, Copyable, Ellipsis, Sorter, Search, HideInSearch, HideInTable bool
-}
-
 func CreateCode(c *gin.Context) {
-	t := generator.TableSchema{
+	fields := []gen.FormFieldSchema{
+		{Group: []gen.FormFieldSchema{
+			{Component: "ProFormSelect", Name: "useMode", Label: "生效方式"},
+			{Component: "ProFormDateRangePicker", Name: "contractTime", Label: "有效期"},
+		}},
+		{Name: "name", Label: "客户名称", Component: "ProFormText"},
+		{Name: "company", Label: "我方公司名称", Component: "ProFormText"},
+	}
+	createForm := gen.ModalFormSchema{
+		Key:    "create",
+		Button: gen.ButtonSchema{Type: "primary", Title: "创建"},
+		Form:   gen.FormSchema{Title: "添加数据", SubmitUrl: "/api/demo/post", FormFields: fields},
+	}
+	t := gen.TableSchema{
 		ItemDataTypeName: "TestTableItem",
 		ItemsDataUrl:     "/api/table/demodata",
 		ItemUpdateUrl:    "/api/demo/post",
 		ItemCreateUrl:    "/api/demo/post",
 		ItemDeleteUrl:    "/api/demo/post",
-		Items: []generator.TableItemSchema{
+		Items: []gen.TableItemSchema{
 			{DataName: "id", Title: "ID", ColSize: 0.7, Copyable: true, DataType: "number"},
 			{DataName: "title", Title: "标题", ColSize: 1, Editable: true, Copyable: true, DataType: "string", Search: true},
 			{DataName: "created_at", Title: "创建时间", ValueType: "dateTime", Sorter: true, DataType: "string"},
 		},
+		ModalForms: []gen.ModalFormSchema{createForm},
 	}
 	err := t.Create()
 	if err != nil {

@@ -80,6 +80,12 @@ func debug(c *gin.Context) {
 }
 
 func getTableDataDemo(c *gin.Context) {
+	page := c.Query("page")
+	limit := c.Query("limit")
+	title := c.Query("title")
+	sort := c.Query("sort")
+	log.Printf("----page:%s--limit:%s---title:%s---sort:%s", page, limit, title, sort)
+	// ----page:1--limit:10---title:您好世界---sort:{"created_at":"ascend"} ---sort:{"created_at":"descend"}
 	resp := `{"data":[
 		{"id":624748504,"number":6689,"title":"🐛 [BUG]yarn install命令 antd2.4.5会报错","labels":[{"name":"bug","color":"error"}],"state":"open","locked":false,"comments":1,"created_at":"2020-05-26T09:42:56Z","updated_at":"2020-05-26T10:03:02Z","closed_at":null,"author_association":"NONE","user":"chenshuai2144","avatar":"https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png"},
 		{"id":624691229,"number":6688,"title":"🐛 [BUG]无法创建工程npm create umi","labels":[{"name":"bug","color":"success"}],"state":"closed","locked":false,"comments":0,"created_at":"2020-05-26T08:19:22Z","updated_at":"2020-05-26T08:19:22Z","closed_at":null,"author_association":"NONE","user":"chenshuai2144","avatar":"https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png"},

@@ -21,7 +21,7 @@ const columns: ProColumns<<%{.ItemDataTypeName}%>>[] = [
       colSize: <%{.ColSize}%>,
       order: <%{.Order}%>, // number
       sorter: <%{.Sorter}%>, // boolean
-<%{if not .Search}%>      search: <%{.Search}%>, // false | { transform: (value: any) => any } <%{end}%>
+<%{if not .Search}%>      search: <%{.Search}%>, <%{end}%> // search: { transform: (value: any) => any } 
       hideInSearch: <%{.HideInSearch}%>,
       hideInTable: <%{.HideInTable}%>,
       // filters,
@@ -97,10 +97,9 @@ export default () => {
       cardBordered
       request={async (params = {}, sort, filter) => {
         console.log(sort, filter);
-        const resp = await get<{data: <%{.ItemDataTypeName}%>[]}>("<%{.ItemsDataUrl}%>", {
-          page: params.current,
-          limit: params.pageSize,
-        })
+        params.page = params.current;
+        params.limit = params.pageSize;
+        const resp = await get<{data: <%{.ItemDataTypeName}%>[]}>("<%{.ItemsDataUrl}%>", params)
         return {
           data: resp.data,
           success: true,

@@ -2,7 +2,7 @@ import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { ProTable, TableDropdown, ModalForm, ProFormText, PageContainer } from '@ant-design/pro-components';
 import { Button, Space, Tag, message, Dropdown, Menu } from 'antd';
 import { useRef } from 'react';
-import {get} from "@/services/api";
+import {get, post} from "@/services/api";
 
 type GithubIssueItem = {
   url: string;
@@ -174,10 +174,10 @@ export default () => {
       cardBordered
       request={async (params = {}, sort, filter) => {
         console.log(sort, filter);
-        const resp = await get<{data: GithubIssueItem[]}>("/api/table/demodata", {
-          page: params.current,
-          limit: params.pageSize,
-        })
+        params.page = params.current
+        params.limit = params.pageSize
+        params.sort = sort
+        const resp = await get<{data: GithubIssueItem[]}>("/api/table/demodata", params)
         return {
           data: resp.data,
           success: true,
@@ -186,6 +186,13 @@ export default () => {
       }}
       editable={{
         type: 'multiple',
+        onSave: async (k, update, origin) => {
+          console.log(update, origin);
+          await post("/api/demo/post", update)
+        },
+        onDelete: async (k, row) => {
+          await post("/api/demo/post", row) // url must begin with /
+        }
       }}
       columnsState={{
         persistenceKey: 'pro-table-singe-demos',

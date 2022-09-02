@@ -21,7 +21,7 @@ const columns: ProColumns<TestTableItem>[] = [
       colSize: 0.7,
       order: 0, // number
       sorter: false, // boolean
-      search: false, // false | { transform: (value: any) => any } 
+      search: false,  // search: { transform: (value: any) => any } 
       hideInSearch: false,
       hideInTable: false,
       // filters,
@@ -38,7 +38,7 @@ const columns: ProColumns<TestTableItem>[] = [
       colSize: 1,
       order: 0, // number
       sorter: false, // boolean
-
+ // search: { transform: (value: any) => any } 
       hideInSearch: false,
       hideInTable: false,
       // filters,
@@ -55,7 +55,7 @@ const columns: ProColumns<TestTableItem>[] = [
       colSize: 0,
       order: 0, // number
       sorter: true, // boolean
-      search: false, // false | { transform: (value: any) => any } 
+      search: false,  // search: { transform: (value: any) => any } 
       hideInSearch: false,
       hideInTable: false,
       // filters,
@@ -131,10 +131,9 @@ export default () => {
       cardBordered
       request={async (params = {}, sort, filter) => {
         console.log(sort, filter);
-        const resp = await get<{data: TestTableItem[]}>("/api/table/demodata", {
-          page: params.current,
-          limit: params.pageSize,
-        })
+        params.page = params.current;
+        params.limit = params.pageSize;
+        const resp = await get<{data: TestTableItem[]}>("/api/table/demodata", params)
         return {
           data: resp.data,
           success: true,

@@ -3,6 +3,7 @@ package handler
 import (
 	"lemocoder/database"
 	"log"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -68,5 +69,6 @@ func PostDemo(c *gin.Context) {
 		return
 	}
 	log.Printf("\n--postDemo: %+v---\n", data)
+	time.Sleep(2 * time.Second)
 	c.JSON(200, ResponseOk("操作成功")) // Response(data, "success", 200)
 }

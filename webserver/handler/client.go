@@ -136,6 +136,11 @@ func CreateCode(c *gin.Context) {
 			{DataName: "title", Title: "标题", ColSize: 1, Editable: true, Copyable: true, DataType: "string", Search: true},
 			{DataName: "created_at", Title: "创建时间", ValueType: "dateTime", Sorter: true, DataType: "string"},
 		},
+		ItemOptions: []gen.TableItemOptionSchema{
+			{Key: "edit", Title: "编辑", Type: "edit"},
+			{Key: "post1", Title: "标记", Type: "action", Url: "/api/demo/post"},
+			{Key: "ret", Title: "跳转", Type: "redirect", Url: "/tabledemo"},
+		},
 		ModalForms: []gen.ModalFormSchema{createForm},
 	}
 	err := t.Create()

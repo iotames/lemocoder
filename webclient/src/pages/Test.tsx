@@ -7,6 +7,7 @@ import { PageContainer, ProTable, ModalForm, ProForm,
 import { Button, message } from 'antd';
 import { useRef } from 'react';
 import {get, post} from "@/services/api"
+import { history } from 'umi';
 
 type TestTableItem = {
      id: number;  title: string;  created_at: string; 
@@ -17,55 +18,56 @@ const columns: ProColumns<TestTableItem>[] = [
     
     {
       title: "ID",
-      dataIndex: "id",
-      editable: false, 
-      copyable: true,
+     dataIndex: "id",
+     editable: false,
+     copyable: true,
      
-      ellipsis: false,
-      colSize: 0.7,
-      order: 0, // number
-      sorter: false, // boolean
-      search: false,  // search: { transform: (value: any) => any } 
-      hideInSearch: false,
-      hideInTable: false,
+     
+     colSize: 0.7,
+     
+     
+     search: false,// search: { transform: (value: any) => any }
+     
+     
       // filters,
       // renderText, (text: any,record: T,index: number,action: UseFetchDataAction<T>) => string
     },
     
     {
       title: "标题",
-      dataIndex: "title",
+     dataIndex: "title",
      
-      copyable: true,
+     copyable: true,
      
-      ellipsis: false,
-      colSize: 1,
-      order: 0, // number
-      sorter: false, // boolean
- // search: { transform: (value: any) => any } 
-      hideInSearch: false,
-      hideInTable: false,
+     
+     colSize: 1,
+     
+     
+     // search: { transform: (value: any) => any }
+     
+     
       // filters,
       // renderText, (text: any,record: T,index: number,action: UseFetchDataAction<T>) => string
     },
     
     {
       title: "创建时间",
-      dataIndex: "created_at",
-      editable: false, 
-      copyable: false,
-      valueType: "dateTime", 
-      ellipsis: false,
-      colSize: 0,
-      order: 0, // number
-      sorter: true, // boolean
-      search: false,  // search: { transform: (value: any) => any } 
-      hideInSearch: false,
-      hideInTable: false,
+     dataIndex: "created_at",
+     editable: false,
+     
+     valueType: "dateTime",
+     
+     
+     
+     sorter: true,// boolean
+     search: false,// search: { transform: (value: any) => any }
+     
+     
       // filters,
       // renderText, (text: any,record: T,index: number,action: UseFetchDataAction<T>) => string
     },
     
+
 
   {
     title: '操作',
@@ -73,21 +75,31 @@ const columns: ProColumns<TestTableItem>[] = [
     key: 'option',
     render: (text, record, _, action) => {
     return [
-      <Button key="edit" type="primary" onClick={() => {action?.startEditable?.(record.id);}}>编辑</Button>,
-
-      <Button key="bttt" type='primary'  onClick={(e)=>{
-        console.log(record.id, record.title)
-        e.currentTarget.setAttribute("disabled", "true");
-      }} >Hello</Button>,
-      
-      <a href="#" target="_blank" onClick={()=>{
-        console.log("查看看看", record.id, record.title)
-        message.success("hello wordd"+record.id)
-        }} rel="noopener noreferrer" key="view">
-        查看
-      </a>,
+    <Button key="edit" type="primary" onClick={() => {action?.startEditable?.(record.id);}}>编辑</Button>,
+    
+    
+    
+    
+    <Button key="post1" type='primary'  onClick={async (e)=>{
+        const btn = e.currentTarget
+        btn.setAttribute("disabled", "true");
+        const resp = await post("/api/demo/post", record)
+        if (resp.Code == 200) {
+          message.success(resp.Msg);
+        }else{
+          message.error(resp.Msg);
+        }
+        btn.removeAttribute("disabled")
+      }} >标记</Button>,
+    
+    
+    
+    
+    <Button key="ret" type='primary' onClick={(e)=>{ history.push("/tabledemo"); }}>跳转</Button>,
     ]},
   },
+
+
 ];
 
 
@@ -111,52 +123,15 @@ const create = (<ModalForm
 
 
 
-
 <ProForm.Group>
-
-<ProFormSelect
-  name="useMode"
-  label="生效方式"
-  
-  request={async()=>[{value:"value1", label:"label1"},{value:"value2", label:"label2"}]}
-  placeholder=""
-/>
-
-<ProFormDateRangePicker
-  name="contractTime"
-  label="有效期"
-  
-  
-  placeholder=""
-/>
-
+<ProFormSelect name="useMode" label="生效方式"  request={async()=>[{value:"value1", label:"label1"},{value:"value2", label:"label2"}]} placeholder="" />
+<ProFormDateRangePicker name="contractTime" label="有效期"   placeholder="" />
 </ProForm.Group>
 
 
+<ProFormText name="name" label="客户名称"   placeholder="" />
 
-
-
-<ProFormText
-  name="name"
-  label="客户名称"
-  
-  
-  placeholder=""
-/>
-
-
-
-
-
-<ProFormText
-  name="company"
-  label="我方公司名称"
-  
-  
-  placeholder=""
-/>
-
-
+<ProFormText name="company" label="我方公司名称"   placeholder="" />
 
 </ModalForm>)
 
@@ -175,11 +150,14 @@ export default () => {
         console.log(sort, filter);
         params.page = params.current;
         params.limit = params.pageSize;
-        const resp = await get<{data: TestTableItem[]}>("/api/table/demodata", params)
+        const resp = await get<{Msg: string; Code: number; Data: {Total: number; Page: number; Items: TestTableItem[]}}>("/api/table/demodata", params)
+        if (resp.Code != 200) {
+          message.error(resp.Msg);
+        }
         return {
-          data: resp.data,
+          data: resp.Data.Items,
           success: true,
-          total: 30
+          total: resp.Data.Total
         }
       }}
       editable={{

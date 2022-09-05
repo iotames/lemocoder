@@ -7,6 +7,7 @@ import { PageContainer, ProTable, ModalForm, ProForm,
 import { Button, message } from 'antd';
 import { useRef } from 'react';
 import {get, post} from "@/services/api"
+import { history } from 'umi';
 
 type <%{.ItemDataTypeName}%> = {
     <%{range .Items}%> <%{.DataName}%>: <%{.DataType}%>; <%{end}%>
@@ -17,43 +18,46 @@ const columns: ProColumns<<%{.ItemDataTypeName}%>>[] = [
     <%{range .Items}%>
     {
       title: "<%{.Title}%>",
-      dataIndex: "<%{.DataName}%>",
-     <%{if not .Editable}%> editable: <%{.Editable}%>, <%{end}%>
-      copyable: <%{.Copyable}%>,
-     <%{if ne .ValueType "" }%> valueType: "<%{.ValueType}%>", <%{end}%>
-      ellipsis: <%{.Ellipsis}%>,
-      colSize: <%{.ColSize}%>,
-      order: <%{.Order}%>, // number
-      sorter: <%{.Sorter}%>, // boolean
-<%{if not .Search}%>      search: <%{.Search}%>, <%{end}%> // search: { transform: (value: any) => any } 
-      hideInSearch: <%{.HideInSearch}%>,
-      hideInTable: <%{.HideInTable}%>,
+     <%{if ne .DataName ""}%>dataIndex: "<%{.DataName}%>",<%{end}%>
+     <%{if not .Editable}%>editable: <%{.Editable}%>,<%{end}%>
+     <%{if .Copyable}%>copyable: <%{.Copyable}%>,<%{end}%>
+     <%{if ne .ValueType "" }%>valueType: "<%{.ValueType}%>",<%{end}%>
+     <%{if .Ellipsis}%>ellipsis: <%{.Ellipsis}%>,<%{end}%>
+     <%{if ne .ColSize 0.0}%>colSize: <%{.ColSize}%>,<%{end}%>
+     <%{if gt .Order 0}%>order: <%{.Order}%>,// number<%{end}%>
+     <%{if .Sorter }%>sorter: <%{.Sorter}%>,// boolean<%{end}%>
+     <%{if not .Search}%>search: <%{.Search}%>,<%{end}%>// search: { transform: (value: any) => any }
+     <%{if .HideInSearch}%>hideInSearch: <%{.HideInSearch}%>,<%{end}%>
+     <%{if .HideInTable}%>hideInTable: <%{.HideInTable}%>,<%{end}%>
       // filters,
       // renderText, (text: any,record: T,index: number,action: UseFetchDataAction<T>) => string
     },
     <%{end}%>
 
+<%{if gt (len .ItemOptions) 0}%>
   {
     title: '操作',
     valueType: 'option',
     key: 'option',
     render: (text, record, _, action) => {
-    return [
-      <Button key="edit" type="primary" onClick={() => {action?.startEditable?.(record.id);}}>编辑</Button>,
-
-      <Button key="bttt" type='primary'  onClick={(e)=>{
-        console.log(record.id, record.title)
-        e.currentTarget.setAttribute("disabled", "true");
-      }} >Hello</Button>,
-      
-      <a href="#" target="_blank" onClick={()=>{
-        console.log("查看看看", record.id, record.title)
-        message.success("hello wordd"+record.id)
-        }} rel="noopener noreferrer" key="view">
-        查看
-      </a>,
-    ]},
+    return [<%{range .ItemOptions}%>
+    <%{if eq .Type "edit"}%><Button key="<%{.Key}%>" type="primary" onClick={() => {action?.startEditable?.(record.id);}}><%{.Title}%></Button>,<%{end}%>
+    <%{if eq .Type "action"}%><Button key="<%{.Key}%>" type='primary'  onClick={async (e)=>{
+        const btn = e.currentTarget
+        btn.setAttribute("disabled", "true");
+        const resp = await post("<%{.Url}%>", record)
+        if (resp.Code == 200) {
+          message.success(resp.Msg);
+        }else{
+          message.error(resp.Msg);
+        }
+        btn.removeAttribute("disabled")
+      }} ><%{.Title}%></Button>,<%{end}%>
+    <%{if eq .Type "redirect"}%><Button key="<%{.Key}%>" type='primary' onClick={(e)=>{ history.push("<%{.Url}%>"); }}><%{.Title}%></Button>,<%{end}%>
+    <%{end}%>]},
   },
+<%{end}%>
+
 ];
 
 <%{range .ModalForms}%>
@@ -76,29 +80,11 @@ const <%{.Key}%> = (<ModalForm
 >
 
 <%{range .Form.FormFields}%>
-
-<%{if eq (len .Group) 0}%>
-<<%{.Component}%>
-  name="<%{.Name}%>"
-  label="<%{.Label}%>"
-  <%{if ne .Width ""}%>width="<%{.Width}%>"<%{end}%>
-  <%{if eq .Component "ProFormSelect"}%>request={async()=>[{value:"value1", label:"label1"},{value:"value2", label:"label2"}]}<%{end}%>
-  placeholder="<%{.Placeholder}%>"
-/>
-<%{else}%>
-<ProForm.Group>
-<%{range .Group}%>
-<<%{.Component}%>
-  name="<%{.Name}%>"
-  label="<%{.Label}%>"
-  <%{if ne .Width ""}%>width="<%{.Width}%>"<%{end}%>
-  <%{if eq .Component "ProFormSelect"}%>request={async()=>[{value:"value1", label:"label1"},{value:"value2", label:"label2"}]}<%{end}%>
-  placeholder="<%{.Placeholder}%>"
-/>
-<%{end}%>
+<%{if eq (len .Group) 0}%><<%{.Component}%> name="<%{.Name}%>" label="<%{.Label}%>" <%{if ne .Width ""}%>width="<%{.Width}%>"<%{end}%> <%{if eq .Component "ProFormSelect"}%>request={async()=>[{value:"value1", label:"label1"},{value:"value2", label:"label2"}]}<%{end}%> placeholder="<%{.Placeholder}%>" /><%{else}%>
+<ProForm.Group><%{range .Group}%>
+<<%{.Component}%> name="<%{.Name}%>" label="<%{.Label}%>" <%{if ne .Width ""}%>width="<%{.Width}%>"<%{end}%> <%{if eq .Component "ProFormSelect"}%>request={async()=>[{value:"value1", label:"label1"},{value:"value2", label:"label2"}]}<%{end}%> placeholder="<%{.Placeholder}%>" /><%{end}%>
 </ProForm.Group>
 <%{end}%>
-
 <%{end}%>
 </ModalForm>)
 <%{end}%>
@@ -117,11 +103,14 @@ export default () => {
         console.log(sort, filter);
         params.page = params.current;
         params.limit = params.pageSize;
-        const resp = await get<{data: <%{.ItemDataTypeName}%>[]}>("<%{.ItemsDataUrl}%>", params)
+        const resp = await get<{Msg: string; Code: number; Data: {Total: number; Page: number; Items: <%{.ItemDataTypeName}%>[]}}>("<%{.ItemsDataUrl}%>", params)
+        if (resp.Code != 200) {
+          message.error(resp.Msg);
+        }
         return {
-          data: resp.data,
+          data: resp.Data.Items,
           success: true,
-          total: 30
+          total: resp.Data.Total
         }
       }}
       editable={{

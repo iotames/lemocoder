@@ -7,9 +7,14 @@ type TableItemSchema struct {
 	Editable, Copyable, Ellipsis, Sorter, Search, HideInSearch, HideInTable bool
 }
 
+type TableItemOptionSchema struct {
+	Key, Title, Type, Url string // type edit,act,redirect
+}
+
 type TableSchema struct {
 	ItemDataTypeName, ItemsDataUrl, ItemUpdateUrl, ItemDeleteUrl, ItemCreateUrl string
 	Items                                                                       []TableItemSchema
+	ItemOptions                                                                 []TableItemOptionSchema
 	ModalForms                                                                  []ModalFormSchema
 }
 

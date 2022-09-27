@@ -2,7 +2,7 @@ import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { ProTable, ModalForm, ProFormText, PageContainer } from '@ant-design/pro-components';
 import { Button, message } from 'antd';
 import { useRef } from 'react';
-import {get, post} from "@/services/api"
+import {post, getTableData} from "@/services/api"
 
 type GithubIssueItem = {
   url: string;
@@ -118,14 +118,18 @@ export default () => {
       cardBordered
       request={async (params = {}, sort, filter) => {
         console.log(sort, filter);
-        const resp = await get<{data: GithubIssueItem[]}>("/api/table/demodata", {
-          page: params.current,
-          limit: params.pageSize,
-        })
+        params.page = params.current
+        params.limit = params.pageSize
+        params.sort = sort
+        const resp = await getTableData<GithubIssueItem>("/api/table/demodata", params)
+        if (resp.Code != 200) {
+          message.error(resp.Msg)
+          return {success: false}
+        }
         return {
-          data: resp.data,
+          data: resp.Data.Items,
           success: true,
-          total: 30
+          total: resp.Data.Total
         }
       }}
       editable={{

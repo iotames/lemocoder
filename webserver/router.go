@@ -97,6 +97,6 @@ func getTableDataDemo(c *gin.Context) {
 		{"id":624674789,"number":6685,"title":"🧐 [问题] build 后还存在 es6 的代码（Umi@2.13.13）","labels":[{"name":"question","color":"success"}],"state":"open","locked":false,"comments":0,"created_at":"2020-05-26T07:54:25Z","updated_at":"2020-05-26T07:54:25Z","closed_at":null,"author_association":"NONE","user":"chenshuai2144","avatar":"https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png"},
 		{"id":624620219,"number":6683,"title":"2.3.1版本如何在业务页面修改头部状态","labels":[{"name":"question","color":"success"}],"state":"open","locked":false,"comments":2,"created_at":"2020-05-26T05:58:24Z","updated_at":"2020-05-26T07:17:39Z","closed_at":null,"author_association":"NONE","user":"chenshuai2144","avatar":"https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png"},
 		{"id":624592470,"number":6682,"title":"hideChildrenInMenu设置后，子路由找不到了","labels":[{"name":"bug","color":"error"}],"state":"open","locked":false,"comments":2,"created_at":"2020-05-26T04:25:59Z","updated_at":"2020-05-26T08:00:51Z","closed_at":null,"author_association":"NONE","user":"chenshuai2144","avatar":"https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png"}
-		],"Page":1,"Total":30},"Msg":"数据错误", "Code":400}`
+		],"Page":1,"Total":30},"Msg":"SUCCESS", "Code":200}`
 	c.String(200, resp)
 }

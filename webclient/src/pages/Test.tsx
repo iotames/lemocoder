@@ -6,7 +6,7 @@ import { PageContainer, ProTable, ModalForm, ProForm,
 } from '@ant-design/pro-components';
 import { Button, message } from 'antd';
 import { useRef } from 'react';
-import {get, post} from "@/services/api"
+import {post, getTableData} from "@/services/api"
 import { history } from 'umi';
 
 type TestTableItem = {
@@ -150,9 +150,11 @@ export default () => {
         console.log(sort, filter);
         params.page = params.current;
         params.limit = params.pageSize;
-        const resp = await get<{Msg: string; Code: number; Data: {Total: number; Page: number; Items: TestTableItem[]}}>("/api/table/demodata", params)
+        params.sort = sort
+        const resp = await getTableData<TestTableItem>("/api/table/demodata", params)
         if (resp.Code != 200) {
-          message.error(resp.Msg);
+          message.error(resp.Msg)
+          return {success: false}
         }
         return {
           data: resp.Data.Items,

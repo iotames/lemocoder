@@ -30,6 +30,10 @@ func main() {
 			return
 		}
 		if v == "init" {
+			if util.IsPathExists("app.lock") {
+				log.Println("Warning!! 不可重复初始化。请删除app.lock文件后继续")
+				return
+			}
 			database.CreateTables()
 			err = generator.BuildWebClient("resource/client")
 			if err != nil {

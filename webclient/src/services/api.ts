@@ -33,6 +33,10 @@ export async function get<T>(url: string, params?: { [key: string]: any }){
   });
 }
 
+export async function getTableData<T>(url: string, params?: { [key: string]: any }) {
+  return get<{Code: number; Data: {Items: T[]; Page: number; Total: number}; Msg: string}>(url, params)
+}
+
 /** 获取当前的用户 GET /api/user/info */
 export async function getCurrentUser(options?: { [key: string]: any }) {
   return request<{

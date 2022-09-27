@@ -139,7 +139,7 @@ func CreateCode(c *gin.Context) {
 		ItemOptions: []gen.TableItemOptionSchema{
 			{Key: "edit", Title: "编辑", Type: "edit"},
 			{Key: "post1", Title: "标记", Type: "action", Url: "/api/demo/post"},
-			{Key: "ret", Title: "跳转", Type: "redirect", Url: "/tabledemo"},
+			{Key: "ret", Title: "跳转", Type: "redirect", Url: "/welcome"},
 		},
 		ModalForms: []gen.ModalFormSchema{createForm},
 	}

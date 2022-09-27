@@ -15,7 +15,8 @@ type TableSchema struct {
 	ItemDataTypeName, ItemsDataUrl, ItemUpdateUrl, ItemDeleteUrl, ItemCreateUrl string
 	Items                                                                       []TableItemSchema
 	ItemOptions                                                                 []TableItemOptionSchema
-	ModalForms                                                                  []ModalFormSchema
+	ItemForms                                                                   []ModalFormSchema
+	ToolBarForms                                                                []ModalFormSchema
 }
 
 type ButtonSchema struct {

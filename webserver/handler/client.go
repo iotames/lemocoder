@@ -120,10 +120,18 @@ func CreateCode(c *gin.Context) {
 		{Name: "name", Label: "客户名称", Component: "ProFormText"},
 		{Name: "company", Label: "我方公司名称", Component: "ProFormText"},
 	}
+	rowFormFields := []gen.FormFieldSchema{
+		{Name: "id", Label: "ID", Component: "ProFormText"},
+		{Name: "title", Label: "Title", Component: "ProFormText"},
+	}
 	createForm := gen.ModalFormSchema{
 		Key:    "create",
 		Button: gen.ButtonSchema{Type: "primary", Title: "创建"},
 		Form:   gen.FormSchema{Title: "添加数据", SubmitUrl: "/api/demo/post", FormFields: fields},
+	}
+	editForm := gen.ModalFormSchema{
+		Key:  "editform1",
+		Form: gen.FormSchema{Title: "编辑数据", SubmitUrl: "/api/demo/post", FormFields: rowFormFields},
 	}
 	t := gen.TableSchema{
 		ItemDataTypeName: "TestTableItem",
@@ -137,11 +145,13 @@ func CreateCode(c *gin.Context) {
 			{DataName: "created_at", Title: "创建时间", ValueType: "dateTime", Sorter: true, DataType: "string"},
 		},
 		ItemOptions: []gen.TableItemOptionSchema{
-			{Key: "edit", Title: "编辑", Type: "edit"},
+			{Key: "edit", Title: "行编辑", Type: "edit"},
+			{Key: "editform1", Title: "表单编辑", Type: "form"},
 			{Key: "post1", Title: "标记", Type: "action", Url: "/api/demo/post"},
 			{Key: "ret", Title: "跳转", Type: "redirect", Url: "/welcome"},
 		},
-		ModalForms: []gen.ModalFormSchema{createForm},
+		ItemForms:    []gen.ModalFormSchema{editForm},
+		ToolBarForms: []gen.ModalFormSchema{createForm},
 	}
 	err := t.Create()
 	if err != nil {

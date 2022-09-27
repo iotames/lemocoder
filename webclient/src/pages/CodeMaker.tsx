@@ -1,7 +1,7 @@
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { ProTable, ModalForm, ProFormText, PageContainer } from '@ant-design/pro-components';
 import { Button, message } from 'antd';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import {post, getTableData} from "@/services/api"
 
 type GithubIssueItem = {
@@ -17,6 +17,45 @@ type GithubIssueItem = {
   closed_at?: string;
 };
 
+
+const createBtn = (<ModalForm
+  title="新建表单"
+  trigger={<Button type="primary">创建</Button>}
+  submitter={{
+    searchConfig: {
+      submitText: '确认',
+      resetText: '取消',
+    },
+  }}
+  onFinish={async (values) => {
+    console.log(values);
+    const resp = await post("/api/demo/post", values)
+    if (resp.Code == 200) {
+      message.success(resp.Msg);
+    }else{
+      message.error(resp.Msg);
+    }
+    return true;
+  }}
+>
+  <ProFormText
+    width="md"
+    name="name"
+    label="签约客户名称"
+    tooltip="最长为 24 位"
+    placeholder="请输入名称"
+  />
+
+  <ProFormText width="md" name="company" label="我方公司名称" placeholder="请输入名称" />
+</ModalForm>)
+
+export default () => {
+  const [modalVisit, setModalVisit] = useState(false);
+  const [rowRecord, setRowRecord] = useState<GithubIssueItem>();
+  const actionRef = useRef<ActionType>();
+  // const [editableKeys, setEditableRowKeys] = useState<React.Key[]>(() => []);
+
+  
 const columns: ProColumns<GithubIssueItem>[] = [
   {
     title: 'ID',
@@ -57,8 +96,11 @@ const columns: ProColumns<GithubIssueItem>[] = [
     key: 'option',
     render: (text, record, _, action) => {
     return [
-      <Button key="edit" type="primary" onClick={() => {action?.startEditable?.(record.id);}}>编辑</Button>,
-
+      <Button key="edit" type="primary" onClick={() => {action?.startEditable?.(record.id);}}>行编辑</Button>,
+      <Button key="form1" type="primary" onClick={() => {
+        setRowRecord(record)
+        setModalVisit(true)
+      }}>编辑</Button>,
       <Button key="bttt" type='primary'  onClick={(e)=>{
         console.log(record.id, record.title)
         e.currentTarget.setAttribute("disabled", "true");
@@ -75,43 +117,30 @@ const columns: ProColumns<GithubIssueItem>[] = [
 ];
 
 
-const createBtn = (<ModalForm
-  title="新建表单"
-  trigger={<Button type="primary">创建</Button>}
-  submitter={{
-    searchConfig: {
-      submitText: '确认',
-      resetText: '取消',
-    },
-  }}
-  onFinish={async (values) => {
-    console.log(values);
-    const resp = await post("/api/demo/post", values)
-    if (resp.Code == 200) {
-      message.success(resp.Msg);
-    }else{
-      message.error(resp.Msg);
-    }
-    return true;
-  }}
->
-  <ProFormText
-    width="md"
-    name="name"
-    label="签约客户名称"
-    tooltip="最长为 24 位"
-    placeholder="请输入名称"
-  />
-
-  <ProFormText width="md" name="company" label="我方公司名称" placeholder="请输入名称" />
-</ModalForm>)
-
-export default () => {
-  const actionRef = useRef<ActionType>();
-  // const [editableKeys, setEditableRowKeys] = useState<React.Key[]>(() => []);
+  const editForm = (<ModalForm
+    title="编辑表单"
+    initialValues={rowRecord}
+    visible={modalVisit}
+    onVisibleChange={setModalVisit}
+    onFinish={async (values) => {
+      console.log(values);
+      const resp = await post("/api/demo/post", values)
+      if (resp.Code == 200) {
+        message.success(resp.Msg);
+      }else{
+        message.error(resp.Msg);
+      }
+      return true;
+    }}
+  >
+    <ProFormText name="id" hidden />
+    <ProFormText width="md" name="title" label="标题" placeholder="请输入标题"/>
+    <ProFormText width="md" name="company" label="我方公司名称" placeholder="请输入名称" />
+  </ModalForm>)
 
   return (
     <PageContainer>
+      {editForm}
     <ProTable<GithubIssueItem>
       columns={columns}
       actionRef={actionRef}
@@ -189,6 +218,7 @@ export default () => {
         // }}>新建</Button>
       ]}
     />
+
     </PageContainer>
   );
 };

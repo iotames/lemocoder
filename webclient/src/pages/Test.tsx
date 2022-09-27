@@ -3,9 +3,10 @@ import { PageContainer, ProTable, ModalForm, ProForm,
   ProFormDateRangePicker,
   ProFormSelect,
   ProFormText,
+  ProFormInstance,
 } from '@ant-design/pro-components';
 import { Button, message } from 'antd';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import {post, getTableData} from "@/services/api"
 import { history } from 'umi';
 
@@ -14,100 +15,12 @@ type TestTableItem = {
 //  labels: {name: string; color: string;}[]; number
 };
 
-const columns: ProColumns<TestTableItem>[] = [
-    
-    {
-      title: "ID",
-     dataIndex: "id",
-     editable: false,
-     copyable: true,
-     
-     
-     colSize: 0.7,
-     
-     
-     search: false,// search: { transform: (value: any) => any }
-     
-     
-      // filters,
-      // renderText, (text: any,record: T,index: number,action: UseFetchDataAction<T>) => string
-    },
-    
-    {
-      title: "标题",
-     dataIndex: "title",
-     
-     copyable: true,
-     
-     
-     colSize: 1,
-     
-     
-     // search: { transform: (value: any) => any }
-     
-     
-      // filters,
-      // renderText, (text: any,record: T,index: number,action: UseFetchDataAction<T>) => string
-    },
-    
-    {
-      title: "创建时间",
-     dataIndex: "created_at",
-     editable: false,
-     
-     valueType: "dateTime",
-     
-     
-     
-     sorter: true,// boolean
-     search: false,// search: { transform: (value: any) => any }
-     
-     
-      // filters,
-      // renderText, (text: any,record: T,index: number,action: UseFetchDataAction<T>) => string
-    },
-    
-
-
-  {
-    title: '操作',
-    valueType: 'option',
-    key: 'option',
-    render: (text, record, _, action) => {
-    return [
-    <Button key="edit" type="primary" onClick={() => {action?.startEditable?.(record.id);}}>编辑</Button>,
-    
-    
-    
-    
-    <Button key="post1" type='primary'  onClick={async (e)=>{
-        const btn = e.currentTarget
-        btn.setAttribute("disabled", "true");
-        const resp = await post("/api/demo/post", record)
-        if (resp.Code == 200) {
-          message.success(resp.Msg);
-        }else{
-          message.error(resp.Msg);
-        }
-        btn.removeAttribute("disabled")
-      }} >标记</Button>,
-    
-    
-    
-    
-    <Button key="ret" type='primary' onClick={(e)=>{ history.push("/tabledemo"); }}>跳转</Button>,
-    ]},
-  },
-
-
-];
-
 
 
 const create = (<ModalForm
   title="添加数据"
   trigger={<Button type="primary">创建</Button>}
-  submitter={{searchConfig: {submitText: '确认',resetText: '取消',},}}
+//  submitter={{searchConfig: {submitText: '确认',resetText: '取消',},}}
 
   onFinish={async (values) => {
     console.log(values);
@@ -138,10 +51,141 @@ const create = (<ModalForm
 
 export default () => {
   const actionRef = useRef<ActionType>();
+  const itemFormRef = useRef<ProFormInstance<TestTableItem>>();
+  const [modaleditform1Visit, setModaleditform1Visit] = useState(false);
+  
   // const [editableKeys, setEditableRowKeys] = useState<React.Key[]>(() => []);
+
+  
+  const editform1 = (<ModalForm
+    title="编辑数据"
+    formRef={itemFormRef}
+    visible={modaleditform1Visit}
+    onVisibleChange={setModaleditform1Visit}
+
+//    submitter={{searchConfig: {submitText: '确认',resetText: '取消',},}}
+
+    onFinish={async (values) => {
+      console.log(values);
+      const resp = await post("/api/demo/post", values)
+      if (resp.Code == 200) {
+        message.success(resp.Msg);
+      }else{
+        message.error(resp.Msg);
+      }
+      return true;
+    }}
+  >
+
+  
+  <ProFormText name="id" label="ID"   placeholder="" />
+  
+  <ProFormText name="title" label="Title"   placeholder="" />
+  
+  </ModalForm>)
+  
+
+
+  const columns: ProColumns<TestTableItem>[] = [
+      
+      {
+        title: "ID",
+      dataIndex: "id",
+      editable: false,
+      copyable: true,
+      
+      
+      colSize: 0.7,
+      
+      
+      search: false,// search: { transform: (value: any) => any }
+      
+      
+        // filters,
+        // renderText, (text: any,record: T,index: number,action: UseFetchDataAction<T>) => string
+      },
+      
+      {
+        title: "标题",
+      dataIndex: "title",
+      
+      copyable: true,
+      
+      
+      colSize: 1,
+      
+      
+      // search: { transform: (value: any) => any }
+      
+      
+        // filters,
+        // renderText, (text: any,record: T,index: number,action: UseFetchDataAction<T>) => string
+      },
+      
+      {
+        title: "创建时间",
+      dataIndex: "created_at",
+      editable: false,
+      
+      valueType: "dateTime",
+      
+      
+      
+      sorter: true,// boolean
+      search: false,// search: { transform: (value: any) => any }
+      
+      
+        // filters,
+        // renderText, (text: any,record: T,index: number,action: UseFetchDataAction<T>) => string
+      },
+      
+
+  
+    {
+      title: '操作',
+      valueType: 'option',
+      key: 'option',
+      render: (text, record, _, action) => {
+      return [
+      <Button key="edit" type="primary" onClick={() => {action?.startEditable?.(record.id);}}>行编辑</Button>,
+      
+      
+      
+      
+      
+      
+      <Button key="editform1" type="primary" onClick={() => {setModaleditform1Visit(true);itemFormRef.current?.setFieldsValue(record);}}>表单编辑</Button>,
+      
+      
+      
+      <Button key="post1" type='primary'  onClick={async (e)=>{
+          const btn = e.currentTarget
+          btn.setAttribute("disabled", "true");
+          const resp = await post("/api/demo/post", record)
+          if (resp.Code == 200) {
+            message.success(resp.Msg);
+          }else{
+            message.error(resp.Msg);
+          }
+          btn.removeAttribute("disabled")
+        }} >标记</Button>,
+      
+      
+      
+      
+      
+      
+      <Button key="ret" type='primary' onClick={(e)=>{ history.push("/welcome"); }}>跳转</Button>,
+      ]},
+    },
+  
+
+  ];
+
 
   return (
     <PageContainer>
+    {editform1}
     <ProTable<TestTableItem>
       columns={columns}
       actionRef={actionRef}

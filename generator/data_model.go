@@ -17,6 +17,11 @@ type TableSchema struct {
 	ItemOptions                                                                 []TableItemOptionSchema
 	ItemForms                                                                   []ModalFormSchema
 	ToolBarForms                                                                []ModalFormSchema
+	BatchOptButtons                                                             []BatchOptButtonSchema
+}
+
+type BatchOptButtonSchema struct {
+	Url, Title string
 }
 
 type ButtonSchema struct {

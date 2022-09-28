@@ -1,5 +1,6 @@
 // import { request } from 'umi';
 import request from "@/utils/request";
+import { message } from 'antd';
 
 /** 获取当前的用户 GET /api/ */
 export async function getClientConfig(options?: { [key: string]: any }) {
@@ -20,6 +21,24 @@ export async function post(url: string, body: {[key: string]: any}, options?: { 
       data: body,
       ...(options || {}),
     });
+}
+
+export async function postMsg(url: string, body: {[key: string]: any}, options?: { [key: string]: any }) {
+  const resp = await post(url, body, options)
+  if (resp.Code == 200) {
+    message.success(resp.Msg);
+  }else{
+    message.error(resp.Msg);
+  }
+  return resp
+}
+
+export async function postByBtn(e: React.MouseEvent<HTMLElement, MouseEvent>, url: string, body: {[key: string]: any}, options?: { [key: string]: any }) {
+  const btn = e.currentTarget
+  btn.setAttribute("disabled", "true");
+  const resp = await postMsg(url, body, options)
+  btn.removeAttribute("disabled")
+  return resp
 }
 
 export async function get<T>(url: string, params?: { [key: string]: any }){

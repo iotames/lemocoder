@@ -42,8 +42,12 @@ go run . init
 go run .
 ```
 
-若执行 `go mod tidy` 命令，加载依赖包出错，可能为GO版本过低或第三方包版本冲突。
-手动重置 `mod.go` 文件内容, 再重试。
+服务端API接口默认地址: `http://127.0.0.1:8888`
+
+客户端资源地址: `http://127.0.0.1:8888/client`
+
+
+> 如执行 `go mod tidy` 命令出错，可能为GO版本过低或第三方包版本冲突。请升级 `Go` 或重置 `mod.go` 文件内容后再试。
 
 ```
 module lemocoder
@@ -80,6 +84,7 @@ yarn start
 yarn build
 ```
 
-## 笔记
+-----------------------------------------------
 
-webpack5 新特性: `experiments.topLevelAwait`
+> antd pro组件总览: https://procomponents.ant.design/components
+> antd 组件总览: https://ant.design/components/overview-cn/

@@ -150,8 +150,9 @@ func CreateCode(c *gin.Context) {
 			{Key: "post1", Title: "标记", Type: "action", Url: "/api/demo/post"},
 			{Key: "ret", Title: "跳转", Type: "redirect", Url: "/welcome"},
 		},
-		ItemForms:    []gen.ModalFormSchema{editForm},
-		ToolBarForms: []gen.ModalFormSchema{createForm},
+		ItemForms:       []gen.ModalFormSchema{editForm},
+		ToolBarForms:    []gen.ModalFormSchema{createForm},
+		BatchOptButtons: []gen.BatchOptButtonSchema{{Title: "批量操作A", Url: "/api/demo/post"}, {Title: "批量操作B", Url: "/api/demo/post"}},
 	}
 	err := t.Create()
 	if err != nil {

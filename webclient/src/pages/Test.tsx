@@ -5,9 +5,9 @@ import { PageContainer, ProTable, ModalForm, ProForm,
   ProFormText,
   ProFormInstance,
 } from '@ant-design/pro-components';
-import { Button, message } from 'antd';
+import { Button, Space, message } from 'antd';
 import { useRef, useState } from 'react';
-import {post, getTableData} from "@/services/api"
+import {postMsg, getTableData, postByBtn} from "@/services/api"
 import { history } from 'umi';
 
 type TestTableItem = {
@@ -24,12 +24,7 @@ const create = (<ModalForm
 
   onFinish={async (values) => {
     console.log(values);
-    const resp = await post("/api/demo/post", values)
-    if (resp.Code == 200) {
-      message.success(resp.Msg);
-    }else{
-      message.error(resp.Msg);
-    }
+    await postMsg("/api/demo/post", values)
     return true;
   }}
 >
@@ -52,6 +47,7 @@ const create = (<ModalForm
 export default () => {
   const actionRef = useRef<ActionType>();
   const itemFormRef = useRef<ProFormInstance<TestTableItem>>();
+  const [rowRecord, setRowRecord] = useState<TestTableItem>();
   const [modaleditform1Visit, setModaleditform1Visit] = useState(false);
   
   // const [editableKeys, setEditableRowKeys] = useState<React.Key[]>(() => []);
@@ -61,18 +57,14 @@ export default () => {
     title="编辑数据"
     formRef={itemFormRef}
     visible={modaleditform1Visit}
+    initialValues={rowRecord}
     onVisibleChange={setModaleditform1Visit}
 
 //    submitter={{searchConfig: {submitText: '确认',resetText: '取消',},}}
 
     onFinish={async (values) => {
       console.log(values);
-      const resp = await post("/api/demo/post", values)
-      if (resp.Code == 200) {
-        message.success(resp.Msg);
-      }else{
-        message.error(resp.Msg);
-      }
+      await postMsg("/api/demo/post", values)
       return true;
     }}
   >
@@ -89,13 +81,7 @@ export default () => {
   const columns: ProColumns<TestTableItem>[] = [
       
       {
-        title: "ID",
-      dataIndex: "id",
-      editable: false,
-      copyable: true,
-      
-      
-      colSize: 0.7,
+        title: "ID",dataIndex: "id",editable: false,copyable: true,colSize: 0.7,
       
       
       search: false,// search: { transform: (value: any) => any }
@@ -106,13 +92,7 @@ export default () => {
       },
       
       {
-        title: "标题",
-      dataIndex: "title",
-      
-      copyable: true,
-      
-      
-      colSize: 1,
+        title: "标题",dataIndex: "title",copyable: true,colSize: 1,
       
       
       // search: { transform: (value: any) => any }
@@ -123,13 +103,7 @@ export default () => {
       },
       
       {
-        title: "创建时间",
-      dataIndex: "created_at",
-      editable: false,
-      
-      valueType: "dateTime",
-      
-      
+        title: "创建时间",dataIndex: "created_at",editable: false,valueType: "dateTime",
       
       sorter: true,// boolean
       search: false,// search: { transform: (value: any) => any }
@@ -154,20 +128,12 @@ export default () => {
       
       
       
-      <Button key="editform1" type="primary" onClick={() => {setModaleditform1Visit(true);itemFormRef.current?.setFieldsValue(record);}}>表单编辑</Button>,
+      <Button key="editform1" type="primary" onClick={() => {setRowRecord(record);itemFormRef.current?.setFieldsValue(record);setModaleditform1Visit(true)}}>表单编辑</Button>,
       
       
       
       <Button key="post1" type='primary'  onClick={async (e)=>{
-          const btn = e.currentTarget
-          btn.setAttribute("disabled", "true");
-          const resp = await post("/api/demo/post", record)
-          if (resp.Code == 200) {
-            message.success(resp.Msg);
-          }else{
-            message.error(resp.Msg);
-          }
-          btn.removeAttribute("disabled")
+        await postByBtn(e, "/api/demo/post", record)
         }} >标记</Button>,
       
       
@@ -188,6 +154,11 @@ export default () => {
     {editform1}
     <ProTable<TestTableItem>
       columns={columns}
+      rowSelection={{}}
+      tableAlertRender={({ selectedRowKeys, selectedRows, onCleanSelected }) => (<Space><span>已选 {selectedRowKeys.length} 项<a onClick={onCleanSelected}>取消</a></span></Space>)}
+      tableAlertOptionRender={({ selectedRowKeys, selectedRows, onCleanSelected }) => {
+        return (<Space><Button onClick={async (e)=>{await postByBtn(e, "/api/demo/post", {items:selectedRows})}}>批量操作A</Button><Button onClick={async (e)=>{await postByBtn(e, "/api/demo/post", {items:selectedRows})}}>批量操作B</Button></Space>);
+      }}
       actionRef={actionRef}
       cardBordered
       request={async (params = {}, sort, filter) => {
@@ -212,10 +183,10 @@ export default () => {
         // onChange: setEditableRowKeys,
         onSave: async (k, update, origin) => {
           console.log(update, origin);
-          await post("/api/demo/post", update)
+          await postMsg("/api/demo/post", update)
         },
         onDelete: async (k, row) => {
-          await post("/api/demo/post", row) // url must begin with /
+          await postMsg("/api/demo/post", row) // url must begin with /
         }
       }}
       columnsState={{

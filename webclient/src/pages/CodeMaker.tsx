@@ -1,5 +1,5 @@
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
-import { ProTable, ModalForm, ProFormText, PageContainer } from '@ant-design/pro-components';
+import { ProCard, ProTable, ModalForm, ProFormText, PageContainer } from '@ant-design/pro-components';
 import { Button, message } from 'antd';
 import { useRef, useState } from 'react';
 import {post, getTableData} from "@/services/api"

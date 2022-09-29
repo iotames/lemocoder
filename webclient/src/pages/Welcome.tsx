@@ -1,6 +1,6 @@
 import { PageContainer } from '@ant-design/pro-components';
 
-import { Alert, Card, Typography } from 'antd';
+import { Alert, Card, Typography, Row, Col } from 'antd';
 import React from 'react';
 import styles from './Welcome.less';
 
@@ -17,42 +17,30 @@ const Welcome: React.FC = () => {
   return (
     <PageContainer>
       <Card>
-        <Alert
-          message={"开发神器: 代码自动生成工具"}
-          type="success"
-          showIcon
-          banner
-          style={{
-            margin: -12,
-            marginBottom: 24,
-          }}
-        />
+        <Alert message={"开发神器: 代码自动生成工具"} type="success" showIcon banner style={{margin: -12, marginBottom: 24, }} />
 
-{/* 
-        <Typography.Text strong>
-          <a
-            href="#"
-            rel="noopener noreferrer"
-            target="__blank"
-          >
-            Welcome
-          </a>
-        </Typography.Text>
+      <Row>
+      <Typography.Text strong>
+                <a href="https://procomponents.ant.design/components" target="__blank" >Ant Design Pro 组件</a>
+              </Typography.Text>
+      </Row>
+
+
+
         <Card>
-        编译客户端
-        <CodePreview>cd webclient</CodePreview>
-        <CodePreview>yarn</CodePreview>
-        <CodePreview>yarn build</CodePreview>
-        移动编译好的客户端文件至客户端资源目录
-        <CodePreview>cd ..</CodePreview>
-        <CodePreview>mv webclien/dist/* resource/client/</CodePreview>
-        编译并运行服务端
         <CodePreview>go mod tidy</CodePreview>
-        <CodePreview>go build</CodePreview>
-        <CodePreview>./lemocoder</CodePreview>
+        <CodePreview>go run . init</CodePreview>
+        <CodePreview>go run </CodePreview>
         </Card>
-*/}
 
+
+        <Row>
+        <Typography.Text strong>
+                  <a href="https://ant.design/components/overview-cn/" rel="noopener noreferrer" target="__blank" >Ant Design 组件</a>
+                </Typography.Text>
+        </Row>
+
+ 
       </Card>
     </PageContainer>
   );

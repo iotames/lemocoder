@@ -3,6 +3,7 @@ package database
 import (
 	"fmt"
 	"lemocoder/config"
+	"lemocoder/util"
 	"log"
 	"sync"
 	"time"
@@ -74,7 +75,8 @@ func getSnowflakeNode() *snowflake.Node {
 	if snode == nil {
 		node, err := snowflake.NewNode(getNodeId())
 		if err != nil {
-			fmt.Println(err)
+			logger := util.GetLogger()
+			logger.Error("Error for database.getSnowflakeNode:", err)
 			snode = nil
 		}
 		snode = node
@@ -116,18 +118,22 @@ func (b BaseModel) GetID() int64 {
 }
 
 func CreateTables() {
-	err := getEngine().CreateTables(new(User))
+	err := getEngine().CreateTables(new(User), new(DataTable))
 	if err != nil {
-		panic(fmt.Errorf("xorm Error: CreateTables Fail %v", err))
+		panic(fmt.Errorf("error for database.CreateTables:%v", err))
 	}
 }
 
 func SyncTables() {
-	getEngine().Sync(new(User))
+	getEngine().Sync(new(User), new(DataTable))
 }
 
 func GetModel(m IModel) {
-	getEngine().Get(m)
+	_, err := getEngine().Get(m)
+	if err != nil {
+		logger := util.GetLogger()
+		logger.Error("Error for database.GetModel:", err)
+	}
 }
 
 func CreateModel(m IModel) (int64, error) {

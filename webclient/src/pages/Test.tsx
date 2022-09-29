@@ -20,8 +20,6 @@ type TestTableItem = {
 const create = (<ModalForm
   title="添加数据"
   trigger={<Button type="primary">创建</Button>}
-//  submitter={{searchConfig: {submitText: '确认',resetText: '取消',},}}
-
   onFinish={async (values) => {
     console.log(values);
     await postMsg("/api/demo/post", values)
@@ -59,9 +57,6 @@ export default () => {
     visible={modaleditform1Visit}
     initialValues={rowRecord}
     onVisibleChange={setModaleditform1Visit}
-
-//    submitter={{searchConfig: {submitText: '确认',resetText: '取消',},}}
-
     onFinish={async (values) => {
       console.log(values);
       await postMsg("/api/demo/post", values)
@@ -132,9 +127,7 @@ export default () => {
       
       
       
-      <Button key="post1" type='primary'  onClick={async (e)=>{
-        await postByBtn(e, "/api/demo/post", record)
-        }} >标记</Button>,
+      <Button key="post1" type='primary'  onClick={async (e)=>{await postByBtn(e, "/api/demo/post", record);}} >标记</Button>,
       
       
       

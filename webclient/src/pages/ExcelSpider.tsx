@@ -1,5 +1,5 @@
 import config from "../../config/webconf"
-import { post } from '@/services/api';
+import { postMsg } from '@/services/api';
 import {
   ProFormInstance,
   ProFormSelect,
@@ -35,7 +35,7 @@ export default () => {
         }>
           onFinish={async (values) => {
             console.log(values)
-            const resp = await post("/api/local/excelspider", {sheet_name:values.sheet_name, spider:values.spider, title:values.title, url_title:values.url_title, uploadfile: values.uploadfile})
+            const resp = await postMsg("/api/local/excelspider", {sheet_name:values.sheet_name, spider:values.spider, title:values.title, url_title:values.url_title, uploadfile: values.uploadfile})
             if (resp.Code != 200){
               message.error(resp.Msg);
               return

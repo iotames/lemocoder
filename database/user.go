@@ -15,7 +15,7 @@ type JwtInfo struct {
 
 type User struct {
 	BaseModel `xorm:"extends"`
-	// xorm Error: CreateTables Fail pq: 语法错误 在 "COMMENT" 或附近的
+	// https://xorm.io/zh/docs/chapter-02/4.columns/  comment	设置字段的注释（当前仅支持mysql）
 	Salt         string `xorm:"varchar(64) notnull"`                 //  comment('加密盐')
 	PasswordHash string `xorm:"varchar(64) notnull 'password_hash'"` //  comment('密码哈希')
 	Account      string `xorm:"varchar(64) notnull unique"`          //  comment('用户名')
@@ -23,6 +23,10 @@ type User struct {
 	Mobile       string `xorm:"varchar(32) notnull unique"`          // comment('手机号')
 	Email        string `xorm:"varchar(32) notnull unique"`          //  comment('电子邮箱')
 	Avatar       string `xorm:"varchar(500) notnull"`                // comment('用户头像')
+}
+
+func (u User) TableName() string {
+	return "users"
 }
 
 func GetDefaultAvatar() string {

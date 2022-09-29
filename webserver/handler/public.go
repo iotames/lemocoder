@@ -21,7 +21,7 @@ func Login(c *gin.Context) {
 	loginForm := &LoginForm{}
 	b := c.Bind(loginForm)
 	if b == nil {
-		log.Printf("\n--LoginWay: %s---\n", loginForm.LoginWay)
+		log.Printf("\n--LoginForm: %+v---\n", loginForm)
 	} else {
 		c.JSON(200, ResponseFail("请求参数解析错误", 404))
 		return

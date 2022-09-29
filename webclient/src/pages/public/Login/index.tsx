@@ -91,7 +91,7 @@ const Login: React.FC = () => {
           </Tabs>
 
           {userLoginState.Code == 400 && LoginWay === 'account' && (
-            <LoginMessage content="账户或密码错误(admin/ant.design)" />
+            <LoginMessage content="账户或密码错误" />
           )}
           {LoginWay === 'account' && (
             <>

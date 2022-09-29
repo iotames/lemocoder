@@ -156,6 +156,8 @@ func CreateCode(c *gin.Context) {
 	}
 	err := t.Create()
 	if err != nil {
+		logger := util.GetLogger()
+		logger.Error("Error for CreateCode:", err)
 		c.JSON(200, ResponseFail(err.Error(), 500))
 		return
 	}

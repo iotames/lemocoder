@@ -9,12 +9,12 @@ import (
 	// 	"time"
 )
 
+// https://xorm.io/zh/docs/chapter-02/4.columns/  comment	设置字段的注释（当前仅支持mysql）
 type DataTable struct {
-	BaseModel `xorm:"extends"`
-	// https://xorm.io/zh/docs/chapter-02/4.columns/  comment	设置字段的注释（当前仅支持mysql）
-	Title, Remark, Path, Component string                `xorm:"varchar(64) notnull"`
-	StructSchema                   generator.TableSchema `xorm:"TEXT notnull"`
-	Name                           string                `xorm:"varchar(32) notnull"`
+	BaseModel           `xorm:"extends"`
+	PageID              int64                 `xorm:"notnull default(0) 'page_id'"`
+	Name, Title, Remark string                `xorm:"varchar(64) notnull"`
+	StructSchema        generator.TableSchema `xorm:"TEXT notnull"`
 }
 
 func (d DataTable) TableName() string {

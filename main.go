@@ -45,6 +45,10 @@ func main() {
 			database.SyncTables()
 			return
 		}
+		if v == "dbinit" {
+			database.CreateTables()
+			return
+		}
 	}
 
 	if daemon {

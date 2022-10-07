@@ -42,7 +42,7 @@ func SetEngine(db config.Database) {
 }
 
 func newEngine(db *config.Database) *xorm.Engine {
-	log.Println("Init newEngine Begin")
+	log.Println("New newEngine Begin")
 	if db == nil {
 		db = config.GetDatabase()
 	}
@@ -56,7 +56,7 @@ func newEngine(db *config.Database) *xorm.Engine {
 		panic(err)
 	}
 	engineInit(engine)
-	log.Println("Init newEngine End")
+	log.Println("New newEngine End")
 	return engine
 }
 
@@ -117,23 +117,52 @@ func (b BaseModel) GetID() int64 {
 	return b.ID
 }
 
+func getAllTables() []interface{} {
+	return []interface{}{new(User), new(DataTable), new(Project), new(WebPage)}
+}
+
 func CreateTables() {
-	err := getEngine().CreateTables(new(User), new(DataTable))
+	err := getEngine().CreateTables(getAllTables()...)
 	if err != nil {
 		panic(fmt.Errorf("error for database.CreateTables:%v", err))
 	}
 }
 
 func SyncTables() {
-	getEngine().Sync(new(User), new(DataTable))
+	getEngine().Sync(getAllTables()...)
 }
 
-func GetModel(m IModel) {
-	_, err := getEngine().Get(m)
+func GetModel(m IModel) (bool, error) {
+	b, err := getEngine().Get(m)
 	if err != nil {
 		logger := util.GetLogger()
 		logger.Error("Error for database.GetModel:", err)
 	}
+	return b, err
+}
+
+// GetModelWhere 添加复杂条件. 参数 m IModel 各属性必须为零值，否则查询条件会冲突
+// GetModelWhere(new(User), "name = ? AND age = ?", "Tom", 19)
+func GetModelWhere(m IModel, query interface{}, args ...interface{}) (bool, error) {
+	b, err := getEngine().Where(query, args...).Get(m)
+	if err != nil {
+		logger := util.GetLogger()
+		logger.Error("Error for database.GetModel:", err)
+	}
+	return b, err
+}
+
+// GetAll 获取多条记录
+// users := make([]Userinfo, 0)
+// GetAll(&users, 50, 3, "age > ? or name = ?", 30, "xlw")
+func GetAll(rows interface{}, limit, page int, query interface{}, args ...interface{}) error {
+	start := (page - 1) * limit
+	err := getEngine().Where(query, args...).Limit(limit, start).Find(rows)
+	if err != nil {
+		logger := util.GetLogger()
+		logger.Error("Error for database.GetAll:", err)
+	}
+	return err
 }
 
 func CreateModel(m IModel) (int64, error) {

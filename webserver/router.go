@@ -68,6 +68,8 @@ func setRouters(g *gin.Engine) {
 
 	user := api.Group("/user")
 	user.Use(checkUserByJWT())
+	user.POST("/pages/add", handler.AddWebPage)
+	user.GET("/pages", handler.GetWebPages)
 	user.GET("/info", handler.GetUserInfo)
 	user.POST("/logout", handler.Logout)
 	user.GET("menu", handler.GetClientMenu)

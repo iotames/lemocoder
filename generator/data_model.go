@@ -1,7 +1,7 @@
 package generator
 
 type TableItemSchema struct {
-	Order                                                                   int64
+	Width, Order                                                            int64
 	ColSize                                                                 float64
 	DataName, DataType, Title, ValueType                                    string
 	Editable, Copyable, Ellipsis, Sorter, Search, HideInSearch, HideInTable bool
@@ -12,12 +12,12 @@ type TableItemOptionSchema struct {
 }
 
 type TableSchema struct {
-	ItemDataTypeName, ItemsDataUrl, ItemUpdateUrl, ItemDeleteUrl, ItemCreateUrl string
-	Items                                                                       []TableItemSchema
-	ItemOptions                                                                 []TableItemOptionSchema
-	ItemForms                                                                   []ModalFormSchema
-	ToolBarForms                                                                []ModalFormSchema
-	BatchOptButtons                                                             []BatchOptButtonSchema
+	ItemDataTypeName, ItemsDataUrl, ItemUpdateUrl, ItemDeleteUrl, ItemCreateUrl, RowKey string
+	Items                                                                               []TableItemSchema
+	ItemOptions                                                                         []TableItemOptionSchema
+	ItemForms                                                                           []ModalFormSchema
+	ToolBarForms                                                                        []ModalFormSchema
+	BatchOptButtons                                                                     []BatchOptButtonSchema
 }
 
 type BatchOptButtonSchema struct {

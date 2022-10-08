@@ -139,6 +139,7 @@ func CreateCode(c *gin.Context) {
 		ItemUpdateUrl:    "/api/demo/post",
 		ItemCreateUrl:    "/api/demo/post",
 		ItemDeleteUrl:    "/api/demo/post",
+		RowKey:           "id",
 		Items: []gen.TableItemSchema{
 			{DataName: "id", Title: "ID", ColSize: 0.7, Copyable: true, DataType: "number"},
 			{DataName: "title", Title: "标题", ColSize: 1, Editable: true, Copyable: true, DataType: "string", Search: true},

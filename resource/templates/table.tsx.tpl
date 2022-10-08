@@ -73,7 +73,7 @@ export default () => {
   const columns: ProColumns<<%{.ItemDataTypeName}%>>[] = [
       <%{range .Items}%>
       {
-        title: "<%{.Title}%>",<%{if ne .DataName ""}%>dataIndex: "<%{.DataName}%>",<%{end}%><%{if not .Editable}%>editable: <%{.Editable}%>,<%{end}%><%{if .Copyable}%>copyable: <%{.Copyable}%>,<%{end}%><%{if ne .ValueType "" }%>valueType: "<%{.ValueType}%>",<%{end}%><%{if .Ellipsis}%>ellipsis: <%{.Ellipsis}%>,<%{end}%><%{if ne .ColSize 0.0}%>colSize: <%{.ColSize}%>,<%{end}%>
+        title: "<%{.Title}%>",<%{if ne .DataName ""}%>dataIndex: "<%{.DataName}%>",<%{end}%><%{if not .Editable}%>editable: <%{.Editable}%>,<%{end}%><%{if .Copyable}%>copyable: <%{.Copyable}%>,<%{end}%><%{if ne .ValueType "" }%>valueType: "<%{.ValueType}%>",<%{end}%><%{if .Ellipsis}%>ellipsis: <%{.Ellipsis}%>,<%{end}%><%{if ne .ColSize 0.0}%>colSize: <%{.ColSize}%>,<%{end}%><%{if ne .Width 0}%>width: <%{.Width}%>,<%{end}%>
       <%{if gt .Order 0}%>order: <%{.Order}%>,// number<%{end}%>
       <%{if .Sorter }%>sorter: <%{.Sorter}%>,// boolean<%{end}%>
       <%{if not .Search}%>search: <%{.Search}%>,<%{end}%>// search: { transform: (value: any) => any }
@@ -91,7 +91,7 @@ export default () => {
       key: 'option',
       render: (text, record, _, action) => {
       return [<%{range .ItemOptions}%>
-      <%{if eq .Type "edit"}%><Button key="<%{.Key}%>" type="primary" onClick={() => {action?.startEditable?.(record.id);}}><%{.Title}%></Button>,<%{end}%>
+      <%{if eq .Type "edit"}%><Button key="<%{.Key}%>" type="primary" onClick={() => {action?.startEditable?.(record.<%{$.RowKey}%>);}}><%{.Title}%></Button>,<%{end}%>
       <%{if eq .Type "action"}%><Button key="<%{.Key}%>" type='primary'  onClick={async (e)=>{await postByBtn(e, "<%{.Url}%>", record);}} ><%{.Title}%></Button>,<%{end}%>
       <%{if eq .Type "form"}%><Button key="<%{.Key}%>" type="primary" onClick={() => {setRowRecord(record);itemFormRef.current?.setFieldsValue(record);setModal<%{.Key}%>Visit(true)}}><%{.Title}%></Button>,<%{end}%>
       <%{if eq .Type "redirect"}%><Button key="<%{.Key}%>" type='primary' onClick={(e)=>{ history.push("<%{.Url}%>"); }}><%{.Title}%></Button>,<%{end}%>
@@ -149,7 +149,7 @@ export default () => {
           console.log('value: ', value);
         },
       }}
-      rowKey="id"
+      rowKey="<%{.RowKey}%>"
       search={{
         labelWidth: 'auto',
         span: 6,

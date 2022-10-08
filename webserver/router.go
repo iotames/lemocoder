@@ -2,7 +2,6 @@ package webserver
 
 import (
 	"fmt"
-	"lemocoder/database"
 	"lemocoder/webserver/handler"
 	"lemocoder/webserver/prepare"
 	"log"
@@ -12,25 +11,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 )
-
-func checkUserByJWT() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		token := c.Request.Header.Get("Auth-Token")
-		if token == "" {
-			c.JSON(200, handler.ResponseFail("缺少token参数，无权访问", 401))
-			c.Abort()
-			return
-		}
-		u := database.User{}
-		user, err := u.GetUserByJwt(token)
-		if err != nil {
-			c.JSON(200, handler.ResponseFail("鉴权错误:"+err.Error(), 401))
-			c.Abort()
-			return
-		}
-		c.Set("user", user)
-	}
-}
 
 func localhostNetwork() gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -67,9 +47,12 @@ func setRouters(g *gin.Engine) {
 	local.POST("/excelspider", handler.ExcelSpider)
 
 	user := api.Group("/user")
-	user.Use(checkUserByJWT())
-	user.POST("/pages/add", handler.AddWebPage)
+	user.Use(prepare.HandlerJWT())
+	user.POST("/page/add", handler.AddWebPage)
 	user.GET("/pages", handler.GetWebPages)
+	user.GET("/table/get", handler.GetTable)
+	user.POST("/table/add", handler.AddTable)
+	user.POST("/table/update", handler.UpdateTable)
 	user.GET("/info", handler.GetUserInfo)
 	user.POST("/logout", handler.Logout)
 	user.GET("menu", handler.GetClientMenu)

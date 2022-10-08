@@ -1,6 +1,8 @@
 package prepare
 
 import (
+	"lemocoder/database"
+	"lemocoder/webserver/handler"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -25,19 +27,19 @@ func HandlerCORS() gin.HandlerFunc {
 
 func HandlerJWT() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		// token := c.Request.Header.Get("Token")
-		// if token == "" {
-		// 	c.JSON(200, data.ResponseFail("缺少token参数，无权访问", 401))
-		// 	c.Abort()
-		// 	return
-		// }
-		// u := model.User{}
-		// user, err := u.GetUserByJwt(token)
-		// if err != nil {
-		// 	c.JSON(200, data.ResponseFail("鉴权错误:"+err.Error(), 401))
-		// 	c.Abort()
-		// 	return
-		// }
-		// c.Set("user", user)
+		token := c.Request.Header.Get("Auth-Token")
+		if token == "" {
+			c.JSON(200, handler.ResponseFail("缺少token参数，无权访问", 401))
+			c.Abort()
+			return
+		}
+		u := database.User{}
+		user, err := u.GetUserByJwt(token)
+		if err != nil {
+			c.JSON(200, handler.ResponseFail("鉴权错误:"+err.Error(), 401))
+			c.Abort()
+			return
+		}
+		c.Set("user", user)
 	}
 }

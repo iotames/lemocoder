@@ -1,6 +1,9 @@
 package handler
 
 import (
+	"fmt"
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -41,9 +44,18 @@ func ResponseItems(items interface{}) interface{} {
 }
 
 func ErrorNoPermission(c *gin.Context) {
-	c.JSON(200, ResponseFail("NoPermission.您没有权限访问此页面", 400))
+	c.JSON(http.StatusOK, ResponseFail("NoPermission.您没有权限访问此页面", 400))
 }
 
 func ErrorUserNotFound(c *gin.Context) {
-	c.JSON(200, ResponseFail("user not found", 500))
+	c.JSON(http.StatusOK, ResponseFail("user not found", 500))
+}
+func ErrorNotFound(c *gin.Context) {
+	c.JSON(http.StatusOK, ResponseFail("无法找到请求对象", http.StatusNotFound))
+}
+func ErrorArgs(c *gin.Context) {
+	c.JSON(http.StatusOK, ResponseFail("请求参数错误", 400))
+}
+func ErrorServer(c *gin.Context, err error) {
+	c.JSON(http.StatusOK, ResponseFail(fmt.Sprintf("服务器系统错误(%v)", err), 500))
 }

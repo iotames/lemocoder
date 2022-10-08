@@ -1,9 +1,9 @@
-import type { ActionType, ProColumns } from '@ant-design/pro-components';
-import { ProCard, ProTable, ModalForm, ProFormText, ProFormSelect, ProForm, PageContainer, CheckCard } from '@ant-design/pro-components';
+import type { ActionType, ProFormInstance, ProColumns } from '@ant-design/pro-components';
+import { ProCard, ProTable, ModalForm, ProFormText, ProFormSelect, TableDropdown, ProForm, PageContainer, CheckCard } from '@ant-design/pro-components';
 import { Button, Typography, message } from 'antd';
 import { useRef, useState } from 'react';
 import {post, postMsg, getTableData, postByBtn} from "@/services/api"
-import { history } from 'umi';
+// import { history } from 'umi';
 
 type PageItem = {
   ID: number;
@@ -14,11 +14,17 @@ type PageItem = {
   remark: string;
   created_at: string;
   updated_at: string;
-
 };
+
+// type TableSchema = {
+//   page_id: number;
+// }
 
 export default () => {
   const [pageFormVisit, setPageFormVisit] = useState(false);
+  const [genFormVisit, setGenFormVisit] = useState(false);
+  const [rowRecord, setRowRecord] = useState<PageItem>();
+  const genFormRef = useRef<ProFormInstance<PageItem>>();
   const actionRef = useRef<ActionType>();
 
 const columns: ProColumns<PageItem>[] = [
@@ -52,19 +58,12 @@ const columns: ProColumns<PageItem>[] = [
     // colSize: 0.3,
     formItemProps: {rules: [{required: true,message: '此项为必填项',},],}
   },
-  {
-    title: '标题',
-    dataIndex: 'Title',
-    ellipsis: true,
-    // colSize: 1,
-    formItemProps: {rules: [{required: true,message: '此项为必填项',},],}
-  },
+
   {
     title: '备注',
     dataIndex: 'Remark',
     ellipsis: true,
     // colSize: 1,
-    formItemProps: {rules: [{required: true,message: '此项为必填项',},],}
   },
   {
     title: '创建时间',
@@ -80,19 +79,30 @@ const columns: ProColumns<PageItem>[] = [
     title: '操作',
     valueType: 'option',
     key: 'option',
-    width: 270,
+    // width: 260,
     // fixed: 'right',
     render: (text, record, _, action) => {
     return [
-      <Button key="edit" type="primary" onClick={() => {action?.startEditable?.(record.ID);}}>编辑</Button>,
+      // <Button  type="primary" onClick={() => {}}></Button>,
 
-      <Button key="bttt" type='primary'  onClick={ async (e)=>{
-        await postByBtn(e, "/api/demo/post", record)
-      }} >Hello</Button>,
-      
+      <Button key="editform1" type="primary" onClick={() => {setRowRecord(record);genFormRef.current?.setFieldsValue(record);setGenFormVisit(true)}}>构建</Button>,
+
       // <Button key="bttt" type='primary'  onClick={ async (e)=>{
       //   await postByBtn(e, "/api/demo/post", record)
       // }} >Hello</Button>,
+      
+      <TableDropdown
+      key="actionGroup"
+      onSelect={(akey:string) => {
+        if (akey == "edit"){
+          action?.startEditable?.(record.ID);
+        }
+        action?.reload()
+      }}
+      menus={[
+        { key: "edit", name: '编辑' },
+      ]}
+    />,
 
       // <a href={record.path} target="_blank" onClick={()=>{
       //   console.log("查看看看", record.id, record.title)
@@ -111,22 +121,23 @@ const {Title} = Typography;
     <PageContainer>
       
       <CheckCard
-        title={<Title level={5}>新增页面</Title>}
+        title={<Title level={5}>新建页面</Title>}
         description="创建网站后台页面. "
         onChange={()=>{setPageFormVisit(true)}}
       />
-      <CheckCard
+
+      {/* <CheckCard
         title={<Title level={5}>新建工程</Title>}
         description="创建Web后台项目. 包含前端和后端源码"
         onChange={()=>{history.push("/welcome")}}
-      />
+      /> */}
 
-<ModalForm
-        title="新增页面"
+      <ModalForm
+        title="新建页面"
         visible={pageFormVisit}
         // width={600}
         onFinish={async (values) => {
-          const resp = await postMsg("/api/user/pages/add", values)
+          const resp = await postMsg("/api/user/page/add", values)
           if (resp.Code == 200) {
             return true;
           }
@@ -152,7 +163,7 @@ const {Title} = Typography;
         <ProFormText width="sm" name="component"  label="前端组件名" tooltip="前端组件文件名。英文, 大写字母开头. 例: Product 生成文件Product.tsx" rules={[{ required: true, message: '此项必填' }]} placeholder="Product" />
         </ProForm.Group>
         <ProForm.Group>
-          <ProFormText name="title"  label="页面标题(选填)" />
+          {/* <ProFormText name="title"  label="页面标题(选填)" /> */}
           <ProFormText name="remark"  label="备注(选填)" />
         </ProForm.Group>
 
@@ -168,7 +179,7 @@ const {Title} = Typography;
           内容二
         </ProCard.TabPane>
     </ProCard>
-     */}
+*/}
 
     <ProTable<PageItem>
       headerTitle="页面管理"

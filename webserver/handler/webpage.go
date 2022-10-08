@@ -12,12 +12,12 @@ func AddWebPage(c *gin.Context) {
 	pg := database.WebPage{}
 	b := c.Bind(&pg)
 	if b != nil {
-		c.JSON(http.StatusOK, ResponseFail("请求参数解析错误", 404))
+		ErrorArgs(c)
 		return
 	}
 	has, err := database.GetModelWhere(new(database.WebPage), "project_id = ? AND path = ?", pg.ProjectID, pg.Path)
 	if err != nil {
-		c.JSON(http.StatusOK, ResponseFail(err.Error(), 500))
+		ErrorServer(c, err)
 		return
 	}
 	if has {
@@ -35,7 +35,9 @@ func AddWebPage(c *gin.Context) {
 func GetWebPages(c *gin.Context) {
 	// var items []database.WebPage
 	items := make([]database.WebPage, 0)
-	err := database.GetAll(&items, 30, 1, "project_id = ?", 0)
+	limit := c.GetInt("limit")
+	page := c.GetInt("page")
+	err := database.GetAll(&items, limit, page, "project_id = ?", 0)
 	if err != nil {
 		c.JSON(http.StatusOK, ResponseFail("请求错误"+err.Error(), 404))
 		return

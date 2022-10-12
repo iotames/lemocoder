@@ -64,6 +64,10 @@ func main() {
 
 	if util.IsPathExists(config.ClientFilepath) {
 		go func() {
+			app := config.GetApp()
+			if app.Env == config.ENV_DEV {
+				return
+			}
 			time.Sleep(1 * time.Second)
 			err = startBrowser()
 			if err != nil {

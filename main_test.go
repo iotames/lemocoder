@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"lemocoder/database"
 	"log"
 	"os"
 	"os/exec"
@@ -57,4 +58,18 @@ func TestExec(t *testing.T) {
 	if err != nil {
 		log.Fatalf("failed to call cmd.Run(): %v", err)
 	}
+}
+
+func TestDbQuery(t *testing.T) {
+	table := database.DataTable{PageID: 1578318193674424300}
+	has, err := database.GetModel(&table)
+	if err != nil {
+		log.Println("-----Error----", err)
+		return
+	}
+	if !has {
+		log.Println("--NotExists-------")
+		return
+	}
+	log.Printf("----table--%+v----", table)
 }

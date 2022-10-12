@@ -2,6 +2,8 @@ package handler
 
 import (
 	"lemocoder/database"
+	"log"
+	"strconv"
 
 	"net/http"
 
@@ -35,8 +37,11 @@ func AddWebPage(c *gin.Context) {
 func GetWebPages(c *gin.Context) {
 	// var items []database.WebPage
 	items := make([]database.WebPage, 0)
-	limit := c.GetInt("limit")
-	page := c.GetInt("page")
+	limitStr := c.DefaultQuery("limit", "30")
+	pageStr := c.DefaultQuery("page", "1")
+	limit, _ := strconv.Atoi(limitStr)
+	page, _ := strconv.Atoi(pageStr)
+	log.Printf("----GetWebPages--limit(%d)---page(%d)----", limit, page)
 	err := database.GetAll(&items, limit, page, "project_id = ?", 0)
 	if err != nil {
 		c.JSON(http.StatusOK, ResponseFail("请求错误"+err.Error(), 404))

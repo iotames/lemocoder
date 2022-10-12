@@ -9,6 +9,9 @@ import (
 	"github.com/joho/godotenv"
 )
 
+const ENV_PROD = "prod"
+const ENV_DEV = "dev"
+
 const DEFAULT_WEB_SERVER_PORT = 8888
 const EnvFilepath = ".env"
 const ClientSrcPagesDir = "webclient/src/pages"
@@ -99,12 +102,17 @@ func (s WebServer) GetAddr() string {
 }
 
 type App struct {
-	Title, Logo string
+	Title, Logo, Env string
 }
 
 func GetApp() *App {
+	runEnv := os.Getenv("APP_ENV")
+	if runEnv == "" {
+		runEnv = ENV_DEV
+	}
 	return &App{
 		Title: os.Getenv("APP_TITLE"),
 		Logo:  os.Getenv("APP_LOGO"),
+		Env:   runEnv,
 	}
 }

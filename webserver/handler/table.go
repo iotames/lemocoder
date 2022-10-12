@@ -2,6 +2,8 @@ package handler
 
 import (
 	"lemocoder/database"
+	"log"
+	"strconv"
 
 	"net/http"
 
@@ -59,8 +61,12 @@ func UpdateTable(c *gin.Context) {
 }
 
 func GetTable(c *gin.Context) {
-	pageID := c.GetInt64("page_id")
-	table := database.DataTable{PageID: int64(pageID)}
+	pageIDstr := c.DefaultQuery("page_id", "0")
+	pageID, _ := strconv.ParseInt(pageIDstr, 10, 64)
+	log.Println("---GetTable---", pageID)
+	// table := database.DataTable{}
+	// has, err := database.GetModelWhere(&table, "page_id = ?", pageID)
+	table := database.DataTable{PageID: pageID}
 	has, err := database.GetModel(&table)
 	if err != nil {
 		c.JSON(http.StatusOK, ResponseFail(err.Error(), 500))

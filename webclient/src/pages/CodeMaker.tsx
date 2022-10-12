@@ -2,29 +2,100 @@ import type { ActionType, ProFormInstance, ProColumns } from '@ant-design/pro-co
 import { ProCard, ProTable, ModalForm, ProFormText, ProFormSelect, TableDropdown, ProForm, PageContainer, CheckCard } from '@ant-design/pro-components';
 import { Button, Typography, message } from 'antd';
 import { useRef, useState } from 'react';
-import {post, postMsg, getTableData, postByBtn} from "@/services/api"
+import {post, postMsg, getTableData, postByBtn, get} from "@/services/api"
 // import { history } from 'umi';
 
 type PageItem = {
-  ID: number;
+  ID: bigint;
   path: string;
   component: string;
   name: string;
+  PageType: number;
   title: string;
   remark: string;
   created_at: string;
   updated_at: string;
 };
 
-// type TableSchema = {
-//   page_id: number;
-// }
+type TableItemOptionSchema = {
+  Key: string;
+  Title: string;
+  Type: string;
+  Url: string;
+}
+
+type BatchOptButtonSchema = {
+	Url: string;
+  Title: string;
+}
+
+
+type FormSchema = {
+	Title: string;
+  SubmitUrl: string;
+	FormFields: FormFieldSchema[]
+}
+type FormFieldSchema = {
+	Group:     FormFieldSchema[]
+  Component: string;
+  Name: string;
+  Label: string;
+  Placeholder: string;
+  Width: string;
+}
+type ButtonSchema = {
+  Title: string;
+  Type: string;
+  Size: string;
+}
+type ModalFormSchema = {
+	Key:    string;
+	Button: ButtonSchema;
+	Form:   FormSchema;
+}
+
+type TableItemSchema = {
+  DataName: string;
+  DataType: string; // number, string, 
+  Title: string;
+  ValueType: string; // 值的类型,会生成不同的渲染器. default(text). option, select, dateTime, dateRange
+  Width: number;
+  Order: number; // 查询表单中的权重，权重大排序靠前
+  Editable: boolean;
+  Copyable: boolean;
+  Sorter: boolean;
+  Search: boolean;
+  HideInSearch: boolean;
+  HideInTable: boolean;
+}
+
+type StructSchema = {
+  ItemDataTypeName: string;
+  ItemsDataUrl: string;
+  ItemUpdateUrl: string;
+  ItemDeleteUrl: string;
+  ItemCreateUrl: string;
+  RowKey: string;
+  Items: TableItemSchema[];
+  ItemOptions: TableItemOptionSchema[];
+  ItemForms: ModalFormSchema[];
+  ToolBarForms: ModalFormSchema[];
+  BatchOptButtons: BatchOptButtonSchema[];
+}
+type TableSchema = {
+  PageID: number;
+  Name: string;
+  Title: string;
+  Remark: string;
+  StructSchema: StructSchema;
+}
 
 export default () => {
   const [pageFormVisit, setPageFormVisit] = useState(false);
-  const [genFormVisit, setGenFormVisit] = useState(false);
-  const [rowRecord, setRowRecord] = useState<PageItem>();
-  const genFormRef = useRef<ProFormInstance<PageItem>>();
+  const [tableFormVisit, setTableFormVisit] = useState(false);
+  // const [rowRecord, setRowRecord] = useState<PageItem>();
+  const [tableSchema, setTableSchema] = useState<TableSchema>();
+  const tableFormRef = useRef<ProFormInstance<TableSchema>>();
   const actionRef = useRef<ActionType>();
 
 const columns: ProColumns<PageItem>[] = [
@@ -85,7 +156,26 @@ const columns: ProColumns<PageItem>[] = [
     return [
       // <Button  type="primary" onClick={() => {}}></Button>,
 
-      <Button key="editform1" type="primary" onClick={() => {setRowRecord(record);genFormRef.current?.setFieldsValue(record);setGenFormVisit(true)}}>构建</Button>,
+      <Button key="editform1" type="primary" onClick={async () => {
+        // setRowRecord(record);
+        if(record.PageType == 0){
+          console.log(record)
+          console.log(record.ID)
+          const resp = await get<{Code: number; Msg: string; Data: TableSchema}>("/api/user/table/get", {"page_id": record.ID})
+          if (resp.Code == 500){
+            await message.error(resp.Msg)
+            return
+          }
+          let initDt = {}
+          if (resp.Code == 200) {
+            initDt = resp.Data
+          }
+          setTableSchema(initDt)
+          tableFormRef.current?.setFieldsValue(initDt);
+          setTableFormVisit(true)
+        }
+        
+      }}>构建</Button>,
 
       // <Button key="bttt" type='primary'  onClick={ async (e)=>{
       //   await postByBtn(e, "/api/demo/post", record)

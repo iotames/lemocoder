@@ -1,11 +1,13 @@
 package handler
 
 import (
+	"encoding/json"
+	"fmt"
 	"lemocoder/database"
+	"lemocoder/generator"
 	"log"
-	"strconv"
-
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -64,17 +66,31 @@ func GetTable(c *gin.Context) {
 	pageIDstr := c.DefaultQuery("page_id", "0")
 	pageID, _ := strconv.ParseInt(pageIDstr, 10, 64)
 	log.Println("---GetTable---", pageID)
-	// table := database.DataTable{}
-	// has, err := database.GetModelWhere(&table, "page_id = ?", pageID)
-	table := database.DataTable{PageID: pageID}
-	has, err := database.GetModel(&table)
+	t := database.DataTable{}
+	result, err := database.Query(fmt.Sprintf("SELECT * FROM %s WHERE page_id = %d", t.TableName(), pageID))
 	if err != nil {
 		c.JSON(http.StatusOK, ResponseFail(err.Error(), 500))
 		return
 	}
-	if !has {
+	if len(result) == 0 {
 		ErrorNotFound(c)
 		return
 	}
-	c.JSON(http.StatusOK, Response(table, "success", 200))
+	fmt.Printf("---GetTable(%+v)-----", result[0])
+	resp := make(map[string]interface{}, len(result[0]))
+	for k, v := range result[0] {
+		nk := database.TableColToObj(k)
+		if k == "struct_schema" {
+			vv := generator.TableSchema{}
+			json.Unmarshal(v, &vv)
+
+			resp[nk] = vv
+		} else {
+			resp[nk] = string(v)
+		}
+
+		log.Println(nk, string(v))
+	}
+	log.Println(resp)
+	c.JSON(http.StatusOK, Response(resp, "success", 200))
 }

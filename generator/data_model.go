@@ -8,7 +8,7 @@ type TableItemSchema struct {
 }
 
 type TableItemOptionSchema struct {
-	Key, Title, Type, Url string // type edit,act,redirect
+	Key, Title, Type, Url string // type: edit,action,form,redirect
 }
 
 type TableSchema struct {

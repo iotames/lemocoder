@@ -1,12 +1,12 @@
 import type { ActionType, ProFormInstance, ProColumns } from '@ant-design/pro-components';
-import { ProCard, ProTable, ModalForm, ProFormText, ProFormSelect, TableDropdown, ProForm, PageContainer, CheckCard } from '@ant-design/pro-components';
-import { Button, Typography, message } from 'antd';
+import { ProCard, ProFormItem, ProFormSwitch, ProFormDigit, ProFormList, ProTable, ModalForm, ProFormText, ProFormSelect, TableDropdown, ProForm, StepsForm, PageContainer, CheckCard } from '@ant-design/pro-components';
+import { Button, Typography, message, Modal, InputNumber } from 'antd';
 import { useRef, useState } from 'react';
 import {post, postMsg, getTableData, postByBtn, get} from "@/services/api"
 // import { history } from 'umi';
 
 type PageItem = {
-  ID: bigint;
+  ID: string;
   path: string;
   component: string;
   name: string;
@@ -83,7 +83,7 @@ type StructSchema = {
   BatchOptButtons: BatchOptButtonSchema[];
 }
 type TableSchema = {
-  PageID: number;
+  PageID: string;
   Name: string;
   Title: string;
   Remark: string;
@@ -94,6 +94,15 @@ export default () => {
   const [pageFormVisit, setPageFormVisit] = useState(false);
   const [tableFormVisit, setTableFormVisit] = useState(false);
   // const [rowRecord, setRowRecord] = useState<PageItem>();
+  const tableSchemaInit = {
+    PageID:"0", Name:"", Title:"", Remark:"", 
+    StructSchema:{
+      ItemDataTypeName:"ProductItem", 
+      ItemsDataUrl:"/api/table/demodata",
+      ItemUpdateUrl:"/api/demo/post",
+      ItemDeleteUrl:"/api/demo/post",
+      RowKey:"ID"
+    }}
   const [tableSchema, setTableSchema] = useState<TableSchema>();
   const tableFormRef = useRef<ProFormInstance<TableSchema>>();
   const actionRef = useRef<ActionType>();
@@ -166,12 +175,17 @@ const columns: ProColumns<PageItem>[] = [
             await message.error(resp.Msg)
             return
           }
-          let initDt = {}
+          let initDt = tableSchemaInit
+          initDt.Name = record.name
+          initDt.Title = record.title
+          initDt.Remark = record.remark
+          initDt.PageID = record.ID
           if (resp.Code == 200) {
             initDt = resp.Data
           }
           setTableSchema(initDt)
-          tableFormRef.current?.setFieldsValue(initDt);
+          tableFormRef.current?.setFieldsValue(initDt); 
+          console.log(initDt)
           setTableFormVisit(true)
         }
         
@@ -221,6 +235,102 @@ const {Title} = Typography;
         description="创建Web后台项目. 包含前端和后端源码"
         onChange={()=>{history.push("/welcome")}}
       /> */}
+
+      <StepsForm  
+        onFinish={async (values) => {
+        const resp = await postMsg("/api/user/table/add", values)
+        if (resp.Code == 200) {
+          return true;
+        }
+        return false;
+      }}
+      formRef={tableFormRef}
+      stepsFormRender={(dom, submitter) => {
+        return (
+          <Modal
+            title="构建数据表格"
+            width={600}
+            onCancel={() => setTableFormVisit(false)}
+            visible={tableFormVisit}
+            footer={submitter}
+            destroyOnClose
+          >
+            {dom}
+          </Modal>
+        );
+      }}
+      >
+  
+        <StepsForm.StepForm name="base" title="基础设置" initialValues={tableSchema?.StructSchema} >
+            <ProFormText name="PageID" hidden initialValue={tableSchema?.PageID} />
+            <ProFormText name="RowKey" hidden initialValue={tableSchema?.StructSchema.RowKey}  />
+            <ProFormText name="ItemDataTypeName" label="数据结构名" placeholder="ProductItem" rules={[{ required: true }]} /> 
+            <ProFormText name="ItemsDataUrl" label="数据源" placeholder="/api/table/demodata" rules={[{ required: true }]} />
+            <ProFormText name="ItemUpdateUrl" label="更新地址" placeholder="/api/demo/post" />
+            <ProFormText name="ItemDeleteUrl" label="删除地址" placeholder="/api/demo/post" /> 
+{/*           
+          <ProFormText name="Name" label="名称" placeholder="请输入名称" initialValue={tableSchema?.Name} />
+          <ProFormText name="Title" label="标题"  initialValue={tableSchema?.Title} />
+          <ProFormText name="Remark" label="备注" initialValue={tableSchema?.Remark} />
+*/}
+        </StepsForm.StepForm>
+
+        <StepsForm.StepForm name="items" title="数据字段" initialValues={tableSchema?.StructSchema}>
+          <ProFormList name="Items" creatorButtonProps={{creatorButtonText: '添加数据字段'}}>
+            <ProForm.Group>
+              <ProFormText name="DataName" label="字段名" rules={[{ required: true }]} />
+              <ProFormText name="Title" label="字段标题" rules={[{ required: true }]} />
+            </ProForm.Group>
+            <ProForm.Group>
+              <ProFormSelect name="DataType" label="字段类型" initialValue="string" options={[
+                {value:"string", label:"字符串"},
+                {value:"int", label:"整型"},
+                {value:"float", label:"浮点型"}
+                ]} rules={[{ required: true }]} />
+              <ProFormSelect name="ValueType" label="值的类型" tooltip="会生成不同的渲染器" initialValue="text" options={[
+                {value:"text", label:"纯文本"}
+                ]} rules={[{ required: true }]} />
+            </ProForm.Group>
+            <ProForm.Group>
+              <ProFormSwitch name="Sorter" label="允许排序" />
+              <ProFormSwitch name="Editable" label="可编辑" />
+              <ProFormSwitch name="Copyable" label="可复制" />
+              <ProFormSwitch name="Ellipsis" label="省略过长内容" />
+            </ProForm.Group>
+            <ProForm.Group>
+              <ProFormDigit label="宽度(px)" min={0} max={300} name="Width" />
+              <ProFormDigit label="权重" tooltip="查询表单中的权重，权重大排序靠前" min={0} max={300} name="Order" />
+            </ProForm.Group>
+          </ProFormList>
+        </StepsForm.StepForm>
+
+        <StepsForm.StepForm name="options" title="行数据操作" initialValues={tableSchema?.StructSchema}>
+        <ProFormList name="ItemOptions" creatorButtonProps={{creatorButtonText: '添加行数据操作项'}}>
+          <ProForm.Group>
+            <ProFormText name="Title" label="操作标题" rules={[{ required: true }]} />
+            <ProFormText name="Key" label="操作名" rules={[{ required: true }]} />
+          </ProForm.Group>
+          <ProForm.Group>
+            <ProFormSelect name="Type" label="操作类型" initialValue="action" options={[
+                {value:"edit", label:"快捷编辑"},
+                {value:"action", label:"标记数据"},
+                {value:"redirect", label:"路由跳转"},
+                {value:"form", label:"表单提交"}
+                ]} rules={[{ required: true }]} />
+            <ProFormText name="Url" label="API地址" />
+          </ProForm.Group>
+        </ProFormList>
+        </StepsForm.StepForm>
+        <StepsForm.StepForm name="batchOpts" title="批量数据操作" initialValues={tableSchema?.StructSchema}>
+        <ProFormList name="BatchOptButtons" creatorButtonProps={{creatorButtonText: '添加批量数据操作项'}}>
+          <ProForm.Group>
+              <ProFormText name="Title" label="操作标题" rules={[{ required: true }]} />
+              <ProFormText name="Url" label="API地址" rules={[{ required: true }]} />
+          </ProForm.Group>
+        </ProFormList>
+        </StepsForm.StepForm>
+
+      </StepsForm>
 
       <ModalForm
         title="新建页面"

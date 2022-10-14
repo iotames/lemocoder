@@ -1,8 +1,11 @@
 package handler
 
 import (
+	"encoding/json"
 	"fmt"
+	"lemocoder/database"
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -34,13 +37,35 @@ func ResponseFail(msg string, code int) interface{} {
 }
 
 func ResponseItems(items interface{}) interface{} {
-	return struct {
-		Code int
-		Msg  string
-		Data JsonObject
-	}{Msg: "success", Code: 200, Data: map[string]interface{}{
-		"Items": items,
-	}}
+	switch items.(type) {
+	case string:
+		return fmt.Sprintf(`{"Code":200,"Msg":"success","Data":{"Items":%s}}`, items)
+	default:
+		return struct {
+			Code int
+			Msg  string
+			Data JsonObject
+		}{Msg: "success", Code: 200, Data: JsonObject{
+			"Items": items,
+		}}
+	}
+}
+
+func ItemsIDtoString[T database.IDitem](items []T) (string, error) {
+	b, err := json.Marshal(items)
+	if err != nil {
+		return "", err
+	}
+
+	befStr := string(b)
+	for _, item := range items {
+		fmt.Printf("---item---%+v--", item)
+		oldstr := fmt.Sprintf(`"ID":%d`, item.GetID())
+		newstr := fmt.Sprintf(`"ID":"%d"`, item.GetID())
+		fmt.Println(oldstr, newstr)
+		befStr = strings.Replace(befStr, oldstr, newstr, 1)
+	}
+	return befStr, err
 }
 
 func ErrorNoPermission(c *gin.Context) {
@@ -54,7 +79,7 @@ func ErrorNotFound(c *gin.Context) {
 	c.JSON(http.StatusOK, ResponseFail("无法找到请求对象", http.StatusNotFound))
 }
 func ErrorArgs(c *gin.Context) {
-	c.JSON(http.StatusOK, ResponseFail("请求参数错误", 400))
+	c.JSON(http.StatusOK, ResponseFail("请求参数错误saf", 400))
 }
 func ErrorServer(c *gin.Context, err error) {
 	c.JSON(http.StatusOK, ResponseFail(fmt.Sprintf("服务器系统错误(%v)", err), 500))

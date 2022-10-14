@@ -47,5 +47,10 @@ func GetWebPages(c *gin.Context) {
 		c.JSON(http.StatusOK, ResponseFail("请求错误"+err.Error(), 404))
 		return
 	}
-	c.JSON(200, ResponseItems(items))
+	itemsStr, err := ItemsIDtoString(items)
+	if err != nil {
+		ErrorServer(c, err)
+		return
+	}
+	c.String(200, ResponseItems(itemsStr).(string))
 }

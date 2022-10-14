@@ -17,6 +17,12 @@ type DataTable struct {
 	StructSchema        generator.TableSchema `xorm:"TEXT notnull"`
 }
 
+// func (d DataTable) GetStructSchema() generator.TableSchema {
+// 	ts := generator.TableSchema{}
+// 	json.Unmarshal([]byte(d.StructSchema), &ts)
+// 	return ts
+// }
+
 func (d DataTable) TableName() string {
 	return "data_tables"
 }

@@ -10,6 +10,15 @@ import (
 	"text/template"
 )
 
+func TestSnakName(t *testing.T) {
+	log.Println(database.ObjToTableCol("PageID"))
+	log.Println(database.ObjToTableCol("PageId"))
+	log.Println("-------------------------")
+	log.Println(database.TableColToObj("project_id"))
+	log.Println(database.TableColToObj("page_id"))
+
+}
+
 func TestTemplate(t *testing.T) {
 	// faldskfal
 	type GameStatus struct {
@@ -61,15 +70,18 @@ func TestExec(t *testing.T) {
 }
 
 func TestDbQuery(t *testing.T) {
-	table := database.DataTable{PageID: 1578318193674424300}
-	has, err := database.GetModel(&table)
+	// table := database.DataTable{PageID: 1578323968463474688}
+	// ts := database.DataTable{}
+	result, err := database.Query("SELECT * FROM data_tables where page_id = 1578318193674424320")
 	if err != nil {
 		log.Println("-----Error----", err)
 		return
 	}
-	if !has {
-		log.Println("--NotExists-------")
-		return
+	log.Printf("----len(%+v)------", len(result))
+	for _, l := range result {
+		for k, v := range l {
+			log.Printf("---%s--(%s)---", k, string(v))
+		}
 	}
-	log.Printf("----table--%+v----", table)
+
 }

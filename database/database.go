@@ -5,6 +5,7 @@ import (
 	"lemocoder/config"
 	"lemocoder/util"
 	"log"
+	"strings"
 	"sync"
 	"time"
 
@@ -85,10 +86,14 @@ func getSnowflakeNode() *snowflake.Node {
 	return snode
 }
 
-type IModel interface {
-	GenerateID() int64
+type IDitem interface {
 	ParseID() snowflake.ID
 	GetID() int64
+}
+
+type IModel interface {
+	GenerateID() int64
+	IDitem
 }
 
 type BaseModel struct {
@@ -117,6 +122,22 @@ func (b BaseModel) GetID() int64 {
 	return b.ID
 }
 
+func TableColToObj(t string) string {
+	tmp := (names.GonicMapper{}).Table2Obj(t)
+	replaceMap := map[string]string{"Id": "ID"}
+	for k, v := range replaceMap {
+		keyIndex := strings.Index(tmp, k)
+		lastIndex := len(tmp) - 2 // 搜索词在末尾
+		if k == "Id" && lastIndex == keyIndex {
+			tmp = strings.ReplaceAll(tmp, k, v)
+		}
+	}
+	return tmp
+}
+func ObjToTableCol(o string) string {
+	return (names.GonicMapper{}).Obj2Table(o)
+}
+
 func getAllTables() []interface{} {
 	return []interface{}{new(User), new(DataTable), new(Project), new(WebPage)}
 }
@@ -139,6 +160,14 @@ func GetModel(m IModel) (bool, error) {
 		logger.Error("Error for database.GetModel:", err)
 	}
 	return b, err
+}
+func Query(sqlOrArgs ...interface{}) (resultsSlice []map[string][]byte, err error) {
+	return getEngine().Query(sqlOrArgs...)
+}
+func Exec(sqlOrArgs ...interface{}) (int64, error) {
+	result, err := getEngine().Exec(sqlOrArgs...)
+	rowsNum, _ := result.RowsAffected()
+	return rowsNum, err
 }
 
 // GetModelWhere 添加复杂条件. 参数 m IModel 各属性必须为零值，否则查询条件会冲突

@@ -12,13 +12,42 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// PageID              int64                 `xorm:"notnull default(0) 'page_id'"`
+// Name, Title, Remark string                `xorm:"varchar(64) notnull"`
+// StructSchema        generator.TableSchema `xorm:"TEXT notnull"`
+// type TableSchema struct {
+// 	ItemDataTypeName, ItemsDataUrl, ItemUpdateUrl, ItemDeleteUrl, ItemCreateUrl, RowKey string
+// 	Items                                                                               []TableItemSchema
+// 	ItemOptions                                                                         []TableItemOptionSchema
+// 	ItemForms                                                                           []ModalFormSchema
+// 	ToolBarForms                                                                        []ModalFormSchema
+// 	BatchOptButtons                                                                     []BatchOptButtonSchema
+// }
+
+type FormTableSchema struct {
+	PageID              int64
+	Name, Title, Remark string
+	generator.TableSchema
+}
+
 func AddTable(c *gin.Context) {
 	table := database.DataTable{}
-	b := c.Bind(&table)
+	f := FormTableSchema{}
+	b := c.Bind(&f)
 	if b != nil {
 		ErrorArgs(c)
 		return
 	}
+	table.PageID = f.PageID
+	table.StructSchema.BatchOptButtons = f.BatchOptButtons
+	table.StructSchema.ItemDataTypeName = f.ItemDataTypeName
+	table.StructSchema.ItemDeleteUrl = f.ItemDeleteUrl
+	table.StructSchema.ItemOptions = f.ItemOptions
+	table.StructSchema.ItemUpdateUrl = f.ItemUpdateUrl
+	table.StructSchema.Items = f.Items
+	table.StructSchema.ItemsDataUrl = f.ItemsDataUrl
+	table.PageID = f.PageID
+	table.StructSchema.RowKey = f.RowKey
 	has, err := database.GetModelWhere(new(database.DataTable), "page_id = ?", table.PageID)
 	if err != nil {
 		ErrorServer(c, err)
@@ -40,7 +69,8 @@ func UpdateTable(c *gin.Context) {
 	table := database.DataTable{}
 	b := c.Bind(&table)
 	if b != nil {
-		ErrorArgs(c)
+		fmt.Println("error for Bind:", b)
+		ErrorArgs(c, b)
 		return
 	}
 	findModel := database.DataTable{}

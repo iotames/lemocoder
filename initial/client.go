@@ -22,6 +22,7 @@ func GetClientRoutes(routes ...ClientRoute) []ClientRoute {
 		{true, "/tabledemo", "./TableDemo", "数据表格示例", ""},
 		{true, "/codemaker", "./CodeMaker", "代码生成器", ""},
 		{true, "/excelspider", "./ExcelSpider", "Excel爬虫", ""},
+		{true, "/tableschema", "./TableSchema", "", ""},
 	}
 	r1 = append(r1, routes...)
 	r1 = append(r1, ClientRoute{true, "/", "", "", "/welcome"}, ClientRoute{true, "", "./404", "", ""})

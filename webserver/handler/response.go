@@ -78,8 +78,12 @@ func ErrorUserNotFound(c *gin.Context) {
 func ErrorNotFound(c *gin.Context) {
 	c.JSON(http.StatusOK, ResponseFail("无法找到请求对象", http.StatusNotFound))
 }
-func ErrorArgs(c *gin.Context) {
-	c.JSON(http.StatusOK, ResponseFail("请求参数错误saf", 400))
+func ErrorArgs(c *gin.Context, errs ...error) {
+	msg := "请求参数错误"
+	if len(errs) > 0 {
+		msg += "," + errs[0].Error()
+	}
+	c.JSON(http.StatusOK, ResponseFail(msg, 400))
 }
 func ErrorServer(c *gin.Context, err error) {
 	c.JSON(http.StatusOK, ResponseFail(fmt.Sprintf("服务器系统错误(%v)", err), 500))

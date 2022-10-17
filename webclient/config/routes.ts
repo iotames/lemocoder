@@ -10,6 +10,7 @@ export default [
     { layout: true,  path: '/excelspider',  name: 'Excel爬虫',  component: './ExcelSpider',   },
     { layout: true,  path: '/test',  name: 'test',  component: './Test',   },
     { layout: true,  path: '/',  name: '',   redirect: '/welcome',  },
+    { layout: true,  path: '/tableschema',  name: '',   component: './TableSchema',  },
     { layout: true,  name: '',  component: './404',   },
     
     // { path: '/', redirect: '/welcome' },

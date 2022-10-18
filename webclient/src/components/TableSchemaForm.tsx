@@ -81,11 +81,13 @@ export type TableSchema = {
 const TableSchemaForm = (props:{
   tableSchema: TableSchema, 
   formRef?: React.MutableRefObject<FormInstance<any> | undefined | null>,
+  setModalVisit?: React.Dispatch<React.SetStateAction<boolean>>,
   stepsFormRender?: (from: React.ReactNode, submitter: React.ReactNode) => React.ReactNode
 }) => {
   const tableSchema = props.tableSchema
   // const tableFormRef = useRef<ProFormInstance<TableSchema>>();
   const formRef = props.formRef
+  const setModalVisit = props.setModalVisit
   const stepsFormRender = props.stepsFormRender
   return (
     <>
@@ -93,6 +95,9 @@ const TableSchemaForm = (props:{
         onFinish={async (values) => {
         const resp = await postMsg("/api/user/table/add", values)
         if (resp.Code == 200) {
+          if (setModalVisit != undefined){
+            setModalVisit(false)
+          }
           return true;
         }
         return false;

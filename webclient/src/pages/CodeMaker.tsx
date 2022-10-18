@@ -155,6 +155,7 @@ const stepsFormRender = (dom: React.ReactNode, submitter: React.ReactNode) => {
     <Modal
       title="构建数据表格"
       width={600}
+      onOk={() => setTableFormVisit(false)}
       onCancel={() => setTableFormVisit(false)}
       visible={tableFormVisit}
       footer={submitter}
@@ -180,7 +181,7 @@ const stepsFormRender = (dom: React.ReactNode, submitter: React.ReactNode) => {
         description="创建Web后台项目. 包含前端和后端源码"
         onChange={()=>{history.push("/welcome")}}
       /> */}
-      <TableSchemaForm tableSchema={tableSchema} formRef={tableFormRef} stepsFormRender={stepsFormRender} />
+      <TableSchemaForm tableSchema={tableSchema} formRef={tableFormRef} setModalVisit={setTableFormVisit} stepsFormRender={stepsFormRender} />
 
       <ModalForm
         title="新建页面"

@@ -23,3 +23,11 @@ func getUserModel(c *gin.Context) database.User {
 	}
 	return u.(database.User)
 }
+
+func CheckArgs[T any](args T, c *gin.Context) error {
+	err := c.Bind(args)
+	if err != nil {
+		ErrorArgs(c, err)
+	}
+	return err
+}

@@ -80,9 +80,20 @@ func ErrorNotFound(c *gin.Context) {
 }
 func ErrorArgs(c *gin.Context, errs ...error) {
 	msg := "请求参数错误"
-	if len(errs) > 0 {
-		msg += "," + errs[0].Error()
+	for i, err := range errs {
+		if i == 0 {
+			msg += "("
+		}
+		msg += err.Error()
+		if i == len(errs)-1 {
+			msg += ")"
+		} else {
+			msg += ","
+		}
 	}
+	// if len(errs) > 0 {
+	// 	msg += "," + errs[0].Error()
+	// }
 	c.JSON(http.StatusOK, ResponseFail(msg, 400))
 }
 func ErrorServer(c *gin.Context, err error) {

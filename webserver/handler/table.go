@@ -2,6 +2,7 @@ package handler
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"lemocoder/database"
 	"lemocoder/generator"
@@ -25,30 +26,24 @@ import (
 // }
 
 type FormTableSchema struct {
-	PageID              int64
-	Name, Title, Remark string
+	ID, PageID, Name, Title, Remark string
 	generator.TableSchema
 }
 
 func AddTable(c *gin.Context) {
-	table := database.DataTable{}
 	f := FormTableSchema{}
-	b := c.Bind(&f)
-	if b != nil {
-		ErrorArgs(c)
+	berr := CheckArgs(&f, c)
+	if berr != nil {
 		return
 	}
-	table.PageID = f.PageID
-	table.StructSchema.BatchOptButtons = f.BatchOptButtons
-	table.StructSchema.ItemDataTypeName = f.ItemDataTypeName
-	table.StructSchema.ItemDeleteUrl = f.ItemDeleteUrl
-	table.StructSchema.ItemOptions = f.ItemOptions
-	table.StructSchema.ItemUpdateUrl = f.ItemUpdateUrl
-	table.StructSchema.Items = f.Items
-	table.StructSchema.ItemsDataUrl = f.ItemsDataUrl
-	table.PageID = f.PageID
-	table.StructSchema.RowKey = f.RowKey
-	has, err := database.GetModelWhere(new(database.DataTable), "page_id = ?", table.PageID)
+	if f.PageID == "" {
+		ErrorArgs(c, errors.New("PageID不能为空"))
+		return
+	}
+	pageID, _ := strconv.ParseInt(f.PageID, 10, 64)
+	table := database.DataTable{}
+	has, err := database.GetModelWhere(&table, "page_id = ?", pageID)
+	fmt.Printf("\n--has(%+v)---err(%+v)---\n", has, err)
 	if err != nil {
 		ErrorServer(c, err)
 		return
@@ -57,6 +52,18 @@ func AddTable(c *gin.Context) {
 		c.JSON(http.StatusOK, ResponseFail("该页面已包含一个数据表格，请勿重复添加", http.StatusBadRequest))
 		return
 	}
+
+	fmt.Printf("\n----table.SetStructSchema(%+v)--\n", table.StructSchema)
+	err = setTableSchema(f, &table)
+	if err != nil {
+		ErrorServer(c, err)
+		return
+	}
+	fmt.Printf("\n----table.SetStructSchema(%+v)--\n", table.StructSchema)
+	table.PageID = pageID
+	table.Name = f.Name
+	table.Title = f.Title
+	table.Remark = f.Remark
 	_, err = database.CreateModel(&table)
 	if err != nil {
 		ErrorServer(c, err)
@@ -66,16 +73,18 @@ func AddTable(c *gin.Context) {
 }
 
 func UpdateTable(c *gin.Context) {
-	table := database.DataTable{}
-	b := c.Bind(&table)
-	if b != nil {
-		fmt.Println("error for Bind:", b)
-		ErrorArgs(c, b)
+	f := FormTableSchema{}
+	berr := CheckArgs(&f, c)
+	if berr != nil {
 		return
 	}
-	findModel := database.DataTable{}
-	findModel.ID = table.ID
-	has, err := database.GetModel(&findModel)
+	if f.ID == "" {
+		ErrorArgs(c, errors.New("ID不能为空"))
+		return
+	}
+	model := database.DataTable{}
+	model.ID, _ = strconv.ParseInt(f.ID, 10, 64)
+	has, err := database.GetModel(&model)
 	if err != nil {
 		ErrorServer(c, err)
 		return
@@ -84,12 +93,32 @@ func UpdateTable(c *gin.Context) {
 		ErrorNotFound(c)
 		return
 	}
-	_, err = database.UpdateModel(&table, nil)
+	setTableSchema(f, &model)
+	model.Name = f.Name
+	model.Title = f.Title
+	model.Remark = f.Remark
+	_, err = database.UpdateModel(&model, nil)
 	if err != nil {
 		ErrorServer(c, err)
 		return
 	}
 	c.JSON(http.StatusOK, ResponseOk("提交成功"))
+}
+
+func setTableSchema(f FormTableSchema, table *database.DataTable) error {
+	ts, err := table.GetStructSchema()
+	if err != nil {
+		return err
+	}
+	ts.BatchOptButtons = f.BatchOptButtons
+	ts.ItemDataTypeName = f.ItemDataTypeName
+	ts.ItemDeleteUrl = f.ItemDeleteUrl
+	ts.ItemOptions = f.ItemOptions
+	ts.ItemUpdateUrl = f.ItemUpdateUrl
+	ts.Items = f.Items
+	ts.ItemsDataUrl = f.ItemsDataUrl
+	ts.RowKey = f.RowKey
+	return table.SetStructSchema(ts)
 }
 
 func GetTable(c *gin.Context) {

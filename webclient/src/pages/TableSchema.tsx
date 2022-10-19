@@ -36,7 +36,6 @@ export default () => {
   console.log(initDt)
   }
   const queryArgs = history.location.query
-//   await refresh(queryArgs.page_id);
   useEffect(() => {
     if (queryArgs.page_id != undefined) {
         // console.log(queryArgs.page_id)

@@ -109,10 +109,10 @@ const TableSchemaForm = (props:{
         <StepsForm.StepForm name="base" title="基础设置" initialValues={tableSchema?.StructSchema} >
             <ProFormText name="PageID" hidden initialValue={tableSchema?.PageID} />
             <ProFormText name="RowKey" hidden initialValue={tableSchema?.StructSchema.RowKey}  />
-            <ProFormText name="ItemDataTypeName" label="数据结构名" placeholder="ProductItem" rules={[{ required: true }]} /> 
-            <ProFormText name="ItemsDataUrl" label="数据源" placeholder="/api/table/demodata" rules={[{ required: true }]} />
-            <ProFormText name="ItemUpdateUrl" label="更新地址" placeholder="/api/demo/post" />
-            <ProFormText name="ItemDeleteUrl" label="删除地址" placeholder="/api/demo/post" /> 
+            <ProFormText name="ItemDataTypeName" value={tableSchema?.StructSchema.ItemDataTypeName} label="数据结构名" placeholder="ProductItem" rules={[{ required: true }]} /> 
+            <ProFormText name="ItemsDataUrl" value={tableSchema?.StructSchema.ItemsDataUrl} label="数据源" placeholder="/api/table/demodata" rules={[{ required: true }]} />
+            <ProFormText name="ItemUpdateUrl" value={tableSchema?.StructSchema.ItemUpdateUrl} label="更新地址" placeholder="/api/demo/post" />
+            <ProFormText name="ItemDeleteUrl" value={tableSchema?.StructSchema.ItemDeleteUrl} label="删除地址" placeholder="/api/demo/post" /> 
         </StepsForm.StepForm>
 
         <StepsForm.StepForm name="items" title="数据字段" initialValues={tableSchema?.StructSchema}>
@@ -173,8 +173,6 @@ const TableSchemaForm = (props:{
         </StepsForm.StepForm>
 
       </StepsForm>
-
-
     </>
   );
 }

@@ -46,13 +46,16 @@ func setRouters(g *gin.Engine) {
 	local.POST("/upload", handler.UploadFile)
 	local.POST("/excelspider", handler.ExcelSpider)
 
-	user := api.Group("/user")
-	user.Use(prepare.HandlerJWT())
-	user.POST("/page/add", handler.AddWebPage)
-	user.GET("/pages", handler.GetWebPages)
-	user.GET("/table/get", handler.GetTable)
-	user.POST("/table/add", handler.AddTable)
-	user.POST("/table/update", handler.UpdateTable)
+	auth := api.Group("")
+	auth.Use(prepare.HandlerJWT())
+
+	auth.POST("/coder/page/add", handler.AddWebPage)
+	auth.GET("/coder/pages", handler.GetWebPages)
+	auth.GET("/coder/table/get", handler.GetTable)
+	auth.POST("/coder/table/add", handler.AddTable)
+	auth.POST("/coder/table/update", handler.UpdateTable)
+
+	user := auth.Group("/user")
 	user.GET("/info", handler.GetUserInfo)
 	user.POST("/logout", handler.Logout)
 	user.GET("menu", handler.GetClientMenu)

@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"lemocoder/database"
-	"lemocoder/generator"
+	"lemocoder/model"
 	"log"
 	"net/http"
 	"strconv"
@@ -13,21 +13,9 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// PageID              int64                 `xorm:"notnull default(0) 'page_id'"`
-// Name, Title, Remark string                `xorm:"varchar(64) notnull"`
-// StructSchema        generator.TableSchema `xorm:"TEXT notnull"`
-// type TableSchema struct {
-// 	ItemDataTypeName, ItemsDataUrl, ItemUpdateUrl, ItemDeleteUrl, ItemCreateUrl, RowKey string
-// 	Items                                                                               []TableItemSchema
-// 	ItemOptions                                                                         []TableItemOptionSchema
-// 	ItemForms                                                                           []ModalFormSchema
-// 	ToolBarForms                                                                        []ModalFormSchema
-// 	BatchOptButtons                                                                     []BatchOptButtonSchema
-// }
-
 type FormTableSchema struct {
 	ID, PageID, Name, Title, Remark string
-	generator.TableSchema
+	model.TableSchema
 }
 
 func AddTable(c *gin.Context) {
@@ -140,7 +128,7 @@ func GetTable(c *gin.Context) {
 	for k, v := range result[0] {
 		nk := database.TableColToObj(k)
 		if k == "struct_schema" {
-			vv := generator.TableSchema{}
+			vv := model.TableSchema{}
 			json.Unmarshal(v, &vv)
 
 			resp[nk] = vv

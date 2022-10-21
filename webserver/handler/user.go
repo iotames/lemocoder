@@ -32,12 +32,11 @@ func Logout(g *gin.Context) {
 }
 
 func GetClientMenu(c *gin.Context) {
-	items := []initial.ClientMenuItem{
-		{Path: "/welcome", Name: "首页"},
-		{Path: "/tabledemo", Name: "数据表格示例"},
-		{Path: "/codemaker", Name: "代码生成器"},
-		{Path: "/excelspider", Name: "Excel爬虫"},
-		{Path: "/test", Name: "测试"},
+	pages := make([]database.WebPage, 0)
+	database.GetAll(&pages, 1000, 1, "project_id = ?", 0)
+	var menu []initial.ClientMenuItem
+	for _, pg := range pages {
+		menu = append(menu, initial.ClientMenuItem{Path: pg.Path, Name: pg.Name})
 	}
-	c.JSON(200, ResponseItems(items))
+	c.JSON(200, ResponseItems(initial.GetClientMenu(menu...)))
 }

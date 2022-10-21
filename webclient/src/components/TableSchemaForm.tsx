@@ -93,7 +93,7 @@ const TableSchemaForm = (props:{
     <>
       <StepsForm
         onFinish={async (values) => {
-        const resp = await postMsg("/api/user/table/add", values)
+        const resp = await postMsg("/api/coder/table/add", values)
         if (resp.Code == 200) {
           if (setModalVisit != undefined){
             setModalVisit(false)

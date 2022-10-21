@@ -4,6 +4,7 @@ import (
 	"lemocoder/config"
 	"lemocoder/database"
 	gen "lemocoder/generator"
+	"lemocoder/model"
 	"lemocoder/util"
 
 	"net/http"
@@ -112,50 +113,50 @@ func databaseInit(conf ClientConfig) error {
 }
 
 func CreateCode(c *gin.Context) {
-	fields := []gen.FormFieldSchema{
-		{Group: []gen.FormFieldSchema{
+	fields := []model.FormFieldSchema{
+		{Group: []model.FormFieldSchema{
 			{Component: "ProFormSelect", Name: "useMode", Label: "生效方式"},
 			{Component: "ProFormDateRangePicker", Name: "contractTime", Label: "有效期"},
 		}},
 		{Name: "name", Label: "客户名称", Component: "ProFormText"},
 		{Name: "company", Label: "我方公司名称", Component: "ProFormText"},
 	}
-	rowFormFields := []gen.FormFieldSchema{
+	rowFormFields := []model.FormFieldSchema{
 		{Name: "id", Label: "ID", Component: "ProFormText"},
 		{Name: "title", Label: "Title", Component: "ProFormText"},
 	}
-	createForm := gen.ModalFormSchema{
+	createForm := model.ModalFormSchema{
 		Key:    "create",
-		Button: gen.ButtonSchema{Type: "primary", Title: "创建"},
-		Form:   gen.FormSchema{Title: "添加数据", SubmitUrl: "/api/demo/post", FormFields: fields},
+		Button: model.ButtonSchema{Type: "primary", Title: "创建"},
+		Form:   model.FormSchema{Title: "添加数据", SubmitUrl: "/api/demo/post", FormFields: fields},
 	}
-	editForm := gen.ModalFormSchema{
+	editForm := model.ModalFormSchema{
 		Key:  "editform1",
-		Form: gen.FormSchema{Title: "编辑数据", SubmitUrl: "/api/demo/post", FormFields: rowFormFields},
+		Form: model.FormSchema{Title: "编辑数据", SubmitUrl: "/api/demo/post", FormFields: rowFormFields},
 	}
-	t := gen.TableSchema{
+	t := model.TableSchema{
 		ItemDataTypeName: "TestTableItem",
 		ItemsDataUrl:     "/api/table/demodata",
 		ItemUpdateUrl:    "/api/demo/post",
 		ItemCreateUrl:    "/api/demo/post",
 		ItemDeleteUrl:    "/api/demo/post",
 		RowKey:           "id",
-		Items: []gen.TableItemSchema{
+		Items: []model.TableItemSchema{
 			{DataName: "id", Title: "ID", ColSize: 0.7, Copyable: true, DataType: "number"},
 			{DataName: "title", Title: "标题", ColSize: 1, Editable: true, Copyable: true, DataType: "string", Search: true},
 			{DataName: "created_at", Title: "创建时间", ValueType: "dateTime", Sorter: true, DataType: "string"},
 		},
-		ItemOptions: []gen.TableItemOptionSchema{
+		ItemOptions: []model.TableItemOptionSchema{
 			{Key: "edit", Title: "行编辑", Type: "edit"},
 			{Key: "editform1", Title: "表单编辑", Type: "form"},
 			{Key: "post1", Title: "标记", Type: "action", Url: "/api/demo/post"},
 			{Key: "ret", Title: "跳转", Type: "redirect", Url: "/welcome"},
 		},
-		ItemForms:       []gen.ModalFormSchema{editForm},
-		ToolBarForms:    []gen.ModalFormSchema{createForm},
-		BatchOptButtons: []gen.BatchOptButtonSchema{{Title: "批量操作A", Url: "/api/demo/post"}, {Title: "批量操作B", Url: "/api/demo/post"}},
+		ItemForms:       []model.ModalFormSchema{editForm},
+		ToolBarForms:    []model.ModalFormSchema{createForm},
+		BatchOptButtons: []model.BatchOptButtonSchema{{Title: "批量操作A", Url: "/api/demo/post"}, {Title: "批量操作B", Url: "/api/demo/post"}},
 	}
-	err := t.Create()
+	err := gen.CreateTableClient(t, database.WebPage{Component: "Test", Path: "/test", Name: "测试菜单1"})
 	if err != nil {
 		logger := util.GetLogger()
 		logger.Error("Error for CreateCode:", err)

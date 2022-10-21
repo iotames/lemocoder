@@ -29,11 +29,14 @@ func GetClientRoutes(routes ...ClientRoute) []ClientRoute {
 	return r1
 }
 
-// export default [
-//     <%{range .Routes}%>
-//     { layout: <%{.Layout}%>, path: '<%{.Path}%>', name: '<%{.Name}%>', component: '<%{.Component}%>', },
-//     <%{end}%>
-//     // { path:"/test", name:"test", component:"./Test"},
-//     { path: '/', redirect: '/welcome' },
-//     { component: './404' },
-// ];
+func GetClientMenu(menu ...ClientMenuItem) []ClientMenuItem {
+	initMenu := []ClientMenuItem{
+		{Path: "/welcome", Name: "首页"},
+		{Path: "/tabledemo", Name: "数据表格示例"},
+		{Path: "/codemaker", Name: "代码生成器"},
+		{Path: "/excelspider", Name: "Excel爬虫"},
+		{Path: "/test", Name: "测试1"},
+	}
+	initMenu = append(initMenu, menu...)
+	return initMenu
+}

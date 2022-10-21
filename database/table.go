@@ -2,7 +2,7 @@ package database
 
 import (
 	"encoding/json"
-	"lemocoder/generator"
+	"lemocoder/model"
 	// 	"fmt"
 	// 	"lemocoder/util"
 	// 	"log"
@@ -17,16 +17,16 @@ type DataTable struct {
 	StructSchema        string `xorm:"TEXT notnull"`
 }
 
-func (d DataTable) GetStructSchema() (generator.TableSchema, error) {
+func (d DataTable) GetStructSchema() (model.TableSchema, error) {
 	var err error
-	ts := generator.TableSchema{}
+	ts := model.TableSchema{}
 	if d.StructSchema != "" {
 		err = json.Unmarshal([]byte(d.StructSchema), &ts)
 	}
 	return ts, err
 }
 
-func (d *DataTable) SetStructSchema(ts generator.TableSchema) error {
+func (d *DataTable) SetStructSchema(ts model.TableSchema) error {
 	b, err := json.Marshal(ts)
 	d.StructSchema = string(b)
 	return err

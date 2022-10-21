@@ -21,7 +21,7 @@ export default () => {
   const [tableSchema, setTableSchema] = useState<TableSchema>();
   const tableFormRef = useRef<ProFormInstance<TableSchema>>();
   const refresh = async (pageID: string) => {
-    const resp = await get<{Code: number; Msg: string; Data: TableSchema}>("/api/user/table/get", {"page_id": pageID})
+    const resp = await get<{Code: number; Msg: string; Data: TableSchema}>("/api/coder/table/get", {"page_id": pageID})
   if (resp.Code == 500){
     await message.error(resp.Msg)
     return

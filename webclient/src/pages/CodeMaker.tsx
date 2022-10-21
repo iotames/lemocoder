@@ -101,7 +101,7 @@ const columns: ProColumns<PageItem>[] = [
 
           console.log(record)
           console.log(record.ID)
-          const resp = await get<{Code: number; Msg: string; Data: TableSchema}>("/api/user/table/get", {"page_id": record.ID})
+          const resp = await get<{Code: number; Msg: string; Data: TableSchema}>("/api/coder/table/get", {"page_id": record.ID})
           if (resp.Code == 500){
             await message.error(resp.Msg)
             return
@@ -188,7 +188,7 @@ const stepsFormRender = (dom: React.ReactNode, submitter: React.ReactNode) => {
         visible={pageFormVisit}
         // width={600}
         onFinish={async (values) => {
-          const resp = await postMsg("/api/user/page/add", values)
+          const resp = await postMsg("/api/coder/page/add", values)
           if (resp.Code == 200) {
             return true;
           }
@@ -243,7 +243,7 @@ const stepsFormRender = (dom: React.ReactNode, submitter: React.ReactNode) => {
         params.page = params.current
         params.limit = params.pageSize
         params.sort = sort
-        const resp = await getTableData<PageItem>("/api/user/pages", params)
+        const resp = await getTableData<PageItem>("/api/coder/pages", params)
         if (resp.Code != 200) {
           message.error(resp.Msg)
           return {success: false}

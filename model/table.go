@@ -1,4 +1,4 @@
-package generator
+package model
 
 type TableItemSchema struct {
 	Width, Order                                                            int64

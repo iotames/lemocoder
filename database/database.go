@@ -206,3 +206,11 @@ func UpdateModel(m IModel, dt map[string]interface{}) (int64, error) {
 	}
 	return getEngine().Table(m).ID(modelID).Update(dt)
 }
+
+func DeleteModel(m IModel) (int64, error) {
+	return getEngine().Delete(m)
+}
+
+func NewSession() *xorm.Session {
+	return getEngine().NewSession()
+}

@@ -68,12 +68,13 @@ const columns: ProColumns<PageItem>[] = [
     formItemProps: {rules: [{required: true,message: '此项为必填项',},],}
   },
 
-  {
-    title: '备注',
-    dataIndex: 'Remark',
-    ellipsis: true,
-    // colSize: 1,
-  },
+  // {
+  //   title: '备注',
+  //   dataIndex: 'Remark',
+  //   ellipsis: true,
+  //   // colSize: 1,
+  // },
+
   {
     title: '创建时间',
     editable:false,
@@ -213,11 +214,12 @@ const stepsFormRender = (dom: React.ReactNode, submitter: React.ReactNode) => {
         <ProFormText width="sm" name="path" label="路径" rules={[{ required: true, message: '此项必填' }]} placeholder="/products" />
         <ProFormText width="sm" name="component"  label="前端组件名" tooltip="前端组件文件名。英文, 大写字母开头. 例: Product 生成文件Product.tsx" rules={[{ required: true, message: '此项必填' }]} placeholder="Product" />
         </ProForm.Group>
+{/* 
         <ProForm.Group>
-          {/* <ProFormText name="title"  label="页面标题(选填)" /> */}
+          <ProFormText name="title"  label="页面标题(选填)" />
           <ProFormText name="remark"  label="备注(选填)" />
         </ProForm.Group>
-
+ */}
       </ModalForm>
 
 
@@ -259,7 +261,7 @@ const stepsFormRender = (dom: React.ReactNode, submitter: React.ReactNode) => {
         // editableKeys,
         // onChange: setEditableRowKeys,
         onSave: async (k, update, origin) => {await post("/api/demo/post", update)},
-        onDelete: async (k, row) => {await post("/api/demo/post", row)}
+        onDelete: async (k, row) => {await postMsg("/api/coder/page/delete", row)}
       }}
       columnsState={{
         persistenceKey: 'pro-table-singe-demos',

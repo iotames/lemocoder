@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"lemocoder/database"
 	"log"
 	"strconv"
@@ -32,6 +33,36 @@ func AddWebPage(c *gin.Context) {
 		msg = err.Error()
 	}
 	c.JSON(http.StatusOK, ResponseOk(msg))
+}
+
+func DeleteWebPage(c *gin.Context) {
+	data := PostData{}
+	b := c.Bind(&data)
+	if b != nil {
+		ErrorArgs(c)
+		return
+	}
+	m := new(database.WebPage)
+	m.ID = data.GetID()
+
+	// https://xorm.io/zh/docs/chapter-10/readme/
+	// ADD SESSION 添加事务
+	_, err := database.DeleteModel(m)
+	if err != nil {
+		ErrorServer(c, err)
+		return
+	}
+
+	mm := new(database.DataTable)
+	mm.PageID = m.ID
+	result, err := database.DeleteModel(mm)
+	if err != nil {
+		ErrorServer(c, err)
+		return
+	}
+	// ADD SESSION 添加事务
+
+	c.JSON(http.StatusOK, ResponseOk(fmt.Sprintf("删除成功%d", result)))
 }
 
 func GetWebPages(c *gin.Context) {

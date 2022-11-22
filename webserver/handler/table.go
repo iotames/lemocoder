@@ -5,7 +5,9 @@ import (
 	"errors"
 	"fmt"
 	"lemocoder/database"
+	gen "lemocoder/generator"
 	"lemocoder/model"
+	"lemocoder/util"
 	"log"
 	"net/http"
 	"strconv"
@@ -57,6 +59,41 @@ func AddTable(c *gin.Context) {
 		ErrorServer(c, err)
 		return
 	}
+
+	// 生成源代码文件 BEGIN
+	t, err := table.GetStructSchema()
+	if err != nil {
+		logger := util.GetLogger()
+		logger.Error("Error for GetStructSchema:", err)
+		c.JSON(200, ResponseFail(err.Error(), 500))
+		return
+	}
+
+	page := database.WebPage{}
+	page.ID = pageID
+	has, err = database.GetModel(&page)
+	if !has {
+		logger := util.GetLogger()
+		logger.Error("Error for CreateCode: Not Found WebPage: ", err)
+		c.JSON(200, ResponseFail(err.Error(), 500))
+		return
+	}
+	err = gen.CreateTableClient(t, page)
+	if err != nil {
+		logger := util.GetLogger()
+		logger.Error("Error for CreateTableClient:", err)
+		c.JSON(200, ResponseFail(err.Error(), 500))
+		return
+	}
+	err = gen.CreateTableServer(t, page)
+	if err != nil {
+		logger := util.GetLogger()
+		logger.Error("Error for CreateTableClient:", err)
+		c.JSON(200, ResponseFail(err.Error(), 500))
+		return
+	}
+	// 生成源代码文件 END
+
 	c.JSON(http.StatusOK, ResponseOk("提交成功"))
 }
 

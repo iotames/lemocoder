@@ -155,7 +155,7 @@ const stepsFormRender = (dom: React.ReactNode, submitter: React.ReactNode) => {
   return (
     <Modal
       title="构建数据表格"
-      width={600}
+      width={900}
       onOk={() => setTableFormVisit(false)}
       onCancel={() => setTableFormVisit(false)}
       visible={tableFormVisit}

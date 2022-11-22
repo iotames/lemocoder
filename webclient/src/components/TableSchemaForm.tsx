@@ -1,5 +1,4 @@
-import {ProFormSwitch, ProFormDigit, ProFormList, ProFormText, ProFormSelect, ProForm, StepsForm} from '@ant-design/pro-components';
-// import { Button, Typography, message, Modal, InputNumber, Input, Select } from 'antd';
+import {ProFormSwitch, ProFormDigit, ProFormList, ProFormText, ProFormSelect, ProForm, StepsForm, ProFormGroup} from '@ant-design/pro-components';
 import {post, postMsg, getTableData, postByBtn, get} from "@/services/api"
 import type { FormInstance, StepsProps } from 'antd';
 
@@ -117,14 +116,8 @@ const TableSchemaForm = (props:{
 
         <StepsForm.StepForm name="items" title="数据字段" initialValues={tableSchema?.StructSchema}>
           <ProFormList name="Items" creatorButtonProps={{creatorButtonText: '添加数据字段'}}>
-            <ProForm.Group>
-              {/* <Input name="DataName" placeholder="请输入字段名" required />
-              <Input name="Title" placeholder="请输入字段标题" required /> */}
-              <ProFormText name="DataName" placeholder="请输入字段名" label="字段名" rules={[{ required: true }]} /> 
-              <ProFormText name="Title" placeholder="请输入字段标题" label="字段标题" rules={[{ required: true }]} />
-            </ProForm.Group>
-            <ProForm.Group>
-              <ProFormSelect name="DataType" label="字段类型" initialValue="string" options={[
+            <ProFormGroup>
+            <ProFormSelect name="DataType" label="字段类型" initialValue="string" options={[
                 {value:"string", label:"字符串"},
                 {value:"int", label:"整型"},
                 {value:"float", label:"浮点型"}
@@ -132,43 +125,48 @@ const TableSchemaForm = (props:{
               <ProFormSelect name="ValueType" label="值的类型" tooltip="会生成不同的渲染器" initialValue="text" options={[
                 {value:"text", label:"纯文本"}
                 ]} rules={[{ required: true }]} />
-            </ProForm.Group>
-            <ProForm.Group>
-              <ProFormSwitch name="Sorter" label="允许排序" />
+              <ProFormText name="DataName" placeholder="字段名" label="字段名" rules={[{ required: true }]} width={120} tooltip="英文字母" /> 
+              <ProFormText name="Title" placeholder="字段标题" label="字段标题" rules={[{ required: true }]} width={120} tooltip="中英文均可" />
+              <ProFormDigit label="宽度(px)" min={0} max={300} name="Width" placeholder="像素宽度" width={90} tooltip="整数(默认0).范围:0~300" />
               <ProFormSwitch name="Editable" label="可编辑" />
+{/* 
+              <ProFormSwitch name="Sorter" label="允许排序" />
+              
               <ProFormSwitch name="Copyable" label="可复制" />
               <ProFormSwitch name="Ellipsis" label="省略过长内容" />
-            </ProForm.Group>
-            <ProForm.Group>
-              <ProFormDigit label="宽度(px)" min={0} max={300} name="Width" placeholder="请输入像素宽度" />
               <ProFormDigit label="权重" tooltip="查询表单中的权重，权重大排序靠前" min={0} max={300} name="Order" placeholder={"请输入权重"} />
-            </ProForm.Group>
+ */}
+
+            </ProFormGroup>
+
+            {/* <ProFormGroup></ProFormGroup> */}
+
           </ProFormList>
         </StepsForm.StepForm>
 
         <StepsForm.StepForm name="options" title="行数据操作" initialValues={tableSchema?.StructSchema}>
         <ProFormList name="ItemOptions" creatorButtonProps={{creatorButtonText: '添加行数据操作项'}}>
-          <ProForm.Group>
-            <ProFormText name="Title" label="操作标题" rules={[{ required: true }]} />
-            <ProFormText name="Key" label="操作名" rules={[{ required: true }]} />
-          </ProForm.Group>
-          <ProForm.Group>
+          <ProFormGroup>
             <ProFormSelect name="Type" label="操作类型" initialValue="action" options={[
-                {value:"edit", label:"快捷编辑"},
-                {value:"action", label:"标记数据"},
-                {value:"redirect", label:"路由跳转"},
-                {value:"form", label:"表单提交"}
-                ]} rules={[{ required: true }]} />
-            <ProFormText name="Url" label="API地址" />
-          </ProForm.Group>
+                  {value:"action", label:"POST数据"},
+                  {value:"redirect", label:"路由跳转"},
+                  {value:"form", label:"表单提交"},
+                  {value:"edit", label:"快捷编辑"},
+                  ]} rules={[{ required: true }]} />
+            <ProFormText name="Title" label="操作标题" rules={[{ required: true }]} width={90} />
+            <ProFormText name="Key" label="操作名" rules={[{ required: true }]} width={90} tooltip="英文" />
+            <ProFormText name="Url" label="地址" />
+
+          </ProFormGroup>
+
         </ProFormList>
         </StepsForm.StepForm>
         <StepsForm.StepForm name="batchOpts" title="批量数据操作" initialValues={tableSchema?.StructSchema}>
         <ProFormList name="BatchOptButtons" creatorButtonProps={{creatorButtonText: '添加批量数据操作项'}}>
-          <ProForm.Group>
+          <ProFormGroup>
               <ProFormText name="Title" label="操作标题" rules={[{ required: true }]} />
               <ProFormText name="Url" label="API地址" rules={[{ required: true }]} />
-          </ProForm.Group>
+          </ProFormGroup>
         </ProFormList>
         </StepsForm.StepForm>
 

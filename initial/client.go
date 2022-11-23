@@ -21,6 +21,7 @@ func GetClientRoutes(routes ...ClientRoute) []ClientRoute {
 		{true, "/welcome", "./Welcome", "Welcome", ""},
 		{true, "/tabledemo", "./TableDemo", "数据表格示例", ""},
 		{true, "/codemaker", "./CodeMaker", "代码生成器", ""},
+		{true, "/test", "./Test", "测试页面", ""},
 		{true, "/excelspider", "./ExcelSpider", "Excel爬虫", ""},
 		{true, "/tableschema", "./TableSchema", "", ""},
 	}

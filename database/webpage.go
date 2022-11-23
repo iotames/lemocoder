@@ -13,6 +13,7 @@ type WebPage struct {
 	ProjectID                            int64  `xorm:"notnull default(0) 'project_id'"`
 	PageType                             int    `xorm:"notnull default(0)"`
 	Name, Title, Remark, Path, Component string `xorm:"varchar(64) notnull"`
+	State                                bool   `xorm:"notnull default(0)"`
 }
 
 func (d WebPage) TableName() string {

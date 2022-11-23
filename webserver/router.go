@@ -55,6 +55,9 @@ func setRouters(g *gin.Engine) {
 	auth.GET("/coder/table/get", handler.GetTable)
 	auth.POST("/coder/table/add", handler.AddTable)
 	auth.POST("/coder/table/update", handler.UpdateTable)
+	auth.POST("/coder/table/createcode", handler.CreateTablePage)
+
+	// ADD CODE
 
 	user := auth.Group("/user")
 	user.GET("/info", handler.GetUserInfo)

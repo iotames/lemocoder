@@ -150,7 +150,10 @@ func CreateTables() {
 }
 
 func SyncTables() {
-	getEngine().Sync(getAllTables()...)
+	err := getEngine().Sync(getAllTables()...)
+	if err != nil {
+		panic(fmt.Errorf("error for database.SyncTables:%v", err))
+	}
 }
 
 func GetModel(m IModel) (bool, error) {

@@ -122,6 +122,7 @@ const columns: ProColumns<PageItem>[] = [
         }
         
       }}>构建</Button>,
+      <Button key="createcode" type="primary" onClick={async () => {await postMsg("/api/coder/table/createcode", {"PageID": record.ID})}}>创建代码</Button>,
 
       // <Button key="bttt" type='primary'  onClick={ async (e)=>{
       //   await postByBtn(e, "/api/demo/post", record)

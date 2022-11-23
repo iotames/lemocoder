@@ -59,41 +59,9 @@ func AddTable(c *gin.Context) {
 		ErrorServer(c, err)
 		return
 	}
-
-	// 生成源代码文件 BEGIN
-	t, err := table.GetStructSchema()
-	if err != nil {
-		logger := util.GetLogger()
-		logger.Error("Error for GetStructSchema:", err)
-		c.JSON(200, ResponseFail(err.Error(), 500))
-		return
-	}
-
 	page := database.WebPage{}
 	page.ID = pageID
-	has, err = database.GetModel(&page)
-	if !has {
-		logger := util.GetLogger()
-		logger.Error("Error for CreateCode: Not Found WebPage: ", err)
-		c.JSON(200, ResponseFail(err.Error(), 500))
-		return
-	}
-	err = gen.CreateTableClient(t, page)
-	if err != nil {
-		logger := util.GetLogger()
-		logger.Error("Error for CreateTableClient:", err)
-		c.JSON(200, ResponseFail(err.Error(), 500))
-		return
-	}
-	err = gen.CreateTableServer(t, page)
-	if err != nil {
-		logger := util.GetLogger()
-		logger.Error("Error for CreateTableClient:", err)
-		c.JSON(200, ResponseFail(err.Error(), 500))
-		return
-	}
-	// 生成源代码文件 END
-
+	database.UpdateModel(&page, map[string]interface{}{"state": 1})
 	c.JSON(http.StatusOK, ResponseOk("提交成功"))
 }
 
@@ -128,6 +96,65 @@ func UpdateTable(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, ResponseOk("提交成功"))
+}
+
+// 生成源代码文件
+func CreateTablePage(c *gin.Context) {
+	f := FormTableSchema{}
+	berr := CheckArgs(&f, c)
+	if berr != nil {
+		return
+	}
+	if f.PageID == "" {
+		ErrorArgs(c, errors.New("PageID不能为空"))
+		return
+	}
+	pageID, _ := strconv.ParseInt(f.PageID, 10, 64)
+	table := database.DataTable{}
+	has, err := database.GetModelWhere(&table, "page_id = ?", pageID)
+	if err != nil {
+		ErrorServer(c, err)
+		return
+	}
+	if !has {
+		c.JSON(http.StatusOK, ResponseFail("该页面不包含数据表格", http.StatusBadRequest))
+		return
+	}
+
+	// 生成源代码文件 BEGIN
+	t, err := table.GetStructSchema()
+	if err != nil {
+		logger := util.GetLogger()
+		logger.Error("Error for GetStructSchema:", err)
+		c.JSON(200, ResponseFail(err.Error(), 500))
+		return
+	}
+
+	page := database.WebPage{}
+	page.ID = pageID
+	has, err = database.GetModel(&page)
+	if !has {
+		logger := util.GetLogger()
+		logger.Error("Error for CreateCode: Not Found WebPage: ", err)
+		c.JSON(200, ResponseFail(err.Error(), 500))
+		return
+	}
+	err = gen.CreateTableClient(t, page)
+	if err != nil {
+		logger := util.GetLogger()
+		logger.Error("Error for CreateTableClient:", err)
+		c.JSON(200, ResponseFail(err.Error(), 500))
+		return
+	}
+	err = gen.CreateTableServer(t, page)
+	if err != nil {
+		logger := util.GetLogger()
+		logger.Error("Error for CreateTableClient:", err)
+		c.JSON(200, ResponseFail(err.Error(), 500))
+		return
+	}
+	// 生成源代码文件 END
+	c.JSON(http.StatusOK, ResponseOk("创建代码成功"))
 }
 
 func setTableSchema(f FormTableSchema, table *database.DataTable) error {

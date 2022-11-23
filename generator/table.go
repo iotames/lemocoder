@@ -17,7 +17,7 @@ func CreateTableClient(t model.TableSchema, p database.WebPage) error {
 	}
 	pages := make([]database.WebPage, 0)
 	// 获取所有页面
-	database.GetAll(&pages, 1000, 1, "project_id = ?", 0)
+	database.GetAll(&pages, 1000, 1, "project_id = ? AND state = ?", 0, 1)
 
 	// 重建客户端路由数据
 	var rts []initial.ClientRoute

@@ -22,6 +22,9 @@ func CreateTableClient(t model.TableSchema, p database.WebPage) error {
 	// 重建客户端路由数据
 	var rts []initial.ClientRoute
 	addRoute := true
+	if p.Path == "/test" {
+		addRoute = false
+	}
 	for _, page := range pages {
 		rts = append(rts, initial.ClientRoute{Name: page.Name, Path: page.Path, Component: "./" + page.Component, Layout: true})
 		if page.Path == p.Path {

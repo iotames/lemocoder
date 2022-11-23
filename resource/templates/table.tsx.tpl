@@ -11,7 +11,7 @@ import {postMsg, getTableData, postByBtn} from "@/services/api"
 import { history } from 'umi';
 
 type <%{.ItemDataTypeName}%> = {
-    <%{range .Items}%> <%{.DataName}%>: <%{.DataType}%>; <%{end}%>
+    <%{range .Items}%> <%{.DataName}%>: <%{.DataType | getDataTypeForJS}%>; <%{end}%>
 //  labels: {name: string; color: string;}[]; number
 };
 

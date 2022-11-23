@@ -144,6 +144,8 @@ func CreateCode(c *gin.Context) {
 		Items: []model.TableItemSchema{
 			{DataName: "id", Title: "ID", ColSize: 0.7, Copyable: true, DataType: "number"},
 			{DataName: "title", Title: "标题", ColSize: 1, Editable: true, Copyable: true, DataType: "string", Search: true},
+			{DataName: "price", Title: "价格", ColSize: 1, Editable: true, Copyable: true, DataType: "float", Search: true},
+			{DataName: "inventory", Title: "库存", ColSize: 1, Editable: true, Copyable: true, DataType: "int", Search: true},
 			{DataName: "created_at", Title: "创建时间", ValueType: "dateTime", Sorter: true, DataType: "string"},
 		},
 		ItemOptions: []model.TableItemOptionSchema{

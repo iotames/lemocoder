@@ -11,7 +11,7 @@ import {postMsg, getTableData, postByBtn} from "@/services/api"
 import { history } from 'umi';
 
 type TestTableItem = {
-     id: number;  title: string;  created_at: string; 
+     id: number;  title: string;  price: number;  inventory: number;  created_at: string; 
 //  labels: {name: string; color: string;}[]; number
 };
 
@@ -88,6 +88,28 @@ export default () => {
       
       {
         title: "标题",dataIndex: "title",copyable: true,colSize: 1,
+      
+      
+      // search: { transform: (value: any) => any }
+      
+      
+        // filters,
+        // renderText, (text: any,record: T,index: number,action: UseFetchDataAction<T>) => string
+      },
+      
+      {
+        title: "价格",dataIndex: "price",copyable: true,colSize: 1,
+      
+      
+      // search: { transform: (value: any) => any }
+      
+      
+        // filters,
+        // renderText, (text: any,record: T,index: number,action: UseFetchDataAction<T>) => string
+      },
+      
+      {
+        title: "库存",dataIndex: "inventory",copyable: true,colSize: 1,
       
       
       // search: { transform: (value: any) => any }

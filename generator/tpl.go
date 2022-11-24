@@ -30,3 +30,12 @@ func CreateFile(targetFilepath, tplFilepath string, data interface{}) error {
 	f.Close()
 	return nil
 }
+
+// SetContentByTpl
+func SetContentByTplText(tplText string, data interface{}, wr io.Writer) error {
+	t, err := newTpl("tplParse").Parse(tplText)
+	if err != nil {
+		return err
+	}
+	return t.Execute(wr, data)
+}

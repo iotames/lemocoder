@@ -39,10 +39,25 @@ func CreateTableClient(t model.TableSchema, p database.WebPage) error {
 	dt1 := map[string]interface{}{"Routes": routes}
 
 	// 重建routes.ts客户端路由文件
-	return CreateFile(config.ClientConfigDir+"/routes.ts", config.TplDirPath+"/routes.ts.tpl", dt1)
+	return CreateFile(config.ClientRoutesPath, config.TplDirPath+"/routes.ts.tpl", dt1)
 }
 
 // CreateTableServer 创建服务端源码文件
-func CreateTableServer(t model.TableSchema, p database.WebPage) error {
-	return nil
+func CreateTableServer(t model.TableSchema) error {
+	// 创建服务端API源码文件
+
+	// 重建服务端路由文件 routesadd.go
+	var apiRoutes []model.ApiRoute
+	// type: edit,action,form,redirect
+	for _, opt := range t.ItemOptions {
+		// TODO
+		if opt.Type == "edit" {
+
+		}
+		if opt.Type == "action" {
+
+		}
+	}
+
+	return AddApiRoutes(apiRoutes)
 }

@@ -158,10 +158,18 @@ func CreateCode(c *gin.Context) {
 		ToolBarForms:    []model.ModalFormSchema{createForm},
 		BatchOptButtons: []model.BatchOptButtonSchema{{Title: "批量操作A", Url: "/api/demo/post"}, {Title: "批量操作B", Url: "/api/demo/post"}},
 	}
-	err := gen.CreateTableClient(t, database.WebPage{Component: "Test", Path: "/test", Name: "测试菜单1"})
+	webpage := database.WebPage{Component: "Test", Path: "/test", Name: "测试菜单1"}
+	err := gen.CreateTableClient(t, webpage)
 	if err != nil {
 		logger := util.GetLogger()
-		logger.Error("Error for CreateCode:", err)
+		logger.Error("Error for CreateTableClient:", err)
+		c.JSON(200, ResponseFail(err.Error(), 500))
+		return
+	}
+	err = gen.CreateTableServer(t)
+	if err != nil {
+		logger := util.GetLogger()
+		logger.Error("Error for CreateTableServer:", err)
 		c.JSON(200, ResponseFail(err.Error(), 500))
 		return
 	}

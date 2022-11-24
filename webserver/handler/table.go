@@ -59,9 +59,7 @@ func AddTable(c *gin.Context) {
 		ErrorServer(c, err)
 		return
 	}
-	page := database.WebPage{}
-	page.ID = pageID
-	database.UpdateModel(&page, map[string]interface{}{"state": 1})
+
 	c.JSON(http.StatusOK, ResponseOk("提交成功"))
 }
 
@@ -146,7 +144,7 @@ func CreateTablePage(c *gin.Context) {
 		c.JSON(200, ResponseFail(err.Error(), 500))
 		return
 	}
-	err = gen.CreateTableServer(t, page)
+	err = gen.CreateTableServer(t)
 	if err != nil {
 		logger := util.GetLogger()
 		logger.Error("Error for CreateTableClient:", err)
@@ -154,6 +152,8 @@ func CreateTablePage(c *gin.Context) {
 		return
 	}
 	// 生成源代码文件 END
+
+	database.UpdateModel(&page, map[string]interface{}{"state": 1})
 	c.JSON(http.StatusOK, ResponseOk("创建代码成功"))
 }
 

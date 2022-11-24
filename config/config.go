@@ -14,8 +14,9 @@ const ENV_DEV = "dev"
 
 const DEFAULT_WEB_SERVER_PORT = 8888
 const EnvFilepath = ".env"
+const ServerApiRoutesPath = "webserver/routesadd.go"
 const ClientSrcPagesDir = "webclient/src/pages"
-const ClientConfigDir = "webclient/config"
+const ClientRoutesPath = "webclient/config/routes.ts"
 const ClientFilepath = "resource/client/index.html"
 const TplDirPath = "resource/templates"
 const DRIVER_SQLITE3 = "sqlite3"

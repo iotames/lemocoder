@@ -54,11 +54,8 @@ export default () => {
     }}
   >
 
-  
-  <ProFormText name="id" label="ID"   placeholder="" />
-  
-  <ProFormText name="title" label="Title"   placeholder="" />
-  
+  <ProFormText name="id" label="ID" placeholder="" /><ProFormText name="title" label="Title" placeholder="" />
+
   </ModalForm>)
   
 

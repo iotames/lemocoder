@@ -3,11 +3,12 @@ package main
 import (
 	"bytes"
 	"lemocoder/database"
+	"lemocoder/generator"
+	"lemocoder/model"
 	"log"
 	"os"
 	"os/exec"
 	"testing"
-	"text/template"
 )
 
 func TestSnakName(t *testing.T) {
@@ -20,26 +21,34 @@ func TestSnakName(t *testing.T) {
 }
 
 func TestTemplate(t *testing.T) {
-	// faldskfal
-	type GameStatus struct {
-		Name  string
-		IsWin bool
+	apiRoutes := []model.ApiRoute{
+		{Method: "GET", Path: "/api/book/get", FuncName: "GetBook"},
+		{Method: "POST", Path: "/api/book/add", FuncName: "AddBook"},
 	}
-	// {{define "debug"}}
-	tpl := template.Must(template.ParseGlob("./resource/templates/debug.common.tpl"))
-	// t1, err := template.ParseFiles("./resource/templates/debug.tpl")
-	var userStatus = []GameStatus{
-		{"大春", true},
-		{"NiuBee", false},
-		{"球球", true},
+	err := generator.AddApiRoutes(apiRoutes)
+	if err != nil {
+		panic(err)
 	}
-	for _, u := range userStatus {
-		// err = t1.Execute(w, userStatus)
-		err := tpl.ExecuteTemplate(os.Stdout, "debug", u)
-		if err != nil {
-			log.Println("executing template:", err)
-		}
-	}
+
+	// // faldskfal
+	// type GameStatus struct {
+	// 	Name  string
+	// 	IsWin bool
+	// }
+	// // {{define "debug"}}
+	// tpl := template.Must(template.ParseGlob("./resource/templates/debug.common.tpl"))
+	// // t1, err := template.ParseFiles("./resource/templates/debug.tpl")
+	// var userStatus = []GameStatus{
+	// 	{"大春", true},
+	// 	{"NiuBee", false},
+	// 	{"球球", true},
+	// }
+	// for _, u := range userStatus {
+	// 	err := tpl.ExecuteTemplate(os.Stdout, "debug", u)
+	// 	if err != nil {
+	// 		log.Println("executing template:", err)
+	// 	}
+	// }
 }
 
 func TestEnv(t *testing.T) {

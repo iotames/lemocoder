@@ -27,17 +27,7 @@ const create = (<ModalForm
   }}
 >
 
-
-
-<ProForm.Group>
-<ProFormSelect name="useMode" label="生效方式"  request={async()=>[{value:"value1", label:"label1"},{value:"value2", label:"label2"}]} placeholder="" />
-<ProFormDateRangePicker name="contractTime" label="有效期"   placeholder="" />
-</ProForm.Group>
-
-
-<ProFormText name="name" label="客户名称"   placeholder="" />
-
-<ProFormText name="company" label="我方公司名称"   placeholder="" />
+<ProForm.Group><ProFormSelect name="useMode" label="生效方式" request={async()=>[{value:"value1", label:"label1"},{value:"value2", label:"label2"}]} placeholder="" /><ProFormDateRangePicker name="contractTime" label="有效期" placeholder="" /></ProForm.Group><ProFormText name="name" label="客户名称" placeholder="" /><ProFormText name="company" label="我方公司名称" placeholder="" />
 
 </ModalForm>)
 

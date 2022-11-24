@@ -27,13 +27,8 @@ const <%{.Key}%> = (<ModalForm
   }}
 >
 
-<%{range .Form.FormFields}%>
-<%{if eq (len .Group) 0}%><<%{.Component}%> name="<%{.Name}%>" label="<%{.Label}%>" <%{if ne .Width ""}%>width="<%{.Width}%>"<%{end}%> <%{if eq .Component "ProFormSelect"}%>request={async()=>[{value:"value1", label:"label1"},{value:"value2", label:"label2"}]}<%{end}%> placeholder="<%{.Placeholder}%>" /><%{else}%>
-<ProForm.Group><%{range .Group}%>
-<<%{.Component}%> name="<%{.Name}%>" label="<%{.Label}%>" <%{if ne .Width ""}%>width="<%{.Width}%>"<%{end}%> <%{if eq .Component "ProFormSelect"}%>request={async()=>[{value:"value1", label:"label1"},{value:"value2", label:"label2"}]}<%{end}%> placeholder="<%{.Placeholder}%>" /><%{end}%>
-</ProForm.Group>
-<%{end}%>
-<%{end}%>
+<%{ .Form.FormFields | getFormFieldsHtml }%>
+
 </ModalForm>)
 <%{end}%>
 
@@ -59,13 +54,8 @@ export default () => {
     }}
   >
 
-  <%{range .Form.FormFields}%>
-  <%{if eq (len .Group) 0}%><<%{.Component}%> name="<%{.Name}%>" label="<%{.Label}%>" <%{if ne .Width ""}%>width="<%{.Width}%>"<%{end}%> <%{if eq .Component "ProFormSelect"}%>request={async()=>[{value:"value1", label:"label1"},{value:"value2", label:"label2"}]}<%{end}%> placeholder="<%{.Placeholder}%>" /><%{else}%>
-  <ProForm.Group><%{range .Group}%>
-  <<%{.Component}%> name="<%{.Name}%>" label="<%{.Label}%>" <%{if ne .Width ""}%>width="<%{.Width}%>"<%{end}%> <%{if eq .Component "ProFormSelect"}%>request={async()=>[{value:"value1", label:"label1"},{value:"value2", label:"label2"}]}<%{end}%> placeholder="<%{.Placeholder}%>" /><%{end}%>
-  </ProForm.Group>
-  <%{end}%>
-  <%{end}%>
+  <%{ .Form.FormFields | getFormFieldsHtml }%>
+
   </ModalForm>)
   <%{end}%>
 

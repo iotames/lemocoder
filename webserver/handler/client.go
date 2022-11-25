@@ -142,7 +142,7 @@ func CreateCode(c *gin.Context) {
 		ItemDeleteUrl:    "/api/demo/post",
 		RowKey:           "id",
 		Items: []model.TableItemSchema{
-			{DataName: "id", Title: "ID", ColSize: 0.7, Copyable: true, DataType: "number"},
+			{DataName: "id", Title: "ID", ColSize: 0.7, Copyable: true, DataType: "int"},
 			{DataName: "title", Title: "标题", ColSize: 1, Editable: true, Copyable: true, DataType: "string", Search: true},
 			{DataName: "price", Title: "价格", ColSize: 1, Editable: true, Copyable: true, DataType: "float", Search: true},
 			{DataName: "inventory", Title: "库存", ColSize: 1, Editable: true, Copyable: true, DataType: "int", Search: true},

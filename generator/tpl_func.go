@@ -2,6 +2,7 @@ package generator
 
 import (
 	"fmt"
+	"lemocoder/database"
 	"lemocoder/model"
 	"lemocoder/util"
 	"os"
@@ -84,10 +85,52 @@ func parseFiles(filenames ...string) (*template.Template, error) {
 	return t, nil
 }
 
+func dbtype(t string) string {
+	result := "varchar(255)"
+	switch t {
+	case "float":
+		result = "FLOAT"
+		break
+	case "int":
+		result = "BIGINT"
+		break
+	case "text":
+		result = "TEXT"
+		break
+	}
+	return result
+}
+
+func dbdefault(t string) string {
+	result := ""
+	switch t {
+	case "float":
+		result = "default(0)"
+		break
+	case "int":
+		result = "default(0)"
+		break
+	}
+	return result
+}
+
+func gotype(t string) string {
+	switch t {
+	case "float":
+		t = "float64"
+		break
+	}
+	return t
+}
+
 func newTpl(name string) *template.Template {
 	tplFuncs := template.FuncMap{
 		"getDataTypeForJS":  getDataTypeForJS,
 		"getFormFieldsHtml": getFormFieldsHtml,
+		"toObjStr":          database.TableColToObj,
+		"dbtype":            dbtype,
+		"dbdefault":         dbdefault,
+		"gotype":            gotype,
 	}
 	return template.New(name).Funcs(tplFuncs).Delims("<%{", "}%>")
 }

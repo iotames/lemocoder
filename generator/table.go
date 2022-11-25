@@ -45,6 +45,7 @@ func CreateTableClient(t model.TableSchema, p database.WebPage) error {
 // CreateTableServer 创建服务端源码文件
 func CreateTableServer(t model.TableSchema) error {
 	// 创建服务端API源码文件
+	AddDbModel(t.Items, t.ItemDataTypeName)
 
 	// 重建服务端路由文件 routesadd.go
 	var apiRoutes []model.ApiRoute
@@ -58,6 +59,8 @@ func CreateTableServer(t model.TableSchema) error {
 
 		}
 	}
-
-	return AddApiRoutes(apiRoutes)
+	if len(apiRoutes) > 0 {
+		return AddApiRoutes(apiRoutes)
+	}
+	return nil
 }

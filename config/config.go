@@ -15,6 +15,7 @@ const ENV_DEV = "dev"
 const DEFAULT_WEB_SERVER_PORT = 8888
 const EnvFilepath = ".env"
 const ServerApiRoutesPath = "webserver/routesadd.go"
+const ServerTablesPath = "database/dbtables.go"
 const ClientSrcPagesDir = "webclient/src/pages"
 const ClientRoutesPath = "webclient/config/routes.ts"
 const ClientFilepath = "resource/client/index.html"

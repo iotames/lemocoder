@@ -1,13 +1,18 @@
 package generator
 
 import (
+	"bytes"
 	"fmt"
-
+	"io"
+	"lemocoder/config"
 	"lemocoder/model"
 	"lemocoder/util"
 	"os"
 	"strings"
 )
+
+// const commentStart = "// Code generated Begin; DO NOT EDIT."
+const commentEnd = "// Code generated End; DO NOT EDIT."
 
 func AddDbModel(fields []model.TableItemSchema, structName string) error {
 	j := 0
@@ -49,5 +54,30 @@ func (m <%{.StructName}%>) TableName() string {
 	if err != nil {
 		return err
 	}
-	return nil
+	return AddDbModelToTables(structName)
+}
+
+func AddDbModelToTables(structName string) error {
+	// 读取原文件内容
+	f, err := os.OpenFile(config.ServerTablesPath, os.O_RDONLY, 0755)
+	if err != nil {
+		return err
+	}
+	var before []byte
+	before, err = io.ReadAll(f)
+	if err != nil {
+		return err
+	}
+	f.Close()
+	replactstr := fmt.Sprintf(`    new(%s),
+	`+commentEnd, structName)
+	replaceBytes := []byte(replactstr)
+
+	// 写入变更后的内容
+	f, err = os.OpenFile(config.ServerApiRoutesPath, os.O_WRONLY|os.O_TRUNC, 0755)
+	if err != nil {
+		return err
+	}
+	f.Write(bytes.Replace(before, []byte(commentEnd), replaceBytes, 1))
+	return f.Close()
 }

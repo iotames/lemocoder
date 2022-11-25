@@ -138,10 +138,6 @@ func ObjToTableCol(o string) string {
 	return (names.GonicMapper{}).Obj2Table(o)
 }
 
-func getAllTables() []interface{} {
-	return []interface{}{new(User), new(DataTable), new(Project), new(WebPage)}
-}
-
 func CreateTables() {
 	err := getEngine().CreateTables(getAllTables()...)
 	if err != nil {

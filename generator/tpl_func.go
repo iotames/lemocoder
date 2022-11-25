@@ -90,13 +90,11 @@ func dbtype(t string) string {
 	switch t {
 	case "float":
 		result = "FLOAT"
-		break
 	case "int":
 		result = "BIGINT"
-		break
+
 	case "text":
 		result = "TEXT"
-		break
 	}
 	return result
 }
@@ -106,10 +104,8 @@ func dbdefault(t string) string {
 	switch t {
 	case "float":
 		result = "default(0)"
-		break
 	case "int":
 		result = "default(0)"
-		break
 	}
 	return result
 }
@@ -118,7 +114,6 @@ func gotype(t string) string {
 	switch t {
 	case "float":
 		t = "float64"
-		break
 	}
 	return t
 }

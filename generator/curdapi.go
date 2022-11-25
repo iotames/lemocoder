@@ -74,7 +74,7 @@ func AddDbModelToTables(structName string) error {
 	replaceBytes := []byte(replactstr)
 
 	// 写入变更后的内容
-	f, err = os.OpenFile(config.ServerApiRoutesPath, os.O_WRONLY|os.O_TRUNC, 0755)
+	f, err = os.OpenFile(config.ServerTablesPath, os.O_WRONLY|os.O_TRUNC, 0755)
 	if err != nil {
 		return err
 	}

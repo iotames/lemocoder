@@ -3,16 +3,12 @@ package generator
 import (
 	"bytes"
 	"fmt"
-	"io"
 	"lemocoder/config"
 	"lemocoder/model"
 	"lemocoder/util"
 	"os"
 	"strings"
 )
-
-// const commentStart = "// Code generated Begin; DO NOT EDIT."
-const commentEnd = "// Code generated End; DO NOT EDIT."
 
 func AddDbModel(fields []model.TableItemSchema, structName string) error {
 	j := 0
@@ -58,26 +54,23 @@ func (m <%{.StructName}%>) TableName() string {
 }
 
 func AddDbModelToTables(structName string) error {
-	// 读取原文件内容
-	f, err := os.OpenFile(config.ServerTablesPath, os.O_RDONLY, 0755)
-	if err != nil {
-		return err
-	}
-	var before []byte
-	before, err = io.ReadAll(f)
-	if err != nil {
-		return err
-	}
-	f.Close()
-	replactstr := fmt.Sprintf(`    new(%s),
-	`+commentEnd, structName)
-	replaceBytes := []byte(replactstr)
+	addCode := fmt.Sprintf(`new(%s),
+		`, structName)
+	return AddCodeToFile(config.ServerTablesPath, addCode)
+}
 
-	// 写入变更后的内容
-	f, err = os.OpenFile(config.ServerTablesPath, os.O_WRONLY|os.O_TRUNC, 0755)
+func AddApiRoutes(apiRoutes []model.ApiRoute) error {
+	// 获取需要新增的内容
+	data := map[string]interface{}{
+		"Routes": apiRoutes,
+	}
+	var bf bytes.Buffer
+	tplText := `<%{range .Routes}%>
+	g.<%{.Method}%>("<%{.Path}%>", <%{.FuncName}%>)
+	<%{end}%>`
+	err := SetContentByTplText(tplText, data, &bf)
 	if err != nil {
 		return err
 	}
-	f.Write(bytes.Replace(before, []byte(commentEnd), replaceBytes, 1))
-	return f.Close()
+	return AddCodeToFile(config.ServerApiRoutesPath, bf.String())
 }

@@ -6,6 +6,7 @@ import (
 	"lemocoder/database"
 	"lemocoder/initial"
 	"lemocoder/model"
+	"strings"
 )
 
 // CreateTableClient 创建客户端源码文件
@@ -49,14 +50,36 @@ func CreateTableServer(t model.TableSchema) error {
 
 	// 重建服务端路由文件 routesadd.go
 	var apiRoutes []model.ApiRoute
+	apiPre := "/api"
+	if strings.Contains(t.ItemsDataUrl, apiPre) {
+		apiPath := strings.Replace(t.ItemsDataUrl, apiPre, "", 1)
+		apiRoutes = append(apiRoutes, model.ApiRoute{Method: "GET", Path: apiPath, FuncName: "Get" + t.ItemDataTypeName + "List"})
+	}
+	if strings.Contains(t.ItemCreateUrl, apiPre) {
+		apiPath := strings.Replace(t.ItemCreateUrl, apiPre, "", 1)
+		apiRoutes = append(apiRoutes, model.ApiRoute{Method: "POST", Path: apiPath, FuncName: "Create" + t.ItemDataTypeName})
+	}
+	if strings.Contains(t.ItemUpdateUrl, apiPre) {
+		apiPath := strings.Replace(t.ItemUpdateUrl, apiPre, "", 1)
+		apiRoutes = append(apiRoutes, model.ApiRoute{Method: "POST", Path: apiPath, FuncName: "Update" + t.ItemDataTypeName})
+	}
+	// if strings.Contains(t.ItemUpdateUrl, apiPre){
+	// 	apiPath := strings.Replace(t.ItemUpdateUrl, apiPre, "", 1)
+	// 	apiRoutes = append(apiRoutes, model.ApiRoute{Method: "GET", Path: apiPath, FuncName: "Get"+t.ItemDataTypeName})
+	// }
+	if strings.Contains(t.ItemDeleteUrl, apiPre) {
+		apiPath := strings.Replace(t.ItemDeleteUrl, apiPre, "", 1)
+		apiRoutes = append(apiRoutes, model.ApiRoute{Method: "POST", Path: apiPath, FuncName: "Delete" + t.ItemDataTypeName})
+	}
+
 	// type: edit,action,form,redirect
 	for _, opt := range t.ItemOptions {
 		// TODO
-		if opt.Type == "edit" {
-
-		}
 		if opt.Type == "action" {
-
+			if strings.Contains(opt.Url, apiPre) {
+				apiPath := strings.Replace(opt.Url, apiPre, "", 1)
+				apiRoutes = append(apiRoutes, model.ApiRoute{Method: "POST", Path: apiPath, FuncName: database.TableColToObj(opt.Key) + t.ItemDataTypeName})
+			}
 		}
 	}
 	if len(apiRoutes) > 0 {

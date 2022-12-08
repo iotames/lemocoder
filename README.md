@@ -75,6 +75,7 @@ go build
 ## WebClient 客户端
 
 ```
+# 进入客户端源码目录
 cd webclient
 # 下载依赖包
 yarn

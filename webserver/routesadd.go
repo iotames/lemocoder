@@ -5,5 +5,6 @@ import (
 )
 
 func addRoutes(g *gin.RouterGroup) {
-	// ADD ROUTES
+	// Code generated Begin; DO NOT EDIT.
+	// Code generated End; DO NOT EDIT.
 }

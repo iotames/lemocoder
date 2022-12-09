@@ -73,5 +73,5 @@ func CreateTableServer(t model.TableSchema) error {
 	}
 
 	// 创建CURD代码
-	return CreateCurdCode(routes)
+	return CreateCurdCode(routes, t)
 }

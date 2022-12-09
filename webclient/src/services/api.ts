@@ -28,7 +28,7 @@ export async function postMsg(url: string, body: {[key: string]: any}, options?:
   if (resp.Code == 200) {
     message.success(resp.Msg);
   }else{
-    message.error(resp.Msg);
+    message.error(resp.Msg, 15);
   }
   return resp
 }

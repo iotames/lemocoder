@@ -1,15 +1,35 @@
 package handler
 
 import (
+	"encoding/json"
 	"fmt"
+	"io"
 	"lemocoder/config"
 	"lemocoder/database"
+	"lemocoder/util"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
 
 type PostData map[string]interface{}
+
+func (p *PostData) ParseBody(body io.ReadCloser) error {
+	reqBodys, err := io.ReadAll(body)
+	if err != nil {
+		return err
+	}
+	return json.Unmarshal(reqBodys, p)
+}
+
+func (p PostData) ParseTo(result interface{}) error {
+	p["ID"] = p.GetID()
+	bts, err := json.Marshal(p)
+	if err != nil {
+		return err
+	}
+	return util.JsonDecodeUseNumber(bts, result)
+}
 
 func (p PostData) GetID() int64 {
 	id, ok := p["ID"]
@@ -51,8 +71,8 @@ func getUserModel(c *gin.Context) database.User {
 	return u.(database.User)
 }
 
-func CheckArgs[T any](args T, c *gin.Context) error {
-	err := c.Bind(args)
+func CheckBindArgs[T any](args T, c *gin.Context) error {
+	err := c.ShouldBind(args) // c.Bind(args)
 	if err != nil {
 		ErrorArgs(c, err)
 	}

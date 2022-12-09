@@ -261,7 +261,7 @@ const stepsFormRender = (dom: React.ReactNode, submitter: React.ReactNode) => {
         type: 'multiple',
         // editableKeys,
         // onChange: setEditableRowKeys,
-        onSave: async (k, update, origin) => {await post("/api/demo/post", update)},
+        onSave: async (k, update, origin) => {await postMsg("/api/coder/table/update", update)},
         onDelete: async (k, row) => {await postMsg("/api/coder/page/delete", row)}
       }}
       columnsState={{

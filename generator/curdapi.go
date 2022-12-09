@@ -97,7 +97,7 @@ func AddApiRoutes(apiRoutes []model.ApiRoute) (routes []model.ApiRoute, err erro
 }
 
 // CreateCurdCode 创建CURD代码
-func CreateCurdCode(routes []model.ApiRoute) error {
+func CreateCurdCode(routes []model.ApiRoute, schema model.TableSchema) error {
 	for _, route := range routes {
 		funcName := strings.Replace(route.FuncName, API_ROUTE_FUNC_PREFIX, "", 1)
 		fmt.Println(funcName)

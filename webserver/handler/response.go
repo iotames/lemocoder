@@ -51,6 +51,7 @@ func ResponseItems(items interface{}) interface{} {
 	}
 }
 
+// ItemsIDtoString 把列表数据的ID字段转为字符串类型，否则JS不支持长整型。会出错。
 func ItemsIDtoString[T database.IDitem](items []T) (string, error) {
 	b, err := json.Marshal(items)
 	if err != nil {

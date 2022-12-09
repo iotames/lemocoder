@@ -22,7 +22,7 @@ type FormTableSchema struct {
 
 func AddTable(c *gin.Context) {
 	f := FormTableSchema{}
-	berr := CheckArgs(&f, c)
+	berr := CheckBindArgs(&f, c)
 	if berr != nil {
 		return
 	}
@@ -65,7 +65,7 @@ func AddTable(c *gin.Context) {
 
 func UpdateTable(c *gin.Context) {
 	f := FormTableSchema{}
-	berr := CheckArgs(&f, c)
+	berr := CheckBindArgs(&f, c)
 	if berr != nil {
 		return
 	}
@@ -97,9 +97,9 @@ func UpdateTable(c *gin.Context) {
 }
 
 // 生成源代码文件
-func CreateTablePage(c *gin.Context) {
+func CreateTablePageCode(c *gin.Context) {
 	f := FormTableSchema{}
-	berr := CheckArgs(&f, c)
+	berr := CheckBindArgs(&f, c)
 	if berr != nil {
 		return
 	}

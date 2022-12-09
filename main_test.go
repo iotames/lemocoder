@@ -25,7 +25,7 @@ func TestTemplate(t *testing.T) {
 		{Method: "GET", Path: "/api/book/get", FuncName: "GetBook"},
 		{Method: "POST", Path: "/api/book/add", FuncName: "AddBook"},
 	}
-	err := generator.AddApiRoutes(apiRoutes)
+	_, err := generator.AddApiRoutes(apiRoutes)
 	if err != nil {
 		panic(err)
 	}

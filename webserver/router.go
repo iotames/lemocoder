@@ -39,7 +39,6 @@ func setRouters(g *gin.Engine) {
 	api.GET("/client/config", handler.GetClientConfig)
 	api.POST("/client/init", handler.ClientInit)
 	api.GET("/table/demodata", getTableDataDemo)
-	api.POST("/demo/post", handler.PostDemo)
 
 	local := api.Group("/local")
 	local.Use(localhostNetwork())

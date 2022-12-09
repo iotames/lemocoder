@@ -6,7 +6,6 @@ import (
 	"lemocoder/database"
 	"lemocoder/initial"
 	"lemocoder/model"
-	"strings"
 )
 
 // CreateTableClient 创建客户端源码文件
@@ -43,47 +42,36 @@ func CreateTableClient(t model.TableSchema, p database.WebPage) error {
 	return CreateFile(config.ClientRoutesPath, config.TplDirPath+"/routes.ts.tpl", dt1)
 }
 
-// CreateTableServer 创建服务端源码文件
+// CreateTableServer 创建服务端API源码文件
 func CreateTableServer(t model.TableSchema) error {
-	// 创建服务端API源码文件
-	AddDbModel(t.Items, t.ItemDataTypeName)
+	// 创建ORM数据表模型文件，并添加到数据列表中
+	err := AddDbModel(t.Items, t.ItemDataTypeName)
+	if err != nil {
+		return err
+	}
 
-	// 重建服务端路由文件 routesadd.go
-	var apiRoutes []model.ApiRoute
-	apiPre := "/api"
-	if strings.Contains(t.ItemsDataUrl, apiPre) {
-		apiPath := strings.Replace(t.ItemsDataUrl, apiPre, "", 1)
-		apiRoutes = append(apiRoutes, model.ApiRoute{Method: "GET", Path: apiPath, FuncName: "Get" + t.ItemDataTypeName + "List"})
-	}
-	if strings.Contains(t.ItemCreateUrl, apiPre) {
-		apiPath := strings.Replace(t.ItemCreateUrl, apiPre, "", 1)
-		apiRoutes = append(apiRoutes, model.ApiRoute{Method: "POST", Path: apiPath, FuncName: "Create" + t.ItemDataTypeName})
-	}
-	if strings.Contains(t.ItemUpdateUrl, apiPre) {
-		apiPath := strings.Replace(t.ItemUpdateUrl, apiPre, "", 1)
-		apiRoutes = append(apiRoutes, model.ApiRoute{Method: "POST", Path: apiPath, FuncName: "Update" + t.ItemDataTypeName})
-	}
-	// if strings.Contains(t.ItemUpdateUrl, apiPre){
-	// 	apiPath := strings.Replace(t.ItemUpdateUrl, apiPre, "", 1)
-	// 	apiRoutes = append(apiRoutes, model.ApiRoute{Method: "GET", Path: apiPath, FuncName: "Get"+t.ItemDataTypeName})
-	// }
-	if strings.Contains(t.ItemDeleteUrl, apiPre) {
-		apiPath := strings.Replace(t.ItemDeleteUrl, apiPre, "", 1)
-		apiRoutes = append(apiRoutes, model.ApiRoute{Method: "POST", Path: apiPath, FuncName: "Delete" + t.ItemDataTypeName})
+	apiRoutes := []model.ApiRoute{
+		// {Method: "GET", Path: "", FuncName: "Get"+t.ItemDataTypeName,
+		{Method: "GET", Path: t.ItemsDataUrl, FuncName: "GetList" + t.ItemDataTypeName},
+		{Method: "POST", Path: t.ItemCreateUrl, FuncName: "Create" + t.ItemDataTypeName},
+		{Method: "POST", Path: t.ItemUpdateUrl, FuncName: "Update" + t.ItemDataTypeName},
+		{Method: "POST", Path: t.ItemDeleteUrl, FuncName: "Delete" + t.ItemDataTypeName},
 	}
 
 	// type: edit,action,form,redirect
 	for _, opt := range t.ItemOptions {
 		// TODO
 		if opt.Type == "action" {
-			if strings.Contains(opt.Url, apiPre) {
-				apiPath := strings.Replace(opt.Url, apiPre, "", 1)
-				apiRoutes = append(apiRoutes, model.ApiRoute{Method: "POST", Path: apiPath, FuncName: database.TableColToObj(opt.Key) + t.ItemDataTypeName})
-			}
+			apiRoutes = append(apiRoutes, model.ApiRoute{Method: "POST", Path: opt.Url, FuncName: database.TableColToObj(opt.Key) + t.ItemDataTypeName})
 		}
 	}
-	if len(apiRoutes) > 0 {
-		return AddApiRoutes(apiRoutes)
+
+	// 添加路由到服务端路由文件中 routesadd.go, 并创建CURD代码
+	routes, err := AddApiRoutes(apiRoutes)
+	if err != nil {
+		return err
 	}
-	return nil
+
+	// 创建CURD代码
+	return CreateCurdCode(routes)
 }

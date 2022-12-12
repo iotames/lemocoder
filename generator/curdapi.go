@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"lemocoder/config"
+	"lemocoder/database"
 	"lemocoder/model"
 	"lemocoder/util"
 	"os"
@@ -98,15 +99,27 @@ func AddApiRoutes(apiRoutes []model.ApiRoute) (routes []model.ApiRoute, err erro
 
 // CreateCurdCode 创建CURD代码
 func CreateCurdCode(routes []model.ApiRoute, schema model.TableSchema) error {
+	tplData := map[string]string{"ItemDataTypeName": schema.ItemDataTypeName}
 	for _, route := range routes {
 		funcName := strings.Replace(route.FuncName, API_ROUTE_FUNC_PREFIX, "", 1)
+		if strings.Index(funcName, "GetList") == 0 {
+			tplData["GetList"] = funcName
+		}
+		if strings.Index(funcName, "GetOne") == 0 {
+			tplData["GetOne"] = funcName
+		}
+		if strings.Index(funcName, "Create") == 0 {
+			tplData["Create"] = funcName
+		}
+		if strings.Index(funcName, "Update") == 0 {
+			tplData["Update"] = funcName
+		}
+		if strings.Index(funcName, "Delete") == 0 {
+			tplData["Delete"] = funcName
+		}
 		fmt.Println(funcName)
 	}
-
-	// {Method: "GET", Path: t.ItemsDataUrl, FuncName: "GetList" + t.ItemDataTypeName},
-	// {Method: "POST", Path: t.ItemCreateUrl, FuncName: "Create" + t.ItemDataTypeName},
-	// {Method: "POST", Path: t.ItemUpdateUrl, FuncName: "Update" + t.ItemDataTypeName},
-	// {Method: "POST", Path: t.ItemDeleteUrl, FuncName: "Delete" + t.ItemDataTypeName},
-
-	return nil
+	targetFile := fmt.Sprintf("%s/%s.go", config.ServerHandlerDir, database.ObjToTableCol(schema.ItemDataTypeName))
+	tplFile := config.TplDirPath + "/curdapi.go.tpl"
+	return CreateFile(targetFile, tplFile, tplData)
 }

@@ -10,21 +10,23 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func CreateItem(c *gin.Context) {
-	pg := database.WebPage{}
-	err := CheckBindArgs(&pg, c)
+<%{ if ne .Create "" }%>
+func Create<%{$.ItemDataTypeName}%>(c *gin.Context) {
+	item := database.<%{$.ItemDataTypeName}%>{}
+	err := CheckBindArgs(&item, c)
 	if err != nil {
 		return
 	}
-	_, err = database.CreateModel(&pg)
+	_, err = database.CreateModel(&item)
 	msg := "数据创建成功"
 	if err != nil {
 		msg = err.Error()
 	}
 	c.JSON(http.StatusOK, ResponseOk(msg))
-}
+}<%{end}%>
 
-func DeleteItem(c *gin.Context) {
+<%{ if ne .Delete "" }%>
+func Delete<%{$.ItemDataTypeName}%>(c *gin.Context) {
 	data := PostData{}
 	err := CheckBindArgs(&data, c)
 	if err != nil {
@@ -36,7 +38,7 @@ func DeleteItem(c *gin.Context) {
 		return
 	}
 
-	m := new(database.WebPage)
+	m := new(database.<%{$.ItemDataTypeName}%>)
 	m.ID = data.GetID()
 	result, err := database.DeleteModel(m)
 	if err != nil {
@@ -45,9 +47,10 @@ func DeleteItem(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, ResponseOk(fmt.Sprintf("删除成功%d", result)))
-}
+}<%{end}%>
 
-func UpdateItem(c *gin.Context) {
+<%{ if ne .Update "" }%>
+func Update<%{.ItemDataTypeName}%>(c *gin.Context) {
 	postData := PostData{}
 	err := postData.ParseBody(c.Request.Body)
 	if err != nil {
@@ -58,7 +61,7 @@ func UpdateItem(c *gin.Context) {
 		ErrorArgs(c, fmt.Errorf("操作对象的ID不能为0"))
 		return
 	}
-	modelFind := database.WebPage{}
+	modelFind := database.<%{.ItemDataTypeName}%>{}
 	modelFind.ID = postData.GetID()
 	has, err := database.GetModel(&modelFind)
 	if err != nil {
@@ -69,7 +72,7 @@ func UpdateItem(c *gin.Context) {
 		ErrorNotFound(c)
 		return
 	}
-	updateModel := database.WebPage{}
+	updateModel := database.<%{.ItemDataTypeName}%>{}
 	postData.ParseTo(&updateModel)
 	_, err = database.UpdateModel(&updateModel, nil)
 	if err != nil {
@@ -77,10 +80,11 @@ func UpdateItem(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, ResponseOk("数据更新成功"))
-}
+}<%{end}%>
 
-func GetListItem(c *gin.Context) {
-	items := make([]database.WebPage, 0)
+<%{ if ne .GetList "" }%>
+func GetList<%{.ItemDataTypeName}%>(c *gin.Context) {
+	items := make([]database.<%{.ItemDataTypeName}%>, 0)
 	limitStr := c.DefaultQuery("limit", "30")
 	pageStr := c.DefaultQuery("page", "1")
 	limit, _ := strconv.Atoi(limitStr)
@@ -97,4 +101,4 @@ func GetListItem(c *gin.Context) {
 		return
 	}
 	c.String(200, ResponseItems(itemsStr).(string))
-}
+}<%{end}%>

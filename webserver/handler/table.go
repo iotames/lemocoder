@@ -50,7 +50,7 @@ func CreateTable(c *gin.Context) {
 	}
 
 	table.PageID = pageID
-	err = setDataTable(postData, &table)
+	err = setDataTable(postData, &table, true)
 	if err != nil {
 		ErrorServer(c, err)
 		return
@@ -88,7 +88,7 @@ func UpdateTable(c *gin.Context) {
 		return
 	}
 
-	err = setDataTable(postData, &modelFind)
+	err = setDataTable(postData, &modelFind, false)
 	if err != nil {
 		ErrorServer(c, err)
 		return
@@ -170,7 +170,7 @@ func CreateTablePageCode(c *gin.Context) {
 	c.JSON(http.StatusOK, ResponseOk("创建代码成功"))
 }
 
-func setDataTable(postData PostData, dtable *database.DataTable) error {
+func setDataTable(postData PostData, dtable *database.DataTable, isCreate bool) error {
 	// TODO 判断路由, DataTypeName 是否重复。
 	tschema, err := dtable.GetStructSchema()
 	if err != nil {
@@ -210,6 +210,21 @@ func setDataTable(postData PostData, dtable *database.DataTable) error {
 	}
 	for i, v := range tschema.Items {
 		tschema.Items[i].DataName = database.TableColToObj(v.DataName)
+	}
+	if isCreate {
+		if len(tschema.ItemOptions) == 0 {
+			// 添加行快捷编辑
+			tschema.ItemOptions = []model.TableItemOptionSchema{
+				{Key: "lineedit", Type: "edit", Title: "编辑", Url: tschema.ItemUpdateUrl},
+			}
+		}
+		if len(tschema.BatchOptButtons) == 0 {
+			// 添加批量操作
+			batchDelApi := fmt.Sprintf("/api/%s/batchdelete", database.ObjToTableCol(tschema.ItemDataTypeName))
+			tschema.BatchOptButtons = []model.BatchOptButtonSchema{
+				{Title: "批量删除", Url: batchDelApi},
+			}
+		}
 	}
 	return dtable.SetStructSchema(tschema)
 }

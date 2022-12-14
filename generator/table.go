@@ -21,10 +21,6 @@ func CreateTableClient(t model.TableSchema, p database.WebPage) error {
 		{Name: p.Name, Path: p.Path, Component: "./" + p.Component, Layout: true},
 	}
 	return AddClientRoutes(rts)
-	// routes := initial.GetClientRoutes(rts...)
-	// dt1 := map[string]interface{}{"Routes": routes}
-	// // 重建routes.ts客户端路由文件
-	// return CreateFile(config.ClientRoutesPath, config.TplDirPath+"/routes.ts.tpl", dt1)
 }
 
 // CreateTableServer 创建服务端API源码文件

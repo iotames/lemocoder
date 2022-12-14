@@ -60,10 +60,10 @@ func ItemsIDtoString[T database.IDitem](items []T) (string, error) {
 
 	befStr := string(b)
 	for _, item := range items {
-		fmt.Printf("---item---%+v--", item)
+		// fmt.Printf("---item---%+v--", item)
 		oldstr := fmt.Sprintf(`"ID":%d`, item.GetID())
 		newstr := fmt.Sprintf(`"ID":"%d"`, item.GetID())
-		fmt.Println(oldstr, newstr)
+		// fmt.Println(oldstr, newstr)
 		befStr = strings.Replace(befStr, oldstr, newstr, 1)
 	}
 	return befStr, err

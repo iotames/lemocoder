@@ -2,14 +2,71 @@ package main
 
 import (
 	"bytes"
+	"io"
+	"lemocoder/config"
 	"lemocoder/database"
 	"lemocoder/generator"
 	"lemocoder/model"
 	"log"
 	"os"
 	"os/exec"
+	"strings"
 	"testing"
 )
+
+// AddApiRoutes 去除API路由的 `/api` 前缀
+func TestAddApiRoutes(t *testing.T) {
+	var routes []model.ApiRoute
+	apiRoutes := []model.ApiRoute{
+		{Method: "GET", Path: "/api/products/list", FuncName: "GetListProduct"},
+		{Method: "POST", Path: "/api/product/create", FuncName: "CreateProduct"},
+		{Method: "POST", Path: "/api/product/update", FuncName: "UpdateProduct"},
+		{Method: "POST", Path: "/api/product/delete", FuncName: "DeleteProduct"},
+	}
+	for _, route := range apiRoutes {
+		if strings.TrimSpace(route.Path) == "" {
+			continue
+		}
+		if route.Method == "GET" && route.Path == "/table/demodata" {
+			continue
+		}
+		if route.Method == "POST" && route.Path == "/demo/post" {
+			continue
+		}
+		if strings.Index(route.Path, "/api/") == 0 {
+			route.Path = strings.Replace(route.Path, "/api/", "/", 1)
+		}
+		if strings.Index(route.FuncName, generator.API_ROUTE_FUNC_PREFIX) != 0 {
+			route.FuncName = generator.API_ROUTE_FUNC_PREFIX + route.FuncName
+		}
+		routes = append(routes, route)
+	}
+	data := map[string]interface{}{
+		"Routes": routes,
+	}
+	var bf bytes.Buffer
+	tplText := `<%{range .Routes }%>g.<%{.Method}%>("<%{.Path}%>", <%{.FuncName}%>)
+	<%{end}%>`
+	err := generator.SetContentByTplText(tplText, data, &bf)
+	if err != nil {
+		panic(err)
+	}
+	addCode := bf.String()
+	filepath := config.ServerApiRoutesPath
+
+	f, err := os.OpenFile(filepath, os.O_RDONLY, 0755)
+	if err != nil {
+		panic(err)
+	}
+	var before []byte
+	before, err = io.ReadAll(f)
+	if err != nil {
+		panic(err)
+	}
+	f.Close()
+	commentEnd := "// Code generated End; DO NOT EDIT."
+	log.Println(strings.Replace(string(before), commentEnd, addCode+commentEnd, 1))
+}
 
 func TestSnakName(t *testing.T) {
 	log.Println(database.ObjToTableCol("PageID"))

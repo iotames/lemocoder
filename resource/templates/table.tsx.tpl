@@ -63,13 +63,21 @@ export default () => {
   const columns: ProColumns<<%{.ItemDataTypeName}%>>[] = [
       <%{range .Items}%>
       {
-        title: "<%{.Title}%>",<%{if ne .DataName ""}%>dataIndex: "<%{.DataName}%>",<%{end}%><%{if not .Editable}%>editable: <%{.Editable}%>,<%{end}%><%{if .Copyable}%>copyable: <%{.Copyable}%>,<%{end}%><%{if ne .ValueType "" }%>valueType: "<%{.ValueType}%>",<%{end}%><%{if .Ellipsis}%>ellipsis: <%{.Ellipsis}%>,<%{end}%><%{if ne .ColSize 0.0}%>colSize: <%{.ColSize}%>,<%{end}%><%{if ne .Width 0}%>width: <%{.Width}%>,<%{end}%>
-      <%{if gt .Order 0}%>order: <%{.Order}%>,// number<%{end}%>
-      <%{if .Sorter }%>sorter: <%{.Sorter}%>,// boolean<%{end}%>
-      <%{if not .Search}%>search: <%{.Search}%>,<%{end}%>// search: { transform: (value: any) => any }
-      <%{if .HideInSearch}%>hideInSearch: <%{.HideInSearch}%>,<%{end}%>
-      <%{if .HideInTable}%>hideInTable: <%{.HideInTable}%>,<%{end}%>
+        title: "<%{.Title}%>",
+        <%{if ne .DataName ""}%>dataIndex: "<%{.DataName}%>",<%{end}%>
+        <%{- if not .Editable}%>editable: <%{.Editable}%>,<%{end}%>
+        <%{- if .Copyable}%>copyable: <%{.Copyable}%>,<%{end}%>
+        <%{- if ne .ValueType "" }%>valueType: "<%{.ValueType}%>",<%{end}%>
+        <%{- if .Ellipsis}%>ellipsis: <%{.Ellipsis}%>,<%{end}%>
+        <%{- if ne .ColSize 0.0}%>colSize: <%{.ColSize}%>,<%{end}%>
+        <%{- if ne .Width 0}%>width: <%{.Width}%>,<%{end}%>
+        <%{- if gt .Order 0}%>order: <%{.Order}%>,// number<%{end}%>
+        <%{- if .Sorter }%>sorter: <%{.Sorter}%>,// boolean<%{end}%>
+        <%{- if not .Search}%>search: <%{.Search}%>,<%{end}%>
+        <%{- if .HideInSearch}%>hideInSearch: <%{.HideInSearch}%>,<%{end}%>
+        <%{- if .HideInTable}%>hideInTable: <%{.HideInTable}%>,<%{end}%>
         // filters,
+        // search: { transform: (value: any) => any }
         // renderText, (text: any,record: T,index: number,action: UseFetchDataAction<T>) => string
       },
       <%{end}%>

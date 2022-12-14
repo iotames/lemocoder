@@ -86,8 +86,7 @@ func AddApiRoutes(apiRoutes []model.ApiRoute) (routes []model.ApiRoute, err erro
 		"Routes": routes,
 	}
 	var bf bytes.Buffer
-	tplText := `<%{range .Routes}%>
-	g.<%{.Method}%>("<%{.Path}%>", <%{.FuncName}%>)
+	tplText := `<%{range .Routes}%>g.<%{.Method}%>("<%{.Path}%>", <%{.FuncName}%>)
 	<%{end}%>`
 	err = SetContentByTplText(tplText, data, &bf)
 	if err != nil {

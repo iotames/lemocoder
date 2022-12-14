@@ -9,7 +9,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 )
-
+// TODO 数值型字段在POST时，会变为字符串
 <%{ if ne .Create "" }%>
 func Create<%{$.ItemDataTypeName}%>(c *gin.Context) {
 	item := database.<%{$.ItemDataTypeName}%>{}
@@ -32,6 +32,7 @@ func Delete<%{$.ItemDataTypeName}%>(c *gin.Context) {
 	if err != nil {
 		return
 	}
+	// TODO 批量删除和删除单条记录合并一个接口 items, ok := data["items"]
 	postID := data.GetID()
 	if postID == 0 {
 		ErrorArgs(c, fmt.Errorf("删除对象的ID不能为0"))

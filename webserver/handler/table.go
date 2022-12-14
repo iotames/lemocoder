@@ -220,12 +220,12 @@ func setDataTable(postData PostData, dtable *database.DataTable, isCreate bool) 
 		}
 		if len(tschema.BatchOptButtons) == 0 {
 			// 添加批量操作
-			batchDelApi := fmt.Sprintf("/api/%s/batchdelete", database.ObjToTableCol(tschema.ItemDataTypeName))
 			tschema.BatchOptButtons = []model.BatchOptButtonSchema{
-				{Title: "批量删除", Url: batchDelApi},
+				{Title: "批量删除", Url: tschema.ItemDeleteUrl},
 			}
 		}
 	}
+	log.Println("------ItemOptions-----BatchOptButtons---------", tschema.ItemOptions, tschema.BatchOptButtons)
 	return dtable.SetStructSchema(tschema)
 }
 

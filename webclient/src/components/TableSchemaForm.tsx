@@ -245,7 +245,7 @@ export const NewDataTableForm = (props:{
             <ProFormText name="DataName" placeholder="字段名" label="字段名" rules={[{ required: true }]} width={120} tooltip="英文字母" /> 
             <ProFormText name="Title" placeholder="字段标题" label="字段标题" rules={[{ required: true }]} width={120} tooltip="中英文均可" />
             <ProFormDigit label="宽度(px)" min={0} max={300} name="Width" placeholder="像素宽度" width={90} tooltip="整数(默认0).范围:0~300" />
-            <ProFormSwitch name="Editable" label="可编辑" />
+            <ProFormSwitch name="Editable" label="可编辑" initialValue={true} />
         </ProFormGroup>
       </ProFormList>
 

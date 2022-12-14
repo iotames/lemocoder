@@ -89,7 +89,7 @@ export default () => {
       key: 'option',
       render: (text, record, _, action) => {
       return [<%{range .ItemOptions}%>
-      <%{if eq .Type "edit"}%><Button key="<%{.Key}%>" type="primary" onClick={() => {action?.startEditable?.(record.<%{$.RowKey}%>);}}><%{.Title}%></Button>,<%{end}%>
+      <%{if eq .Type "edit"}%><a key="<%{.Key}%>" onClick={() => {action?.startEditable?.(record.<%{$.RowKey}%>);}}><%{.Title}%></a>,<%{end}%>
       <%{if eq .Type "action"}%><Button key="<%{.Key}%>" type='primary'  onClick={async (e)=>{await postByBtn(e, "<%{.Url}%>", record);}} ><%{.Title}%></Button>,<%{end}%>
       <%{if eq .Type "form"}%><Button key="<%{.Key}%>" type="primary" onClick={() => {setRowRecord(record);itemFormRef.current?.setFieldsValue(record);setModal<%{.Key}%>Visit(true)}}><%{.Title}%></Button>,<%{end}%>
       <%{if eq .Type "redirect"}%><Button key="<%{.Key}%>" type='primary' onClick={(e)=>{ history.push("<%{.Url}%>"); }}><%{.Title}%></Button>,<%{end}%>

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"lemocoder/config"
 	"lemocoder/database"
+	"lemocoder/initial"
 	"lemocoder/model"
 	"lemocoder/util"
 	"os"
@@ -62,6 +63,18 @@ func AddDbModelToTables(structName string) error {
 	return AddCodeToFile(config.ServerTablesPath, addCode)
 }
 
+// AddClientRoutes 添加客户端路由
+func AddClientRoutes(addRoutes []initial.ClientRoute) error {
+	tplText := `<%{range . }%>{ layout: <%{.Layout}%>, <%{if ne .Path "" }%> path: '<%{.Path}%>', <%{end}%> name: '<%{.Name}%>', <%{if ne .Component "" }%> component: '<%{.Component}%>', <%{end}%> <%{if ne .Redirect "" }%> redirect: '<%{.Redirect}%>', <%{end}%> },
+    <%{end}%>`
+	var bf bytes.Buffer
+	err := SetContentByTplText(tplText, addRoutes, &bf)
+	if err != nil {
+		return err
+	}
+	return AddCodeToFile(config.ClientRoutesPath, bf.String())
+}
+
 // AddApiRoutes 去除API路由的 `/api` 前缀
 func AddApiRoutes(apiRoutes []model.ApiRoute) (routes []model.ApiRoute, err error) {
 	for _, route := range apiRoutes {
@@ -86,7 +99,7 @@ func AddApiRoutes(apiRoutes []model.ApiRoute) (routes []model.ApiRoute, err erro
 		"Routes": routes,
 	}
 	var bf bytes.Buffer
-	tplText := `<%{range .Routes}%>g.<%{.Method}%>("<%{.Path}%>", <%{.FuncName}%>)
+	tplText := `<%{range .Routes }%>g.<%{.Method}%>("<%{.Path}%>", <%{.FuncName}%>)
 	<%{end}%>`
 	err = SetContentByTplText(tplText, data, &bf)
 	if err != nil {

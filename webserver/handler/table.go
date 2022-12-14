@@ -171,6 +171,7 @@ func CreateTablePageCode(c *gin.Context) {
 }
 
 func setDataTable(postData PostData, dtable *database.DataTable) error {
+	// TODO 判断路由, DataTypeName 是否重复。
 	tschema, err := dtable.GetStructSchema()
 	if err != nil {
 		return err

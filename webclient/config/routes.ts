@@ -9,6 +9,8 @@ export default [
     { layout: true,  path: '/codemaker',  name: '代码生成器',  component: './CodeMaker',   },
     { layout: true,  path: '/test',  name: '测试页面',  component: './Test',   },
     { layout: true,  path: '/excelspider',  name: 'Excel爬虫',  component: './ExcelSpider',   },
+    // Code generated Begin; DO NOT EDIT.
+    // Code generated End; DO NOT EDIT.
     { layout: true,  path: '/tableschema',  name: '',  component: './TableSchema',   },
     { layout: true,  path: '/',  name: '',   redirect: '/welcome',  },
     { layout: true,  name: '',  component: './404',   },

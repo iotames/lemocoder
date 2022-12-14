@@ -1,6 +1,8 @@
-import {ProFormSwitch, ProFormDigit, ProFormList, ProFormText, ProFormSelect, ProForm, StepsForm, ProFormGroup} from '@ant-design/pro-components';
+import {ProFormSwitch, ProFormInstance, ProFormDigit, ProFormList, ProFormText, ProFormSelect, ProForm, StepsForm, ProFormGroup, ModalForm} from '@ant-design/pro-components';
 import {post, postMsg, getTableData, postByBtn, get} from "@/services/api"
 import type { FormInstance, StepsProps } from 'antd';
+import TableSchema from '@/pages/TableSchema';
+import { useRef, useState } from 'react';
 
 type TableItemOptionSchema = {
   Key: string;
@@ -69,6 +71,7 @@ type StructSchema = {
 }
 
 export type TableSchema = {
+  ID: string;
   PageID: string;
   Name: string;
   Title: string;
@@ -76,9 +79,26 @@ export type TableSchema = {
   StructSchema: StructSchema;
 }
 
+// const stepsFormRender = (dom: React.ReactNode, submitter: React.ReactNode) => {
+//   return (
+//     <Modal
+//       title="构建数据表格"
+//       width={900}
+//       onOk={() => setTableFormVisit(false)}
+//       onCancel={() => setTableFormVisit(false)}
+//       visible={tableFormVisit}
+//       footer={submitter}
+//       destroyOnClose
+//     >
+//       {dom}
+//     </Modal>
+//   );
+// }
+
 // {onUploaded:(resp:any)=>void, name: string, action: string, label: string}
-const TableSchemaForm = (props:{
-  tableSchema: TableSchema, 
+export const TableSchemaForm = (props:{
+  postUrl: string,
+  tableSchema: TableSchema,
   formRef?: React.MutableRefObject<FormInstance<any> | undefined | null>,
   setModalVisit?: React.Dispatch<React.SetStateAction<boolean>>,
   stepsFormRender?: (from: React.ReactNode, submitter: React.ReactNode) => React.ReactNode
@@ -86,13 +106,16 @@ const TableSchemaForm = (props:{
   const tableSchema = props.tableSchema
   // const tableFormRef = useRef<ProFormInstance<TableSchema>>();
   const formRef = props.formRef
+  formRef?.current?.setFieldsValue(tableSchema)
   const setModalVisit = props.setModalVisit
   const stepsFormRender = props.stepsFormRender
+  const postUrl = props.postUrl
+
   return (
     <>
       <StepsForm
         onFinish={async (values) => {
-        const resp = await postMsg("/api/coder/table/add", values)
+        const resp = await postMsg(postUrl, values)
         if (resp.Code == 200) {
           if (setModalVisit != undefined){
             setModalVisit(false)
@@ -105,17 +128,17 @@ const TableSchemaForm = (props:{
       formRef={formRef}
       stepsFormRender={stepsFormRender}
       >
-        <StepsForm.StepForm name="base" title="基础设置" initialValues={tableSchema?.StructSchema} >
-            <ProFormText name="PageID" hidden initialValue={tableSchema?.PageID} />
-            <ProFormText name="RowKey" hidden initialValue={tableSchema?.StructSchema.RowKey}  />
-            <ProFormText name="ItemDataTypeName" value={tableSchema?.StructSchema.ItemDataTypeName} label="数据结构名" placeholder="ProductItem" rules={[{ required: true }]} /> 
-            <ProFormText name="ItemsDataUrl" value={tableSchema?.StructSchema.ItemsDataUrl} label="数据源" placeholder="/api/table/demodata" rules={[{ required: true }]} />
-            <ProFormText name="ItemUpdateUrl" value={tableSchema?.StructSchema.ItemUpdateUrl} label="更新地址" placeholder="/api/demo/post" />
-            <ProFormText name="ItemDeleteUrl" value={tableSchema?.StructSchema.ItemDeleteUrl} label="删除地址" placeholder="/api/demo/post" /> 
+        <StepsForm.StepForm name="base" title="基础设置" initialValues={tableSchema}>
+            <ProFormText name="PageID" hidden />
+            <ProFormText name={["StructSchema", "RowKey"]} hidden />
+            <ProFormText name={["StructSchema", "ItemDataTypeName"]} label="数据结构名" placeholder="ProductItem" rules={[{ required: true }]} /> 
+            <ProFormText name={["StructSchema", "ItemsDataUrl"]}  label="数据源" placeholder="/api/table/demodata" rules={[{ required: true }]} />
+            <ProFormText name={["StructSchema", "ItemUpdateUrl"]}  label="更新地址" placeholder="/api/demo/post" />
+            <ProFormText name={["StructSchema", "ItemDeleteUrl"]} label="删除地址" placeholder="/api/demo/post" /> 
         </StepsForm.StepForm>
 
-        <StepsForm.StepForm name="items" title="数据字段" initialValues={tableSchema?.StructSchema}>
-          <ProFormList name="Items" creatorButtonProps={{creatorButtonText: '添加数据字段'}}>
+        <StepsForm.StepForm name="items" title="数据字段" initialValues={tableSchema}>
+          <ProFormList name={["StructSchema", "Items"]} creatorButtonProps={{creatorButtonText: '添加数据字段'}}>
             <ProFormGroup>
             <ProFormSelect name="DataType" label="字段类型" initialValue="string" options={[
                 {value:"string", label:"字符串"},
@@ -175,5 +198,58 @@ const TableSchemaForm = (props:{
   );
 }
 
-export default TableSchemaForm;
+export const NewDataTableForm = (props:{
+  // tableData: TableSchema,
+  formRef: React.MutableRefObject<FormInstance<any> | undefined | null>,
+  modalVisit: boolean,
+  setModalVisit: React.Dispatch<React.SetStateAction<boolean>>,
+}) => {
+  const formRef = props.formRef
+  // const formRef = useRef<ProFormInstance<TableSchema>>();
+  // const tableData = props.tableData
+  // formRef.current?.setFieldsValue(tableData)
+  const postUrl = "/api/coder/table/add"
+  const modalVisit = props.modalVisit
+  const setModalVisit = props.setModalVisit
+  return (
+    <>
+    <ModalForm 
+      title="新建数据表格"
+      width={900}
+      visible={modalVisit}
+      onVisibleChange={setModalVisit}
+      formRef={formRef}
+      onFinish={async (values) => {
+        const resp = await postMsg(postUrl, values)
+        if (resp.Code == 200) {
+          setModalVisit(false)
+          return true;
+        }
+        return false;
+      }}
+    >
+      <ProFormText name="PageID" hidden />
+      <ProFormText name={["StructSchema", "ItemDataTypeName"]} label="数据结构名" tooltip="例: Product, ProductReview" placeholder="例: Product, ProductReview" rules={[{ required: true }]} />
 
+
+      <ProFormList name={["StructSchema", "Items"]} creatorButtonProps={{creatorButtonText: '添加数据字段'}}>
+        <ProFormGroup>
+          <ProFormSelect name="DataType" label="字段类型" initialValue="string" options={[
+              {value:"string", label:"字符串"},
+              {value:"int", label:"整型"},
+              {value:"float", label:"浮点型"}
+              ]} rules={[{ required: true }]} />
+            <ProFormSelect name="ValueType" label="值的类型" tooltip="会生成不同的渲染器" initialValue="text" options={[
+              {value:"text", label:"纯文本"}
+              ]} rules={[{ required: true }]} />
+            <ProFormText name="DataName" placeholder="字段名" label="字段名" rules={[{ required: true }]} width={120} tooltip="英文字母" /> 
+            <ProFormText name="Title" placeholder="字段标题" label="字段标题" rules={[{ required: true }]} width={120} tooltip="中英文均可" />
+            <ProFormDigit label="宽度(px)" min={0} max={300} name="Width" placeholder="像素宽度" width={90} tooltip="整数(默认0).范围:0~300" />
+            <ProFormSwitch name="Editable" label="可编辑" />
+        </ProFormGroup>
+      </ProFormList>
+
+    </ModalForm>
+    </>
+  );
+}

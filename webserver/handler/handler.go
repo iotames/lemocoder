@@ -28,6 +28,7 @@ func (p PostData) ParseTo(result interface{}) error {
 	if err != nil {
 		return err
 	}
+	// "StructSchema":{ ... } json: cannot unmarshal object into Go struct field DataTable.StructSchema of type string
 	return util.JsonDecodeUseNumber(bts, result)
 }
 
@@ -77,4 +78,14 @@ func CheckBindArgs[T any](args T, c *gin.Context) error {
 		ErrorArgs(c, err)
 	}
 	return err
+}
+
+func ParsePostData(c *gin.Context) (postData PostData, err error) {
+	postData = PostData{}
+	err = postData.ParseBody(c.Request.Body)
+	if err != nil {
+		ErrorServer(c, fmt.Errorf("ParsePostData error:%w", err))
+		return
+	}
+	return
 }

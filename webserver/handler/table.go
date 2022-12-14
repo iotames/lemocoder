@@ -20,17 +20,23 @@ type FormTableSchema struct {
 	model.TableSchema
 }
 
-func AddTable(c *gin.Context) {
-	f := FormTableSchema{}
-	berr := CheckBindArgs(&f, c)
-	if berr != nil {
+func CreateTable(c *gin.Context) {
+	postData, err := ParsePostData(c)
+	if err != nil {
 		return
 	}
-	if f.PageID == "" {
-		ErrorArgs(c, errors.New("PageID不能为空"))
+	log.Println("-----------Log--postData--------------", postData)
+	pageIDstr, ok := postData["PageID"]
+	if !ok {
+		ErrorArgs(c, errors.New("缺少PageID参数"))
 		return
 	}
-	pageID, _ := strconv.ParseInt(f.PageID, 10, 64)
+	if pageIDstr.(string) == "" {
+		ErrorArgs(c, errors.New("参数PageID不能为空"))
+		return
+	}
+	pageID, _ := strconv.ParseInt(pageIDstr.(string), 10, 64)
+
 	table := database.DataTable{}
 	has, err := database.GetModelWhere(&table, "page_id = ?", pageID)
 	fmt.Printf("\n--has(%+v)---err(%+v)---\n", has, err)
@@ -43,17 +49,15 @@ func AddTable(c *gin.Context) {
 		return
 	}
 
-	fmt.Printf("\n----table.SetStructSchema(%+v)--\n", table.StructSchema)
-	err = setTableSchema(f, &table)
+	table.PageID = pageID
+	err = setDataTable(postData, &table)
 	if err != nil {
 		ErrorServer(c, err)
 		return
 	}
-	fmt.Printf("\n----table.SetStructSchema(%+v)--\n", table.StructSchema)
-	table.PageID = pageID
-	table.Name = f.Name
-	table.Title = f.Title
-	table.Remark = f.Remark
+
+	log.Printf("----Log--tableModel-<%+v>-\n", table)
+
 	_, err = database.CreateModel(&table)
 	if err != nil {
 		ErrorServer(c, err)
@@ -64,18 +68,17 @@ func AddTable(c *gin.Context) {
 }
 
 func UpdateTable(c *gin.Context) {
-	f := FormTableSchema{}
-	berr := CheckBindArgs(&f, c)
-	if berr != nil {
+	postData, err := ParsePostData(c)
+	if err != nil {
 		return
 	}
-	if f.ID == "" {
+	if postData.GetID() == 0 {
 		ErrorArgs(c, errors.New("ID不能为空"))
 		return
 	}
-	model := database.DataTable{}
-	model.ID, _ = strconv.ParseInt(f.ID, 10, 64)
-	has, err := database.GetModel(&model)
+	modelFind := database.DataTable{}
+	modelFind.ID = postData.GetID()
+	has, err := database.GetModel(&modelFind)
 	if err != nil {
 		ErrorServer(c, err)
 		return
@@ -84,11 +87,13 @@ func UpdateTable(c *gin.Context) {
 		ErrorNotFound(c)
 		return
 	}
-	setTableSchema(f, &model)
-	model.Name = f.Name
-	model.Title = f.Title
-	model.Remark = f.Remark
-	_, err = database.UpdateModel(&model, nil)
+
+	err = setDataTable(postData, &modelFind)
+	if err != nil {
+		ErrorServer(c, err)
+		return
+	}
+	_, err = database.UpdateModel(&modelFind, nil)
 	if err != nil {
 		ErrorServer(c, err)
 		return
@@ -98,16 +103,20 @@ func UpdateTable(c *gin.Context) {
 
 // 生成源代码文件
 func CreateTablePageCode(c *gin.Context) {
-	f := FormTableSchema{}
-	berr := CheckBindArgs(&f, c)
-	if berr != nil {
+	postData, err := ParsePostData(c)
+	if err != nil {
 		return
 	}
-	if f.PageID == "" {
-		ErrorArgs(c, errors.New("PageID不能为空"))
+	pageIDstr, ok := postData["PageID"]
+	if !ok {
+		ErrorArgs(c, errors.New("缺少PageID参数"))
 		return
 	}
-	pageID, _ := strconv.ParseInt(f.PageID, 10, 64)
+	if pageIDstr.(string) == "" {
+		ErrorArgs(c, errors.New("参数PageID不能为空"))
+		return
+	}
+	pageID, _ := strconv.ParseInt(pageIDstr.(string), 10, 64)
 	table := database.DataTable{}
 	has, err := database.GetModelWhere(&table, "page_id = ?", pageID)
 	if err != nil {
@@ -116,6 +125,19 @@ func CreateTablePageCode(c *gin.Context) {
 	}
 	if !has {
 		c.JSON(http.StatusOK, ResponseFail("该页面不包含数据表格", http.StatusBadRequest))
+		return
+	}
+	page := database.WebPage{}
+	page.ID = pageID
+	has, err = database.GetModel(&page)
+	if !has {
+		logger := util.GetLogger()
+		logger.Error("Error for CreateCode: Not Found WebPage: ", err)
+		c.JSON(200, ResponseFail(err.Error(), 500))
+		return
+	}
+	if page.State {
+		c.JSON(http.StatusOK, ResponseFail("请勿重复生成代码", 400))
 		return
 	}
 
@@ -128,15 +150,6 @@ func CreateTablePageCode(c *gin.Context) {
 		return
 	}
 
-	page := database.WebPage{}
-	page.ID = pageID
-	has, err = database.GetModel(&page)
-	if !has {
-		logger := util.GetLogger()
-		logger.Error("Error for CreateCode: Not Found WebPage: ", err)
-		c.JSON(200, ResponseFail(err.Error(), 500))
-		return
-	}
 	err = gen.CreateTableClient(t, page)
 	if err != nil {
 		logger := util.GetLogger()
@@ -157,20 +170,47 @@ func CreateTablePageCode(c *gin.Context) {
 	c.JSON(http.StatusOK, ResponseOk("创建代码成功"))
 }
 
-func setTableSchema(f FormTableSchema, table *database.DataTable) error {
-	ts, err := table.GetStructSchema()
+func setDataTable(postData PostData, dtable *database.DataTable) error {
+	tschema, err := dtable.GetStructSchema()
 	if err != nil {
 		return err
 	}
-	ts.BatchOptButtons = f.BatchOptButtons
-	ts.ItemDataTypeName = f.ItemDataTypeName
-	ts.ItemDeleteUrl = f.ItemDeleteUrl
-	ts.ItemOptions = f.ItemOptions
-	ts.ItemUpdateUrl = f.ItemUpdateUrl
-	ts.Items = f.Items
-	ts.ItemsDataUrl = f.ItemsDataUrl
-	ts.RowKey = f.RowKey
-	return table.SetStructSchema(ts)
+	tschemaJson, err := json.Marshal(postData["StructSchema"])
+	if err != nil {
+		return err
+	}
+	err = json.Unmarshal(tschemaJson, &tschema)
+	if err != nil {
+		return err
+	}
+	if tschema.RowKey == "" {
+		tschema.RowKey = "ID"
+	}
+	if tschema.ItemsDataUrl == "" {
+		tschema.ItemsDataUrl = fmt.Sprintf("/api/%s/list", database.ObjToTableCol(tschema.ItemDataTypeName))
+	}
+	if tschema.ItemCreateUrl == "" {
+		tschema.ItemCreateUrl = fmt.Sprintf("/api/%s/create", database.ObjToTableCol(tschema.ItemDataTypeName))
+	}
+	if tschema.ItemUpdateUrl == "" {
+		tschema.ItemUpdateUrl = fmt.Sprintf("/api/%s/update", database.ObjToTableCol(tschema.ItemDataTypeName))
+	}
+	if tschema.ItemDeleteUrl == "" {
+		tschema.ItemDeleteUrl = fmt.Sprintf("/api/%s/delete", database.ObjToTableCol(tschema.ItemDataTypeName))
+	}
+	if postData["Name"] != nil {
+		dtable.Name = postData["Name"].(string)
+	}
+	if postData["Title"] != nil {
+		dtable.Title = postData["Title"].(string)
+	}
+	if postData["Remark"] != nil {
+		dtable.Remark = postData["Remark"].(string)
+	}
+	for i, v := range tschema.Items {
+		tschema.Items[i].DataName = database.TableColToObj(v.DataName)
+	}
+	return dtable.SetStructSchema(tschema)
 }
 
 func GetTable(c *gin.Context) {
@@ -187,7 +227,7 @@ func GetTable(c *gin.Context) {
 		ErrorNotFound(c)
 		return
 	}
-	fmt.Printf("---GetTable(%+v)-----", result[0])
+
 	resp := make(map[string]interface{}, len(result[0]))
 	for k, v := range result[0] {
 		nk := database.TableColToObj(k)

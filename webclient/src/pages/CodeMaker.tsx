@@ -3,7 +3,7 @@ import { ProTable, ModalForm, ProFormText, ProFormSelect, TableDropdown, ProForm
 import { Button, Typography, message, Modal, InputNumber, Input, Select } from 'antd';
 import { useRef, useState } from 'react';
 import {post, postMsg, getTableData, postByBtn, get} from "@/services/api"
-import TableSchemaForm from "@/components/TableSchemaForm"
+import {TableSchemaForm, NewDataTableForm} from "@/components/TableSchemaForm"
 import type { TableSchema } from "@/components/TableSchemaForm"
 import { history } from 'umi';
 
@@ -15,6 +15,7 @@ type PageItem = {
   PageType: number;
   title: string;
   remark: string;
+  State: boolean;
   created_at: string;
   updated_at: string;
 };
@@ -23,18 +24,16 @@ export default () => {
   const [pageFormVisit, setPageFormVisit] = useState(false);
   const [tableFormVisit, setTableFormVisit] = useState(false);
   // const [rowRecord, setRowRecord] = useState<PageItem>();
+  // const [tableSchema, setTableSchema] = useState<TableSchema>();
+  const tableFormRef = useRef<ProFormInstance<TableSchema>>();
+  const actionRef = useRef<ActionType>();
+
   const tableSchemaInit = {
     PageID:"0", Name:"", Title:"", Remark:"", 
     StructSchema:{
-      ItemDataTypeName:"ProductItem", 
-      ItemsDataUrl:"/api/table/demodata",
-      ItemUpdateUrl:"/api/demo/post",
-      ItemDeleteUrl:"/api/demo/post",
       RowKey:"ID"
     }}
-  const [tableSchema, setTableSchema] = useState<TableSchema>();
-  const tableFormRef = useRef<ProFormInstance<TableSchema>>();
-  const actionRef = useRef<ActionType>();
+
 
 const columns: ProColumns<PageItem>[] = [
   {
@@ -92,82 +91,78 @@ const columns: ProColumns<PageItem>[] = [
     // width: 260,
     // fixed: 'right',
     render: (text, record, _, action) => {
-    return [
-      // <Button  type="primary" onClick={() => {}}></Button>,
+      let buildText = "构建"
+      if (record.State) {
+        buildText = "编辑"
+      }
+      return [
+        // <Button  type="primary" onClick={() => {}}></Button>,
 
-      <Button key="editform1" type="primary" onClick={async () => {
-        // setRowRecord(record);
-        if(record.PageType == 0){
-          // history.push("/tableschema?page_id="+record.ID)
+        <Button key="editform1" type="primary" onClick={async () => {
+          // setRowRecord(record);
+          if(record.PageType == 0){
+            
+            console.log(record)
+            console.log(record.ID)
+            const resp = await get<{Code: number; Msg: string; Data: TableSchema}>("/api/coder/table/get", {"page_id": record.ID})
+            if (resp.Code == 500){
+              await message.error(resp.Msg)
+              return
+            }
+            let initDt = tableSchemaInit
+            initDt.Name = record.name
+            initDt.Title = record.title
+            initDt.Remark = record.remark
+            initDt.PageID = record.ID
+            if (resp.Code == 404){
+              // 添加数据
+              // setTableSchema(initDt)
+              setTableFormVisit(true) // 显示表单应该在设置表单数据之前，否则第一次弹层表单会无数据
+              tableFormRef.current?.setFieldsValue(initDt);
+              return
+            }
 
-          console.log(record)
-          console.log(record.ID)
-          const resp = await get<{Code: number; Msg: string; Data: TableSchema}>("/api/coder/table/get", {"page_id": record.ID})
-          if (resp.Code == 500){
-            await message.error(resp.Msg)
-            return
+            if (resp.Code == 200) {
+              // 修改数据
+              // initDt = resp.Data
+              history.push("/tableschema?page_id="+record.ID)
+              return
+            }
+            
           }
-          let initDt = tableSchemaInit
-          initDt.Name = record.name
-          initDt.Title = record.title
-          initDt.Remark = record.remark
-          initDt.PageID = record.ID
-          if (resp.Code == 200) {
-            initDt = resp.Data
-          }
-          setTableSchema(initDt)
-          tableFormRef.current?.setFieldsValue(initDt); 
-          console.log(initDt)
-          setTableFormVisit(true)
-        }
+          
+        }}>{buildText}</Button>,
+
+        // <Button key="createcode" type="primary" onClick={async () => {await postMsg("/api/coder/table/createcode", {"PageID": record.ID})}}>创建代码</Button>,
+
+        // <Button key="bttt" type='primary'  onClick={ async (e)=>{
+        //   await postByBtn(e, "/api/demo/post", record)
+        // }} >Hello</Button>,
         
-      }}>构建</Button>,
-      <Button key="createcode" type="primary" onClick={async () => {await postMsg("/api/coder/table/createcode", {"PageID": record.ID})}}>创建代码</Button>,
+        <TableDropdown
+        key="actionGroup"
+        onSelect={(akey:string) => {
+          if (akey == "edit"){
+            action?.startEditable?.(record.ID);
+          }
+          action?.reload()
+        }}
+        menus={[
+          { key: "edit", name: '编辑' },
+        ]}
+      />,
 
-      // <Button key="bttt" type='primary'  onClick={ async (e)=>{
-      //   await postByBtn(e, "/api/demo/post", record)
-      // }} >Hello</Button>,
-      
-      <TableDropdown
-      key="actionGroup"
-      onSelect={(akey:string) => {
-        if (akey == "edit"){
-          action?.startEditable?.(record.ID);
-        }
-        action?.reload()
-      }}
-      menus={[
-        { key: "edit", name: '编辑' },
-      ]}
-    />,
-
-      // <a href={record.path} target="_blank" onClick={()=>{
-      //   console.log("查看看看", record.id, record.title)
-      //   message.success("hello wordd"+record.id)
-      //   }} rel="noopener noreferrer" key="view">
-      //   查看
-      // </a>,
-    ]},
+        // <a href={record.path} target="_blank" onClick={()=>{
+        //   console.log("查看看看", record.id, record.title)
+        //   message.success("hello wordd"+record.id)
+        //   }} rel="noopener noreferrer" key="view">
+        //   查看
+        // </a>,
+      ]},
   },
 ];
 
 const {Title} = Typography;
-const stepsFormRender = (dom: React.ReactNode, submitter: React.ReactNode) => {
-  return (
-    <Modal
-      title="构建数据表格"
-      width={900}
-      onOk={() => setTableFormVisit(false)}
-      onCancel={() => setTableFormVisit(false)}
-      visible={tableFormVisit}
-      footer={submitter}
-      destroyOnClose
-    >
-      {dom}
-    </Modal>
-  );
-}
-
 
   return (
     <PageContainer>
@@ -183,7 +178,8 @@ const stepsFormRender = (dom: React.ReactNode, submitter: React.ReactNode) => {
         description="创建Web后台项目. 包含前端和后端源码"
         onChange={()=>{history.push("/welcome")}}
       /> */}
-      <TableSchemaForm tableSchema={tableSchema} formRef={tableFormRef} setModalVisit={setTableFormVisit} stepsFormRender={stepsFormRender} />
+      <NewDataTableForm formRef={tableFormRef} setModalVisit={setTableFormVisit} modalVisit={tableFormVisit}  />
+      {/* <TableSchemaForm postUrl="/api/coder/table/add" tableSchema={tableSchema} formRef={tableFormRef} setModalVisit={setTableFormVisit} stepsFormRender={stepsFormRender} /> */}
 
       <ModalForm
         title="新建页面"
@@ -192,6 +188,7 @@ const stepsFormRender = (dom: React.ReactNode, submitter: React.ReactNode) => {
         onFinish={async (values) => {
           const resp = await postMsg("/api/coder/page/add", values)
           if (resp.Code == 200) {
+            actionRef.current?.reload()
             return true;
           }
           return false;

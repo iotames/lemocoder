@@ -52,7 +52,7 @@ func setRouters(g *gin.Engine) {
 	auth.POST("/coder/page/delete", handler.DeleteWebPage)
 	auth.GET("/coder/pages", handler.GetWebPages)
 	auth.GET("/coder/table/get", handler.GetTable)
-	auth.POST("/coder/table/add", handler.AddTable)
+	auth.POST("/coder/table/add", handler.CreateTable)
 	auth.POST("/coder/table/update", handler.UpdateTable)
 	auth.POST("/coder/table/createcode", handler.CreateTablePageCode)
 

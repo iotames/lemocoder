@@ -33,7 +33,7 @@ func Logout(g *gin.Context) {
 
 func GetClientMenu(c *gin.Context) {
 	pages := make([]database.WebPage, 0)
-	database.GetAll(&pages, 1000, 1, "project_id = ? AND state = ?", 0, 1)
+	database.GetAll(&pages, 1000, 1, "project_id = ? AND state = ?", 0, database.PAGE_STATE_CREATED)
 	var menu []initial.ClientMenuItem
 	for _, pg := range pages {
 		menu = append(menu, initial.ClientMenuItem{Path: pg.Path, Name: pg.Name})

@@ -1,5 +1,10 @@
 package model
 
+const TABLE_ITEM_OPT_FORM = "form"
+const TABLE_ITEM_OPT_ACTION = "action"
+const TABLE_ITEM_OPT_REDIRECT = "redirect"
+const TABLE_ITEM_OPT_EDIT = "edit"
+
 type TableItemSchema struct {
 	Width, Order                                                            int64
 	ColSize                                                                 float64

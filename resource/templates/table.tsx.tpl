@@ -177,7 +177,7 @@ export default () => {
       }}
       dateFormatter="string"
       headerTitle="高级表格"
-      toolBarRender={() => [<%{range .ToolBarForms}%><%{.Key}%>,<%{end}%>]}
+      toolBarRender={() => [<%{range .ToolBarForms}%><%{.Key.Button.Title}%>,<%{end}%>]}
     />
     </PageContainer>
   );

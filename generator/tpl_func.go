@@ -11,6 +11,15 @@ import (
 	"text/template"
 )
 
+const (
+	TYPE_DB_INT      = "INT"
+	TYPE_DB_SMALLINT = "SMALLINT"
+	TYPE_DB_BIGINT   = "BIGINT"
+	TYPE_DB_FLOAT    = "FLOAT"
+	TYPE_DB_STRING   = "STRING"
+	TYPE_DB_TEXT     = "TEXT"
+)
+
 func readFileOS(file string) (name string, b []byte, err error) {
 	name = filepath.Base(file)
 	b, err = os.ReadFile(file)
@@ -89,17 +98,17 @@ func parseFiles(filenames ...string) (*template.Template, error) {
 func dbtype(t string) string {
 	result := "VARCHAR"
 	switch strings.ToUpper(t) {
-	case "INT":
+	case TYPE_DB_INT:
 		result = "INT"
-	case "SMALLINT":
+	case TYPE_DB_SMALLINT:
 		result = "SMALLINT"
-	case "BIGINT":
+	case TYPE_DB_BIGINT:
 		result = "BIGINT"
-	case "FLOAT":
+	case TYPE_DB_FLOAT:
 		result = "FLOAT"
-	case "STRING":
+	case TYPE_DB_STRING:
 		result = "VARCHAR"
-	case "TEXT":
+	case TYPE_DB_TEXT:
 		result = "TEXT"
 	}
 	return result

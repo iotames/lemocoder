@@ -15,7 +15,7 @@ type PageItem = {
   PageType: number;
   title: string;
   remark: string;
-  State: boolean;
+  State: number;
   created_at: string;
   updated_at: string;
 };
@@ -92,7 +92,7 @@ const columns: ProColumns<PageItem>[] = [
     // fixed: 'right',
     render: (text, record, _, action) => {
       let buildText = "构建"
-      if (record.State) {
+      if (record.State > 0) {
         buildText = "编辑"
       }
       return [

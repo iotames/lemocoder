@@ -136,7 +136,7 @@ func CreateTablePageCode(c *gin.Context) {
 		c.JSON(200, ResponseFail(err.Error(), 500))
 		return
 	}
-	if page.State {
+	if page.State == 2 {
 		c.JSON(http.StatusOK, ResponseFail("请勿重复生成代码", 400))
 		return
 	}

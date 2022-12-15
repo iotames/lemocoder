@@ -68,9 +68,12 @@ export default () => {
         >
           <ProFormGroup>
             <ProFormSelect name="DataType" label="字段类型" initialValue="string" options={[
-                {value:"string", label:"字符串"},
-                {value:"int", label:"整型"},
-                {value:"float", label:"浮点型"}
+                {value:"string", label:"字符串(string)"},
+                {value:"int", label:"整型(int)"},
+                {value:"float", label:"浮点型(float)"},
+                {value:"text", label:"文本(text)"},
+                {value:"smallint", label:"小整型(smallint)"},
+                {value:"bigint", label:"长整型(bigint)"},
                 ]} rules={[{ required: true }]} />
               <ProFormSelect name="ValueType" label="值的类型" tooltip="会生成不同的渲染器" initialValue="text" options={[
                 {value:"text", label:"纯文本"}

@@ -7,6 +7,7 @@ import (
 	"lemocoder/util"
 	"os"
 	"path/filepath"
+	"strings"
 	"text/template"
 )
 
@@ -86,14 +87,19 @@ func parseFiles(filenames ...string) (*template.Template, error) {
 }
 
 func dbtype(t string) string {
-	result := "varchar(255)"
-	switch t {
-	case "float":
-		result = "FLOAT"
-	case "int":
+	result := "VARCHAR"
+	switch strings.ToUpper(t) {
+	case "INT":
+		result = "INT"
+	case "SMALLINT":
+		result = "SMALLINT"
+	case "BIGINT":
 		result = "BIGINT"
-
-	case "text":
+	case "FLOAT":
+		result = "FLOAT"
+	case "STRING":
+		result = "VARCHAR"
+	case "TEXT":
 		result = "TEXT"
 	}
 	return result

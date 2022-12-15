@@ -16,6 +16,10 @@ type WebPage struct {
 	State                                int    `xorm:"SMALLINT notnull default(0)"`
 }
 
+const PAGE_STATE_EMPTY = 0
+const PAGE_STATE_READY = 1
+const PAGE_STATE_CREATED = 2
+
 func (d WebPage) TableName() string {
 	return "web_pages"
 }

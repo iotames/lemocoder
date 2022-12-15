@@ -5,6 +5,7 @@ import (
 	"lemocoder/config"
 	"lemocoder/util"
 	"log"
+	"reflect"
 	"strings"
 	"sync"
 	"time"
@@ -122,6 +123,35 @@ func (b BaseModel) GetID() int64 {
 	return b.ID
 }
 
+func (b BaseModel) ToMap(m IModel) map[string]interface{} {
+	typeof := reflect.TypeOf(m).Elem()
+	typevalue := reflect.ValueOf(m).Elem()
+	fieldLen := typeof.NumField()
+	fieldsMap := make(map[string]interface{}, fieldLen+2)
+	for i := 0; i < fieldLen; i++ {
+		field := typeof.Field(i)
+		fvalue := typevalue.Field(i)
+		value := fvalue.Interface()
+		if field.Name == "BaseModel" {
+			for j := 0; j < field.Type.NumField(); j++ {
+				fieldj := field.Type.Field(j)
+				fvaluej := fvalue.Field(j)
+				valuej := fvaluej.Interface()
+				if fieldj.Name == "ID" {
+					valuej = fmt.Sprintf("%d", valuej)
+				}
+				fieldsMap[fieldj.Name] = valuej
+			}
+		} else {
+			if strings.Contains(field.Name, "ID") {
+				value = fmt.Sprintf("%d", value)
+			}
+			fieldsMap[field.Name] = value
+		}
+	}
+	return fieldsMap
+}
+
 func TableColToObj(t string) string {
 	tmp := (names.GonicMapper{}).Table2Obj(t)
 	replaceMap := map[string]string{"Id": "ID"}
@@ -208,6 +238,10 @@ func UpdateModel(m IModel, dt map[string]interface{}) (int64, error) {
 
 func DeleteModel(m IModel) (int64, error) {
 	return getEngine().Delete(m)
+}
+
+func BatchDelete(m IModel, codes []string) (int64, error) {
+	return getEngine().In("ID", codes).Delete(m)
 }
 
 func NewSession() *xorm.Session {

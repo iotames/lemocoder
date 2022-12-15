@@ -63,6 +63,9 @@ func CreateTable(c *gin.Context) {
 		ErrorServer(c, err)
 		return
 	}
+	wpage := database.WebPage{}
+	wpage.ID = pageID
+	database.UpdateModel(&wpage, map[string]interface{}{"state": database.PAGE_STATE_READY})
 
 	c.JSON(http.StatusOK, ResponseOk("提交成功"))
 }
@@ -136,7 +139,7 @@ func CreateTablePageCode(c *gin.Context) {
 		c.JSON(200, ResponseFail(err.Error(), 500))
 		return
 	}
-	if page.State == 2 {
+	if page.State == database.PAGE_STATE_CREATED {
 		c.JSON(http.StatusOK, ResponseFail("请勿重复生成代码", 400))
 		return
 	}
@@ -166,7 +169,7 @@ func CreateTablePageCode(c *gin.Context) {
 	}
 	// 生成源代码文件 END
 
-	database.UpdateModel(&page, map[string]interface{}{"state": 1})
+	database.UpdateModel(&page, map[string]interface{}{"state": database.PAGE_STATE_CREATED})
 	c.JSON(http.StatusOK, ResponseOk("创建代码成功"))
 }
 

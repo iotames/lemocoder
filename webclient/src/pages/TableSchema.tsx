@@ -9,9 +9,20 @@ import { history } from 'umi';
 
 export default () => {
   // const [tableSchema, setTableSchema] = useState<TableSchema>();
+  const [pageState, setPageState] = useState<number>(0);
   const [pageID, setPageID] = useState<string>();
   const tableFormRef = useRef<ProFormInstance<TableSchema>>();
   const refresh = async (pageID: string) => {
+    const pageResp = await get<{Code: number; Msg: string; Data:{State: number}}>("/api/coder/page/get", {"id": pageID})
+    if (pageResp.Code == 500){
+      await message.error(pageResp.Msg)
+      return
+    }
+    if (pageResp.Code == 404) {
+      await message.error(pageResp.Msg)
+      return
+    }
+    setPageState(pageResp.Data.State)
     const resp = await get<{Code: number; Msg: string; Data: TableSchema}>("/api/coder/table/get", {"page_id": pageID})
     if (resp.Code == 500){
       await message.error(resp.Msg)
@@ -125,14 +136,22 @@ export default () => {
 
   </ProForm>)
 
+  const codeGen = (
+    <Col span={12} style={{ marginBlockEnd: 16 }}>
+    <Button type='primary' shape="default" icon={<PlayCircleOutlined />} onClick={async()=>{await postMsg("/api/coder/table/createcode", {"PageID": pageID})}}>生成代码</Button>
+  </Col>
+  );
+  let topBtn = (<Col></Col>)
+  if (pageState < 2){
+    topBtn = codeGen
+  }
+
   return (
     <PageContainer>
 
       <Row>
         {/* TODO  判断是否已生成 然后显示按钮  生成代码 */}{/* 代码回滚 */}
-        <Col span={12} style={{ marginBlockEnd: 16 }}>
-          <Button type='primary' shape="default" icon={<PlayCircleOutlined />} onClick={async()=>{await postMsg("/api/coder/table/createcode", {"PageID": pageID})}}>生成代码</Button>
-        </Col>
+        {topBtn}
       </Row>
       
       <Row>

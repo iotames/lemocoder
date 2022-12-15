@@ -32,16 +32,25 @@ func Delete<%{$.ItemDataTypeName}%>(c *gin.Context) {
 	if err != nil {
 		return
 	}
-	// TODO 批量删除和删除单条记录合并一个接口 items, ok := data["items"]
-	postID := data.GetID()
-	if postID == 0 {
-		ErrorArgs(c, fmt.Errorf("删除对象的ID不能为0"))
-		return
-	}
-
+	var result int64
+	items, ok := data["items"]
 	m := new(database.<%{$.ItemDataTypeName}%>)
-	m.ID = data.GetID()
-	result, err := database.DeleteModel(m)
+	if ok {
+		var codes []string
+		for _, v := range items.([]interface{}) {
+			code := v.(map[string]interface{})["ID"].(string)
+			codes = append(codes, code)
+		}
+		result, err = database.BatchDelete(m, codes)
+	} else {
+		postID := data.GetID()
+		if postID == 0 {
+			ErrorArgs(c, fmt.Errorf("删除对象的ID不能为0"))
+			return
+		}
+		m.ID = data.GetID()
+		result, err = database.DeleteModel(m)
+	}
 	if err != nil {
 		ErrorServer(c, err)
 		return

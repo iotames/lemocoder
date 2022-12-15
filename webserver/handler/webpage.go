@@ -65,7 +65,7 @@ func DeleteWebPage(c *gin.Context) {
 	c.JSON(http.StatusOK, ResponseOk(fmt.Sprintf("删除成功%d", result)))
 }
 
-func GetWebPages(c *gin.Context) {
+func GetWebPagesList(c *gin.Context) {
 	// var items []database.WebPage
 	items := make([]database.WebPage, 0)
 	limitStr := c.DefaultQuery("limit", "30")
@@ -84,4 +84,25 @@ func GetWebPages(c *gin.Context) {
 		return
 	}
 	c.String(200, ResponseItems(itemsStr).(string))
+}
+
+func GetWebPage(c *gin.Context) {
+	idStr := c.DefaultQuery("id", "0")
+	if idStr == "0" {
+		idStr = c.DefaultQuery("ID", "0")
+	}
+	pageID, _ := strconv.ParseInt(idStr, 10, 64)
+	wpage := database.WebPage{}
+	wpage.ID = pageID
+	has, err := database.GetModel(&wpage)
+	if err != nil {
+		ErrorServer(c, err)
+		return
+	}
+	if !has {
+		ErrorNotFound(c)
+		return
+	}
+	resp := wpage.ToMap(&wpage)
+	c.JSON(http.StatusOK, Response(resp, "success", 200))
 }

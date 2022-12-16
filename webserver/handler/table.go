@@ -214,22 +214,21 @@ func setDataTable(postData PostData, dtable *database.DataTable, isCreate bool) 
 	for i, v := range tschema.Items {
 		tschema.Items[i].DataName = database.TableColToObj(v.DataName)
 	}
+	if len(tschema.ItemForms) == 0 {
+		tschema.ItemForms = []model.ModalFormSchema{
+			gen.GetUpdateForm(tschema.Items, tschema.ItemUpdateUrl),
+		}
+	}
+	if len(tschema.ToolBarForms) == 0 {
+		tschema.ToolBarForms = []model.ModalFormSchema{
+			gen.GetCreateForm(tschema.Items, tschema.ItemCreateUrl),
+		}
+	}
 	if isCreate {
 		if len(tschema.ItemOptions) == 0 {
-			// 添加行快捷编辑
 			tschema.ItemOptions = []model.TableItemOptionSchema{
-				// {Key: "lineedit", Type: "edit", Title: "编辑", Url: tschema.ItemUpdateUrl},
+				// {Key: "lineedit", Type: "edit", Title: "编辑", Url: tschema.ItemUpdateUrl}, // 添加行快捷编辑
 				{Key: gen.TABLE_ITEM_OPT_KEY_UPDATE, Type: model.TABLE_ITEM_OPT_FORM, Title: "编辑", Url: tschema.ItemUpdateUrl},
-			}
-		}
-		if len(tschema.ItemForms) == 0 {
-			tschema.ItemForms = []model.ModalFormSchema{
-				gen.GetUpdateForm(tschema.Items, tschema.ItemUpdateUrl),
-			}
-		}
-		if len(tschema.ToolBarForms) == 0 {
-			tschema.ToolBarForms = []model.ModalFormSchema{
-				gen.GetCreateForm(tschema.Items, tschema.ItemCreateUrl),
 			}
 		}
 		if len(tschema.BatchOptButtons) == 0 {

@@ -2,6 +2,7 @@ package generator
 
 import (
 	"lemocoder/model"
+	"strings"
 )
 
 const TABLE_ITEM_OPT_KEY_UPDATE = "update"
@@ -43,7 +44,8 @@ func getFormSchema(fields []model.TableItemSchema, postUrl string, isUpdate bool
 	}
 	fieldComponentsMap := getDbTypeComponentsMap()
 	for _, field := range fields {
-		fcomponentName, ok := fieldComponentsMap[field.DataType]
+		fdpType := strings.ToUpper(field.DataType)
+		fcomponentName, ok := fieldComponentsMap[fdpType]
 		if !ok {
 			fcomponentName = FORM_COMPONENT_TEXT
 		}

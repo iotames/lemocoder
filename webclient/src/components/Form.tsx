@@ -5,6 +5,7 @@ import {
     ProFormSelect, 
     ProFormGroup
 } from '@ant-design/pro-components';
+import { useState } from 'react';
 
 
 export const TableItemFormFields = () => {
@@ -32,6 +33,32 @@ export const TableItemFormFields = () => {
             <ProFormSwitch name="Ellipsis" label="省略过长内容" />
             <ProFormDigit label="权重" tooltip="查询表单中的权重，权重大排序靠前" min={0} max={300} name="Order" placeholder={"请输入权重"} /> */}
 
-      </ProFormGroup>
+        </ProFormGroup>
     );
-} 
+}
+
+export const TableItemOptFormFields = () => {
+    const [urlFieldHide, setUrlFieldHide] = useState(false);
+    return (
+        <ProFormGroup>
+            <ProFormSelect name="Type" label="操作类型" initialValue="action"
+                onChange={(value)=>{
+                    if (value=="form" || value=="edit"){
+                        setUrlFieldHide(true)
+                    }
+                    if (value=="action" || value=="redirect"){
+                        setUrlFieldHide(false)
+                    }
+                }} 
+            options={[
+                {value:"action", label:"POST数据"},
+                {value:"redirect", label:"路由跳转"},
+                {value:"form", label:"表单提交"},
+                {value:"edit", label:"快捷编辑"},
+                ]} rules={[{ required: true }]} />
+            <ProFormText name="Title" label="操作标题" rules={[{ required: true }]} width={90} />
+            <ProFormText name="Key" label="操作名" rules={[{ required: true }]} width={90} tooltip="英文.更新行数据的表单提交, 操作名必须为update" />
+            <ProFormText name="Url" label="地址" hidden={urlFieldHide} />
+        </ProFormGroup>
+    )
+}

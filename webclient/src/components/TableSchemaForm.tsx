@@ -2,8 +2,7 @@ import {ProFormSwitch, ProFormInstance, ProFormDigit, ProFormList, ProFormText, 
 import {post, postMsg, getTableData, postByBtn, get} from "@/services/api"
 import type { FormInstance, StepsProps } from 'antd';
 // import TableSchema from '@/pages/TableSchema';
-import { TableItemFormFields } from "@/components/Form"
-import { useRef, useState } from 'react';
+import { TableItemFormFields, TableItemOptFormFields } from "@/components/Form"
 
 type TableItemOptionSchema = {
   Key: string;
@@ -141,26 +140,12 @@ export const TableSchemaForm = (props:{
         <StepsForm.StepForm name="items" title="数据字段" initialValues={tableSchema}>
           <ProFormList name={["StructSchema", "Items"]} creatorButtonProps={{creatorButtonText: '添加数据字段'}}>
           <TableItemFormFields />
-            {/* <ProFormGroup></ProFormGroup> */}
-
           </ProFormList>
         </StepsForm.StepForm>
 
         <StepsForm.StepForm name="options" title="行数据操作" initialValues={tableSchema?.StructSchema}>
         <ProFormList name="ItemOptions" creatorButtonProps={{creatorButtonText: '添加行数据操作项'}}>
-          <ProFormGroup>
-            <ProFormSelect name="Type" label="操作类型" initialValue="action" options={[
-                  {value:"action", label:"POST数据"},
-                  {value:"redirect", label:"路由跳转"},
-                  {value:"form", label:"表单提交"},
-                  {value:"edit", label:"快捷编辑"},
-                  ]} rules={[{ required: true }]} />
-            <ProFormText name="Title" label="操作标题" rules={[{ required: true }]} width={90} />
-            <ProFormText name="Key" label="操作名" rules={[{ required: true }]} width={90} tooltip="英文" />
-            <ProFormText name="Url" label="地址" />
-
-          </ProFormGroup>
-
+        <TableItemOptFormFields />
         </ProFormList>
         </StepsForm.StepForm>
         <StepsForm.StepForm name="batchOpts" title="批量数据操作" initialValues={tableSchema?.StructSchema}>
@@ -187,7 +172,7 @@ export const NewDataTableForm = (props:{
   // const formRef = useRef<ProFormInstance<TableSchema>>();
   // const tableData = props.tableData
   // formRef.current?.setFieldsValue(tableData)
-  const postUrl = "/api/coder/table/add"
+  const postUrl = "/api/coder/table/create"
   const modalVisit = props.modalVisit
   const setModalVisit = props.setModalVisit
   return (

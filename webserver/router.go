@@ -48,12 +48,13 @@ func setRouters(g *gin.Engine) {
 	auth := api.Group("")
 	auth.Use(prepare.HandlerJWT())
 
-	auth.POST("/coder/page/add", handler.AddWebPage)
+	auth.POST("/coder/page/create", handler.CreateWebPage)
 	auth.POST("/coder/page/delete", handler.DeleteWebPage)
+	auth.POST("/coder/page/update", handler.UpdateWebPage)
 	auth.GET("/coder/page/get", handler.GetWebPage)
 	auth.GET("/coder/pages", handler.GetWebPagesList)
 	auth.GET("/coder/table/get", handler.GetTable)
-	auth.POST("/coder/table/add", handler.CreateTable)
+	auth.POST("/coder/table/create", handler.CreateTable)
 	auth.POST("/coder/table/update", handler.UpdateTable)
 	auth.POST("/coder/table/createcode", handler.CreateTablePageCode)
 

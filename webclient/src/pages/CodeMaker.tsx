@@ -5,6 +5,7 @@ import { useRef, useState } from 'react';
 import {post, postMsg, getTableData, postByBtn, get} from "@/services/api"
 import {TableSchemaForm, NewDataTableForm} from "@/components/TableSchemaForm"
 import type { TableSchema } from "@/components/TableSchemaForm"
+import { EyeOutlined, PlusOutlined } from '@ant-design/icons';
 import { history } from 'umi';
 
 type PageItem = {
@@ -91,14 +92,14 @@ const columns: ProColumns<PageItem>[] = [
     // width: 260,
     // fixed: 'right',
     render: (text, record, _, action) => {
-      let buildText = "构建"
+      let btnCoin = (<PlusOutlined />)
       if (record.State > 0) {
-        buildText = "编辑"
+        btnCoin = (<EyeOutlined />)
       }
       return [
         // <Button  type="primary" onClick={() => {}}></Button>,
 
-        <Button key="editform1" type="primary" onClick={async () => {
+        <Button key="editform1" type="primary" icon={btnCoin} onClick={async () => {
           // setRowRecord(record);
           if(record.PageType == 0){
             
@@ -131,7 +132,7 @@ const columns: ProColumns<PageItem>[] = [
             
           }
           
-        }}>{buildText}</Button>,
+        }}></Button>,
 
         // <Button key="createcode" type="primary" onClick={async () => {await postMsg("/api/coder/table/createcode", {"PageID": record.ID})}}>创建代码</Button>,
 
@@ -139,18 +140,19 @@ const columns: ProColumns<PageItem>[] = [
         //   await postByBtn(e, "/api/demo/post", record)
         // }} >Hello</Button>,
         
-        <TableDropdown
-        key="actionGroup"
-        onSelect={(akey:string) => {
-          if (akey == "edit"){
-            action?.startEditable?.(record.ID);
-          }
-          action?.reload()
-        }}
-        menus={[
-          { key: "edit", name: '编辑' },
-        ]}
-      />,
+      //   <TableDropdown
+      //   key="actionGroup"
+      //   onSelect={(akey:string) => {
+      //     if (akey == "edit"){
+      //       action?.startEditable?.(record.ID);
+      //     }
+      //     action?.reload()
+      //   }}
+      //   menus={[
+      //     { key: "edit", name: '编辑' },
+      //   ]}
+      // />,
+      <a onClick={()=>{action?.startEditable?.(record.ID);action?.reload()}}>编辑</a>
 
         // <a href={record.path} target="_blank" onClick={()=>{
         //   console.log("查看看看", record.id, record.title)
@@ -179,14 +181,13 @@ const {Title} = Typography;
         onChange={()=>{history.push("/welcome")}}
       /> */}
       <NewDataTableForm formRef={tableFormRef} setModalVisit={setTableFormVisit} modalVisit={tableFormVisit}  />
-      {/* <TableSchemaForm postUrl="/api/coder/table/add" tableSchema={tableSchema} formRef={tableFormRef} setModalVisit={setTableFormVisit} stepsFormRender={stepsFormRender} /> */}
 
       <ModalForm
         title="新建页面"
         visible={pageFormVisit}
         // width={600}
         onFinish={async (values) => {
-          const resp = await postMsg("/api/coder/page/add", values)
+          const resp = await postMsg("/api/coder/page/create", values)
           if (resp.Code == 200) {
             actionRef.current?.reload()
             return true;
@@ -258,8 +259,8 @@ const {Title} = Typography;
         type: 'multiple',
         // editableKeys,
         // onChange: setEditableRowKeys,
-        onSave: async (k, update, origin) => {await postMsg("/api/coder/table/update", update)},
-        onDelete: async (k, row) => {await postMsg("/api/coder/page/delete", row)}
+        onSave: async (k, update, origin) => {await postMsg("/api/coder/page/update", update); actionRef.current?.reload},
+        onDelete: async (k, row) => {await postMsg("/api/coder/page/delete", row); actionRef.current?.reload}
       }}
       columnsState={{
         persistenceKey: 'pro-table-singe-demos',

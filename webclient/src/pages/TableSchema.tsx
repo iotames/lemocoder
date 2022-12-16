@@ -1,9 +1,9 @@
-import { ProCard, ProFormItem, ProFormSwitch, ProFormGroup, ProFormInstance, ProFormDigit, ProFormList, ProTable, ModalForm, ProFormText, ProFormSelect, TableDropdown, ProForm, StepsForm, PageContainer, CheckCard } from '@ant-design/pro-components';
+import { ProCard, ProFormItem, ProFormSwitch, ProFormGroup, ProFormInstance, ProFormDigit, ProFormList, ProTable, ModalForm, ProFormText, ProForm, StepsForm, PageContainer, CheckCard } from '@ant-design/pro-components';
 import { Row, Col, Button, Typography, message, Modal, InputNumber, Input, Select } from 'antd';
 import { useRef, useState, useEffect } from 'react';
 import {post, postMsg, getTableData, postByBtn, get} from "@/services/api"
 import type { TableSchema } from "@/components/TableSchemaForm"
-import { TableItemFormFields } from "@/components/Form"
+import { TableItemFormFields, TableItemOptFormFields } from "@/components/Form"
 import { PlayCircleOutlined } from '@ant-design/icons';
 
 import { history } from 'umi';
@@ -87,19 +87,7 @@ export default () => {
 
       <ProCard title="行数据操作" style={{ marginBlockStart: 16 }}>
           <ProFormList name={["StructSchema", "ItemOptions"]} creatorButtonProps={{creatorButtonText: '添加行数据操作项'}}>
-          <ProFormGroup>
-            <ProFormSelect name="Type" label="操作类型" initialValue="action" options={[
-                  {value:"action", label:"POST数据"},
-                  {value:"redirect", label:"路由跳转"},
-                  {value:"form", label:"表单提交"},
-                  {value:"edit", label:"快捷编辑"},
-                  ]} rules={[{ required: true }]} />
-            <ProFormText name="Title" label="操作标题" rules={[{ required: true }]} width={90} />
-            <ProFormText name="Key" label="操作名" rules={[{ required: true }]} width={90} tooltip="英文.更新行数据的表单提交, 操作名必须为update" />
-            <ProFormText name="Url" label="地址" />
-
-          </ProFormGroup>
-
+          <TableItemOptFormFields />
         </ProFormList>
       </ProCard>
 

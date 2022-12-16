@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"lemocoder/database"
@@ -52,21 +53,20 @@ func ResponseItems(items interface{}) interface{} {
 }
 
 // ItemsIDtoString 把列表数据的ID字段转为字符串类型，否则JS不支持长整型。会出错。
-func ItemsIDtoString[T database.IDitem](items []T) (string, error) {
-	b, err := json.Marshal(items)
-	if err != nil {
-		return "", err
-	}
-
-	befStr := string(b)
+func ItemsIDtoString[T database.IDitem](items []T) (result string, err error) {
+	buf := bytes.Buffer{}
+	encoder := json.NewEncoder(&buf)
+	err = encoder.Encode(items)
+	result = buf.String()
+	fmt.Printf("\n-------%s------\n", result)
 	for _, item := range items {
 		// fmt.Printf("---item---%+v--", item)
 		oldstr := fmt.Sprintf(`"ID":%d`, item.GetID())
 		newstr := fmt.Sprintf(`"ID":"%d"`, item.GetID())
-		// fmt.Println(oldstr, newstr)
-		befStr = strings.Replace(befStr, oldstr, newstr, 1)
+		// json数值类型只有 number, 对长整型会丢失精度
+		result = strings.Replace(result, oldstr, newstr, 1)
 	}
-	return befStr, err
+	return
 }
 
 func ErrorNoPermission(c *gin.Context) {

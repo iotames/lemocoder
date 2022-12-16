@@ -17,23 +17,6 @@ type <%{.ItemDataTypeName}%> = {
 //  labels: {name: string; color: string;}[]; number
 };
 
-<%{range .ToolBarForms}%>
-
-const <%{.Key}%> = (<ModalForm
-  title="<%{.Form.Title}%>"
-  trigger={<Button type="<%{.Button.Type}%>"><%{.Button.Title}%></Button>}
-  onFinish={async (values) => {
-    console.log(values);
-    await postMsg("<%{.Form.SubmitUrl}%>", values)
-    return true;
-  }}
->
-
-<%{ .Form.FormFields | getFormFieldsHtml }%>
-
-</ModalForm>)
-<%{end}%>
-
 export default () => {
   const actionRef = useRef<ActionType>();
   const itemFormRef = useRef<ProFormInstance<<%{.ItemDataTypeName}%>>>();
@@ -41,6 +24,24 @@ export default () => {
   <%{range .ItemForms}%>const [modal<%{.Key}%>Visit, setModal<%{.Key}%>Visit] = useState(false);
   <%{end}%>
   // const [editableKeys, setEditableRowKeys] = useState<React.Key[]>(() => []);
+
+  <%{range .ToolBarForms}%>
+  const <%{.Key}%> = (<ModalForm
+    title="<%{.Form.Title}%>"
+    trigger={<Button type="<%{.Button.Type}%>"><%{.Button.Title}%></Button>}
+    onFinish={async (values) => {
+      console.log(values);
+      const resp = await postMsg("<%{.Form.SubmitUrl}%>", values)
+      if (resp.Code == 200) {
+        actionRef.current?.reload()
+        return true;
+      }
+      return false;
+    }}
+  >
+  <%{ .Form.FormFields | getFormFieldsHtml }%>
+  </ModalForm>)
+  <%{end}%>
 
   <%{range .ItemForms}%>
   const <%{.Key}%> = (<ModalForm
@@ -51,13 +52,15 @@ export default () => {
     onVisibleChange={setModal<%{.Key}%>Visit}
     onFinish={async (values) => {
       console.log(values);
-      await postMsg("<%{.Form.SubmitUrl}%>", values)
-      return true;
+      const resp = await postMsg("<%{.Form.SubmitUrl}%>", values)
+      if (resp.Code == 200) {
+        actionRef.current?.reload()
+        return true;
+      }
+      return false;
     }}
   >
-
   <%{ .Form.FormFields | getFormFieldsHtml }%>
-
   </ModalForm>)
   <%{end}%>
 

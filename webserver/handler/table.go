@@ -183,7 +183,7 @@ func setDataTable(postData PostData, dtable *database.DataTable, isCreate bool) 
 	if err != nil {
 		return err
 	}
-	err = json.Unmarshal(tschemaJson, &tschema)
+	err = json.Unmarshal(tschemaJson, &tschema) // POST tschemaJson 缺少部分字段, 不改变 &tschema 对应字段的原有值
 	if err != nil {
 		return err
 	}
@@ -214,6 +214,7 @@ func setDataTable(postData PostData, dtable *database.DataTable, isCreate bool) 
 	for i, v := range tschema.Items {
 		tschema.Items[i].DataName = database.TableColToObj(v.DataName)
 	}
+	log.Printf("\n------tschema.ItemForms(%+v)----tschema.ToolBarForms(%+v)------\n", tschema.ItemForms, tschema.ToolBarForms)
 	if len(tschema.ItemForms) == 0 {
 		tschema.ItemForms = []model.ModalFormSchema{
 			gen.GetUpdateForm(tschema.Items, tschema.ItemUpdateUrl),

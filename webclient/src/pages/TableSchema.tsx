@@ -95,7 +95,7 @@ export default () => {
                   {value:"edit", label:"快捷编辑"},
                   ]} rules={[{ required: true }]} />
             <ProFormText name="Title" label="操作标题" rules={[{ required: true }]} width={90} />
-            <ProFormText name="Key" label="操作名" rules={[{ required: true }]} width={90} tooltip="英文" />
+            <ProFormText name="Key" label="操作名" rules={[{ required: true }]} width={90} tooltip="英文.更新行数据的表单提交, 操作名必须为update" />
             <ProFormText name="Url" label="地址" />
 
           </ProFormGroup>

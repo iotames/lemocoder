@@ -37,14 +37,21 @@ func getFormFieldHtml(field model.FormFieldSchema) string {
 		html += "</ProForm.Group>"
 	}
 	if grouplen == 0 {
-		html += fmt.Sprintf(`<%s name="%s" label="%s"`, field.Component, field.Name, field.Label)
+		if field.Name == "ID" {
+			html += fmt.Sprintf(`<%s name="ID" hidden`, FORM_COMPONENT_TEXT)
+		} else {
+			html += fmt.Sprintf(`<%s name="%s" label="%s"`, field.Component, field.Name, field.Label)
+		}
 		if field.Width != "" {
 			html += ` width="` + field.Width + `"`
 		}
 		if field.Component == "ProFormSelect" {
 			html += ` request={async()=>[{value:"value1", label:"label1"},{value:"value2", label:"label2"}]}`
 		}
-		html += fmt.Sprintf(` placeholder="%s" />`, field.Placeholder)
+		if field.Placeholder != "" {
+			html += fmt.Sprintf(` placeholder="%s"`, field.Placeholder)
+		}
+		html += " />"
 	}
 	return html
 }

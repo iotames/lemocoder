@@ -3,6 +3,8 @@ import { PageContainer, ProTable, ModalForm, ProForm,
   ProFormDateRangePicker,
   ProFormSelect,
   ProFormText,
+  ProFormTextArea,
+  ProFormDigit,
   ProFormInstance,
 } from '@ant-design/pro-components';
 import { Button, Space, message } from 'antd';
@@ -177,7 +179,7 @@ export default () => {
       }}
       dateFormatter="string"
       headerTitle="高级表格"
-      toolBarRender={() => [<%{range .ToolBarForms}%><%{.Key.Button.Title}%>,<%{end}%>]}
+      toolBarRender={() => [<%{range .ToolBarForms}%><%{.Key}%>,<%{end}%>]}
     />
     </PageContainer>
   );

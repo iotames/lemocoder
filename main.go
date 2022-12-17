@@ -31,6 +31,7 @@ func main() {
 		}
 		if v == "init" {
 			if util.IsPathExists("app.lock") {
+				// 只有调用 、/api/client/init 接口才会生成 app.lock 文件
 				log.Println("Warning!! 不可重复初始化。请删除app.lock文件后继续")
 				return
 			}
@@ -47,6 +48,13 @@ func main() {
 		}
 		if v == "dbinit" {
 			database.CreateTables()
+			return
+		}
+		if v == "clientinit" {
+			err = generator.BuildWebClient("resource/client")
+			if err != nil {
+				panic(err)
+			}
 			return
 		}
 	}

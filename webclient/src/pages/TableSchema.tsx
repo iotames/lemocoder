@@ -1,12 +1,13 @@
 import { ProCard, ProFormItem, ProFormSwitch, ProFormGroup, ProFormInstance, ProFormDigit, ProFormList, ProTable, ModalForm, ProFormText, ProForm, StepsForm, PageContainer, CheckCard } from '@ant-design/pro-components';
-import { Row, Col, Button, Typography, message, Modal, InputNumber, Input, Select } from 'antd';
+import { Row, Col, Button, Alert, Popover, message, Modal, InputNumber, Input, Select, Typography } from 'antd';
 import { useRef, useState, useEffect } from 'react';
 import {post, postMsg, getTableData, postByBtn, get} from "@/services/api"
 import type { TableSchema } from "@/components/TableSchemaForm"
 import { TableItemFormFields, TableItemOptFormFields } from "@/components/Form"
-import { PlayCircleOutlined } from '@ant-design/icons';
-
+import { PlayCircleOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { history } from 'umi';
+
+const { Title, Paragraph, Text } = Typography;
 
 export default () => {
   // const [tableSchema, setTableSchema] = useState<TableSchema>();
@@ -102,11 +103,31 @@ export default () => {
 
 
   </ProForm>)
+    const htlpTitle = <span>后续操作</span>;
+    const htlpContent = (
+      <div>
+        <p><Text copyable>go run . clientinit</Text></p>
+        <p><Text copyable>go run . dbsync</Text></p>
+        <p><Text copyable>go build .</Text></p>
+      </div>
+    );
+    const htlpBtn = (
+      <Popover placement="bottom" title={htlpTitle} content={htlpContent} trigger="click">
+      <Button type='ghost' shape='circle' icon={<QuestionCircleOutlined />}></Button>
+    </Popover>
+    );
 
   const codeGen = (
-    <Col span={12} style={{ marginBlockEnd: 16 }}>
-    <Button type='primary' shape="default" icon={<PlayCircleOutlined />} onClick={async()=>{await postMsg("/api/coder/table/createcode", {"PageID": pageID})}}>生成代码</Button>
-  </Col>
+    <>
+    <Button type='primary' style={{marginRight:6}} shape="default" icon={<PlayCircleOutlined />} onClick={
+      async()=>{
+        await postMsg("/api/coder/table/createcode", {"PageID": pageID})
+      }
+    }
+      >生成代码</Button>
+      {htlpBtn}
+    </>
+
   );
   let topBtn = (<Col></Col>)
   if (pageState < 2){
@@ -117,12 +138,17 @@ export default () => {
     <PageContainer>
 
       <Row>
-        {/* TODO  判断是否已生成 然后显示按钮  生成代码 */}{/* 代码回滚 */}
-        {topBtn}
-      </Row>
-      
-      <Row>
-        <Col span={20}>{TableSchemaUpdateForm}</Col>
+        <Col span={20}>
+          <Alert
+            message="提示: 生成代码后，请重新编译前后端项目，并同步数据表，方可生效."
+            // description=""
+            type="warning" showIcon closable
+            style={{margin: -12, marginBottom: 24, }} />
+          <Col span={12} style={{ marginBlockEnd: 16 }}>
+          <span>{topBtn}</span>
+          </Col>
+          {TableSchemaUpdateForm}
+        </Col>
       </Row>
       
 {/*     

@@ -34,11 +34,11 @@ go env -w GOPROXY=https://goproxy.cn,direct
 # 加载依赖包
 go mod tidy
 
-# 初始化本地sqlite3数据库, 生成 WebClient 客户端资源
+# 初始化数据库(默认sqlite3), 生成 WebClient 客户端资源
 # (cd webclient && yarn && yarn build && cd .. && mv webclient/dist/* resource/client/)
 go run . init
 
-# 运行
+# 编译并运行
 go run .
 ```
 
@@ -49,11 +49,34 @@ go run .
 
 > 如执行 `go mod tidy` 命令出错，可能为GO版本过低或第三方包版本冲突。请升级 `Go` 或重置 `mod.go` 文件内容后再试。
 
+`mod.go`:
+
 ```
 module lemocoder
 
 go 1.19
 ```
+
+
+## 配置文件
+
+复制 `env.default` 文件为 `.env`, 并更改新配置文件 `.env` 的配置项，以覆盖 `env.default` 配置文件的默认值
+
+
+## 自动生成代码
+
+程序自动生成代码文件后，无法实时生效。必须 `重新编译前后端，并同步数据表结构`
+
+```
+# 编译前端文件并拷贝至 resource/client 目录
+go run . clientinit
+# 同步数据表结构
+go run . dbsync
+# 编译后端主程序
+go build .
+```
+
+重新执行主程序: `./lemocoder` 或 `lemocoder.exe`
 
 
 ## WebServer 服务端
@@ -64,9 +87,9 @@ go run . init
 go run .
 ```
 
-编译成可执行文件后运行
+编译成可执行文件后执行
 ```
-go build
+go build .
 ./lemocoder init
 ./lemocoder
 ```

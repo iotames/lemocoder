@@ -41,7 +41,7 @@ func New() WebServer {
 
 	fmt.Printf(`
 	欢迎使用 LemoCoder
-	当前版本:V0.1.0
+	当前版本:V1.0.1
 	服务端接口运行地址:http://127.0.0.1%s
 	客户端资源运行地址:http://127.0.0.1%s/client
 `, addr, addr)

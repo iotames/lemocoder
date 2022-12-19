@@ -1,10 +1,12 @@
 package handler
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
 	"lemocoder/database"
 	gen "lemocoder/generator"
+	"lemocoder/util"
 	"net/http"
 	"os"
 	"os/exec"
@@ -78,4 +80,28 @@ func RebuildProject(c *gin.Context) {
 	// 更新数据库
 	database.UpdateModel(&wpage, map[string]interface{}{"state": database.PAGE_STATE_BUILT})
 	c.JSON(http.StatusOK, ResponseOk("编译完成, 请重启应用"))
+}
+
+func GetOsStatus(c *gin.Context) {
+	vNode, _ := util.RunCmd("node", "--version")
+	vYarn, _ := util.RunCmd("yarn", "--version")
+	if len(vYarn) != 0 {
+		vYarn = append([]byte("v"), vYarn...)
+	}
+	vGit, _ := util.RunCmd("git", "--version")
+	if len(vGit) != 0 {
+		vGit = bytes.Replace(vGit, []byte("git version "), []byte("v"), 1)
+	}
+	vGo, _ := util.RunCmd("go", "version")
+	if len(vGo) != 0 {
+		vGo = bytes.Replace(vGo, []byte("go version go"), []byte("v"), 1)
+	}
+
+	data := map[string]string{
+		"vnode": string(vNode),
+		"vyarn": string(vYarn),
+		"vgit":  string(vGit),
+		"vgo":   string(vGo),
+	}
+	c.JSON(http.StatusOK, Response(data, "success", http.StatusOK))
 }

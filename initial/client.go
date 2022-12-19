@@ -33,10 +33,10 @@ type ClientRoute struct {
 func GetClientMenu(menu ...ClientMenuItem) []ClientMenuItem {
 	initMenu := []ClientMenuItem{
 		{Path: "/welcome", Name: "首页"},
-		{Path: "/tabledemo", Name: "数据表格示例"},
+		// {Path: "/tabledemo", Name: "数据表格示例"},
 		{Path: "/codemaker", Name: "代码生成器"},
 		// {Path: "/excelspider", Name: "Excel爬虫"},
-		{Path: "/test", Name: "测试1"},
+		// {Path: "/test", Name: "测试1"},
 	}
 	initMenu = append(initMenu, menu...)
 	return initMenu

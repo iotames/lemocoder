@@ -105,7 +105,7 @@ export default () => {
     </ProForm>)
 
     const htlpTitle = (
-    <Popconfirm placement="right" title="是否自动自行?" onConfirm={async()=>{ await postMsg("/api/coder/project/rebuild", {"PageID": pageID})}} okText="是" cancelText="否">
+    <Popconfirm placement="right" title="是否执行?" onConfirm={async()=>{ await postMsg("/api/coder/project/rebuild", {"PageID": pageID})}} okText="是" cancelText="否">
       <Button type="primary">后续操作</Button>
     </Popconfirm>);
 
@@ -123,15 +123,12 @@ export default () => {
     );
 
   const codeGen = (
-    <>
-    <Button type='primary' style={{marginRight:6}} shape="default" icon={<PlayCircleOutlined />} onClick={
+    <Popconfirm placement="right" title="是否生成代码?" onConfirm={
       async()=>{
-        await postMsg("/api/coder/table/createcode", {"PageID": pageID})
-      }
-    }
-      >生成代码</Button>
-    </>
-
+      await postMsg("/api/coder/table/createcode", {"PageID": pageID})
+    }} okText="是" cancelText="否">
+    <Button type='primary' style={{marginRight:6}} shape="circle" icon={<PlayCircleOutlined />} ></Button>
+    </Popconfirm>
   );
   let topBtn = (<Col></Col>)
   if (pageState < 2){

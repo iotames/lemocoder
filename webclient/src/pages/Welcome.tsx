@@ -1,8 +1,10 @@
 import { PageContainer } from '@ant-design/pro-components';
 
-import { Alert, Card, Typography, Row, Timeline, Col } from 'antd';
-import React from 'react';
+import { Alert, Card, Typography, Row, Timeline, Col, message } from 'antd';
+// import React, {  } from 'react';
+import { useState, useEffect } from 'react';
 import { SmileOutlined } from '@ant-design/icons';
+import {post, postMsg, getTableData, postByBtn,get} from "@/services/api"
 // import styles from './Welcome.less';
 
 // const CodePreview: React.FC = ({ children }) => (
@@ -13,7 +15,37 @@ import { SmileOutlined } from '@ant-design/icons';
 //   </pre>
 // );
 
-const Welcome: React.FC = () => {
+
+
+type OsStatus = {
+  vnode: string;
+  vyarn: string;
+  vgit: string;
+  vgo: string;
+}
+
+
+
+// const Welcome: React.FC = () => {
+  export default () => {
+  const [isload, setIsload] = useState<boolean>(false);
+  const [osstatus, setosstatus] = useState<OsStatus>({vnode:"",vyarn:"",vgit:"",vgo:""});
+
+  const refresh = async () => {
+    const resp = await get<{Code: number; Data: OsStatus; Msg: string}>("/api/os/getstatus")
+    if (resp.Code!=200){
+      await message.error(resp.Msg)
+      return
+    }
+    setosstatus(resp.Data)
+  }
+  
+  useEffect(()=>{
+    if (!isload){
+      refresh()
+      setIsload(true)
+    }
+  })
 
   return (
     <PageContainer>
@@ -22,31 +54,21 @@ const Welcome: React.FC = () => {
         <Row>
           <Col span={16}>
             <Timeline>
-              <Timeline.Item color="green">后端开发环境</Timeline.Item>
-              <Timeline.Item color="green">前端开发环境</Timeline.Item>
-              <Timeline.Item color="red">
-                <p>Solve initial network problems 1</p>
-                <p>Solve initial network problems 2</p>
-                <p>Solve initial network problems 3 2015-09-01</p>
-              </Timeline.Item>
-              <Timeline.Item>
+              <Timeline.Item color={osstatus.vgo == "" ? "red" : "green"}>go {osstatus.vgo}</Timeline.Item>
+              <Timeline.Item color={osstatus.vnode == "" ? "red" : "green"}>node: {osstatus.vnode}</Timeline.Item>
+              <Timeline.Item color={osstatus.vyarn == "" ? "red" : "green"}>yarn {osstatus.vyarn}</Timeline.Item>
+              <Timeline.Item color={osstatus.vgit == "" ? "red" : "green"}>git {osstatus.vgit}</Timeline.Item>
+
+              {/* <Timeline.Item color="gray">
                 <p>Technical testing 1</p>
                 <p>Technical testing 2</p>
                 <p>Technical testing 3 2015-09-01</p>
               </Timeline.Item>
-              <Timeline.Item color="gray">
-                <p>Technical testing 1</p>
-                <p>Technical testing 2</p>
-                <p>Technical testing 3 2015-09-01</p>
-              </Timeline.Item>
-              <Timeline.Item color="gray">
-                <p>Technical testing 1</p>
-                <p>Technical testing 2</p>
-                <p>Technical testing 3 2015-09-01</p>
-              </Timeline.Item>
+
               <Timeline.Item color="#00CCFF" dot={<SmileOutlined />}>
                 <p>Custom color testing</p>
-              </Timeline.Item>
+              </Timeline.Item> */}
+
             </Timeline>
 
           </Col>
@@ -76,4 +98,4 @@ const Welcome: React.FC = () => {
   );
 };
 
-export default Welcome;
+// export default Welcome;

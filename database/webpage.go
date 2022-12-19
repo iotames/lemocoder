@@ -19,6 +19,7 @@ type WebPage struct {
 const PAGE_STATE_EMPTY = 0
 const PAGE_STATE_READY = 1
 const PAGE_STATE_CREATED = 2
+const PAGE_STATE_BUILT = 3
 
 func (d WebPage) TableName() string {
 	return "web_pages"

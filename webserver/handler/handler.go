@@ -89,3 +89,16 @@ func ParsePostData(c *gin.Context) (postData PostData, err error) {
 	}
 	return
 }
+
+func mustFind(c *gin.Context, m database.IModel) error {
+	has, err := database.GetModel(m)
+	if err != nil {
+		ErrorServer(c, err)
+		return err
+	}
+	if !has {
+		ErrorNotFound(c)
+		err = fmt.Errorf("无法找到请求对象")
+	}
+	return err
+}

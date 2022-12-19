@@ -81,13 +81,9 @@ func UpdateTable(c *gin.Context) {
 	}
 	modelFind := database.DataTable{}
 	modelFind.ID = postData.GetID()
-	has, err := database.GetModel(&modelFind)
+
+	err = mustFind(c, &modelFind)
 	if err != nil {
-		ErrorServer(c, err)
-		return
-	}
-	if !has {
-		ErrorNotFound(c)
 		return
 	}
 

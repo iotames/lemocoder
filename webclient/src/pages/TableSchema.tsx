@@ -1,5 +1,5 @@
 import { ProCard, ProFormItem, ProFormSwitch, ProFormGroup, ProFormInstance, ProFormDigit, ProFormList, ProTable, ModalForm, ProFormText, ProForm, StepsForm, PageContainer, CheckCard } from '@ant-design/pro-components';
-import { Row, Col, Button, Alert, Popover, message, Modal, InputNumber, Input, Select, Typography } from 'antd';
+import { Row, Col, Button, Alert, Popover, Popconfirm, message, Modal, InputNumber, Input, Select, Typography } from 'antd';
 import { useRef, useState, useEffect } from 'react';
 import {post, postMsg, getTableData, postByBtn, get} from "@/services/api"
 import type { TableSchema } from "@/components/TableSchemaForm"
@@ -51,59 +51,64 @@ export default () => {
     }
   }, [queryArgs]);
 
-  const TableSchemaUpdateForm = (
-  <ProForm<TableSchema>
-  submitter={{ searchConfig: { submitText: '修改'}, resetButtonProps:{style:{display:"none"}}}}
-    onFinish={async(values) => {
-      await postMsg("/api/coder/table/update", values)
-    }}
-    formRef={tableFormRef}
-    // initialValues={tableSchema}
-    >
-      <ProFormText name="ID" hidden />
-      <ProFormText name="PageID" hidden />
-      <ProFormText name={["StructSchema", "RowKey"]} hidden />
+    const TableSchemaUpdateForm = (
+    <ProForm<TableSchema>
+    submitter={{ searchConfig: { submitText: '修改'}, resetButtonProps:{style:{display:"none"}}}}
+      onFinish={async(values) => {
+        await postMsg("/api/coder/table/update", values)
+      }}
+      formRef={tableFormRef}
+      // initialValues={tableSchema}
+      >
+        <ProFormText name="ID" hidden />
+        <ProFormText name="PageID" hidden />
+        <ProFormText name={["StructSchema", "RowKey"]} hidden />
 
-      
-      <ProForm.Group>
-        <ProFormText width={120} name={["StructSchema", "ItemDataTypeName"]} label="数据结构名" rules={[{ required: true }]} />
-        <ProFormText width={180} name={["StructSchema", "ItemsDataUrl"]} label="数据源" rules={[{ required: true }]} />
-        <ProFormText width={180} name={["StructSchema", "ItemCreateUrl"]} label="新增数据地址" />
-        <ProFormText width={180} name={["StructSchema", "ItemUpdateUrl"]} label="更新数据地址" />
-        <ProFormText width={180} name={["StructSchema", "ItemDeleteUrl"]} label="删除数据地址" /> 
-      </ProForm.Group>
+        
+        <ProForm.Group>
+          <ProFormText width={120} name={["StructSchema", "ItemDataTypeName"]} label="数据结构名" rules={[{ required: true }]} />
+          <ProFormText width={180} name={["StructSchema", "ItemsDataUrl"]} label="数据源" rules={[{ required: true }]} />
+          <ProFormText width={180} name={["StructSchema", "ItemCreateUrl"]} label="新增数据地址" />
+          <ProFormText width={180} name={["StructSchema", "ItemUpdateUrl"]} label="更新数据地址" />
+          <ProFormText width={180} name={["StructSchema", "ItemDeleteUrl"]} label="删除数据地址" /> 
+        </ProForm.Group>
 
-      {/* <ProForm.Group label="数据字段"> */}
-      <ProCard title="数据字段" style={{ marginBlockStart: 16 }} >
-        <ProFormList 
-        name={["StructSchema", "Items"]} 
-        creatorButtonProps={{creatorButtonText: '添加数据字段'}}
-        >
-          
-          <TableItemFormFields />
-          
-        </ProFormList>
-      </ProCard>
-      {/* </ProForm.Group> */}
+        {/* <ProForm.Group label="数据字段"> */}
+        <ProCard title="数据字段" style={{ marginBlockStart: 16 }} >
+          <ProFormList 
+          name={["StructSchema", "Items"]} 
+          creatorButtonProps={{creatorButtonText: '添加数据字段'}}
+          >
+            
+            <TableItemFormFields />
+            
+          </ProFormList>
+        </ProCard>
+        {/* </ProForm.Group> */}
 
-      <ProCard title="行数据操作" style={{ marginBlockStart: 16 }}>
-          <ProFormList name={["StructSchema", "ItemOptions"]} creatorButtonProps={{creatorButtonText: '添加行数据操作项'}}>
-          <TableItemOptFormFields />
-        </ProFormList>
-      </ProCard>
+        <ProCard title="行数据操作" style={{ marginBlockStart: 16 }}>
+            <ProFormList name={["StructSchema", "ItemOptions"]} creatorButtonProps={{creatorButtonText: '添加行数据操作项'}}>
+            <TableItemOptFormFields />
+          </ProFormList>
+        </ProCard>
 
-      <ProCard title="批量数据操作" style={{ marginBlock: 16 }}>
-        <ProFormList name={["StructSchema", "BatchOptButtons"]} creatorButtonProps={{creatorButtonText: '添加批量数据操作项'}}>
-          <ProFormGroup>
-              <ProFormText name="Title" label="操作标题" rules={[{ required: true }]} />
-              <ProFormText name="Url" label="API地址" rules={[{ required: true }]} />
-          </ProFormGroup>
-        </ProFormList>
-      </ProCard>
+        <ProCard title="批量数据操作" style={{ marginBlock: 16 }}>
+          <ProFormList name={["StructSchema", "BatchOptButtons"]} creatorButtonProps={{creatorButtonText: '添加批量数据操作项'}}>
+            <ProFormGroup>
+                <ProFormText name="Title" label="操作标题" rules={[{ required: true }]} />
+                <ProFormText name="Url" label="API地址" rules={[{ required: true }]} />
+            </ProFormGroup>
+          </ProFormList>
+        </ProCard>
 
 
-  </ProForm>)
-    const htlpTitle = <span>后续操作</span>;
+    </ProForm>)
+
+    const htlpTitle = (
+    <Popconfirm placement="right" title="是否自动自行?" onConfirm={async()=>{ await postMsg("/api/coder/project/rebuild", {"PageID": pageID})}} okText="是" cancelText="否">
+      <Button type="primary">后续操作</Button>
+    </Popconfirm>);
+
     const htlpContent = (
       <div>
         <p><Text copyable>go run . clientinit</Text></p>
@@ -112,7 +117,7 @@ export default () => {
       </div>
     );
     const htlpBtn = (
-      <Popover placement="bottom" title={htlpTitle} content={htlpContent} trigger="click">
+      <Popover placement="right" title={htlpTitle} content={htlpContent} trigger="click">
       <Button type='ghost' shape='circle' icon={<QuestionCircleOutlined />}></Button>
     </Popover>
     );
@@ -125,7 +130,6 @@ export default () => {
       }
     }
       >生成代码</Button>
-      {htlpBtn}
     </>
 
   );
@@ -140,12 +144,12 @@ export default () => {
       <Row>
         <Col span={20}>
           <Alert
-            message="提示: 生成代码后，请重新编译前后端项目，并同步数据表，方可生效."
-            // description=""
+            message="后续操作"
+            description="生成代码后, 请重新编译前后端项目, 并同步数据表.  编译后的前端资源文件(如: umi.js), 如因缓存问题而没有生效, 请手动清除浏览器缓存."
             type="warning" showIcon closable
             style={{margin: -12, marginBottom: 24, }} />
           <Col span={12} style={{ marginBlockEnd: 16 }}>
-          <span>{topBtn}</span>
+          <span>{topBtn}{htlpBtn}</span>
           </Col>
           {TableSchemaUpdateForm}
         </Col>

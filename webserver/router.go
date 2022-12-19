@@ -48,6 +48,7 @@ func setRouters(g *gin.Engine) {
 	auth := api.Group("")
 	auth.Use(prepare.HandlerJWT())
 
+	auth.POST("/coder/project/rebuild", handler.RebuildProject)
 	auth.POST("/coder/page/create", handler.CreateWebPage)
 	auth.POST("/coder/page/delete", handler.DeleteWebPage)
 	auth.POST("/coder/page/update", handler.UpdateWebPage)

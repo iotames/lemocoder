@@ -94,15 +94,11 @@ func GetWebPage(c *gin.Context) {
 	pageID, _ := strconv.ParseInt(idStr, 10, 64)
 	wpage := database.WebPage{}
 	wpage.ID = pageID
-	has, err := database.GetModel(&wpage)
+	err := mustFind(c, &wpage)
 	if err != nil {
-		ErrorServer(c, err)
 		return
 	}
-	if !has {
-		ErrorNotFound(c)
-		return
-	}
+
 	resp := wpage.ToMap(&wpage)
 	c.JSON(http.StatusOK, Response(resp, "success", 200))
 }
@@ -120,13 +116,8 @@ func UpdateWebPage(c *gin.Context) {
 	}
 	modelFind := database.WebPage{}
 	modelFind.ID = postData.GetID()
-	has, err := database.GetModel(&modelFind)
+	err = mustFind(c, &modelFind)
 	if err != nil {
-		ErrorServer(c, err)
-		return
-	}
-	if !has {
-		ErrorNotFound(c)
 		return
 	}
 	updateModel := database.WebPage{}

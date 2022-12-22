@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"bytes"
 	"errors"
 	"fmt"
 	"lemocoder/database"
@@ -10,6 +9,7 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+	"runtime"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -82,26 +82,53 @@ func RebuildProject(c *gin.Context) {
 	c.JSON(http.StatusOK, ResponseOk("编译完成, 请重启应用"))
 }
 
+type DevTool struct {
+	Name, Version, Url string
+}
+
+type PlatformStatus struct {
+	HostName, OS, Arch string
+	DevTools           []DevTool
+	CpuNum             int
+}
+
 func GetOsStatus(c *gin.Context) {
-	vNode, _ := util.RunCmd("node", "--version")
-	vYarn, _ := util.RunCmd("yarn", "--version")
-	if len(vYarn) != 0 {
-		vYarn = append([]byte("v"), vYarn...)
-	}
-	vGit, _ := util.RunCmd("git", "--version")
-	if len(vGit) != 0 {
-		vGit = bytes.Replace(vGit, []byte("git version "), []byte("v"), 1)
-	}
 	vGo, _ := util.RunCmd("go", "version")
+	gov := ""
 	if len(vGo) != 0 {
-		vGo = bytes.Replace(vGo, []byte("go version go"), []byte("v"), 1)
+		gov = (util.NewStrfind(string(vGo))).SetRegexp(`(\d+\.\d+)`).DoFind().GetOne(false)
 	}
 
-	data := map[string]string{
-		"vnode": string(vNode),
-		"vyarn": string(vYarn),
-		"vgit":  string(vGit),
-		"vgo":   string(vGo),
+	vNode, _ := util.RunCmd("node", "--version")
+	nodev := ""
+	if len(vNode) != 0 {
+		nodev = (util.NewStrfind(string(vNode))).SetRegexp(`(\d+\.\d+\.\d+)`).DoFind().GetOne(false)
+	}
+
+	vYarn, _ := util.RunCmd("yarn", "--version")
+	yarnv := string(vYarn)
+
+	vGit, _ := util.RunCmd("git", "--version")
+	gitv := ""
+	if len(vGit) != 0 {
+		gitv = (util.NewStrfind(string(vGit))).SetRegexp(`(\d+\.\d+\.\d+)`).DoFind().GetOne(false)
+	}
+
+	devTools := []DevTool{
+		{Name: "Go", Version: gov, Url: "https://golang.google.cn/doc/install"},
+		{Name: "Node", Version: nodev, Url: "https://nodejs.org/zh-cn/download/"},
+		{Name: "Yarn", Version: yarnv, Url: "https://yarn.bootcss.com/docs/install"},
+		{Name: "Git", Version: gitv, Url: "https://git-scm.com/downloads"},
+	}
+	hostname, _ := os.Hostname()
+	// memStat := new(runtime.MemStats)
+	// runtime.ReadMemStats(memStat)
+	data := PlatformStatus{
+		HostName: hostname,
+		CpuNum:   runtime.NumCPU(),
+		OS:       runtime.GOOS,   // 操作系统 win
+		Arch:     runtime.GOARCH, // 体系架构 amd64
+		DevTools: devTools,
 	}
 	c.JSON(http.StatusOK, Response(data, "success", http.StatusOK))
 }

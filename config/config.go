@@ -105,7 +105,7 @@ func (s WebServer) GetAddr() string {
 }
 
 type App struct {
-	Title, Logo, Env string
+	Title, Logo, Env, Version string
 }
 
 func GetApp() *App {
@@ -114,8 +114,9 @@ func GetApp() *App {
 		runEnv = ENV_DEV
 	}
 	return &App{
-		Title: os.Getenv("APP_TITLE"),
-		Logo:  os.Getenv("APP_LOGO"),
-		Env:   runEnv,
+		Title:   os.Getenv("APP_TITLE"),
+		Logo:    os.Getenv("APP_LOGO"),
+		Env:     runEnv,
+		Version: os.Getenv("APP_VERSION"),
 	}
 }

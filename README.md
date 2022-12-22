@@ -1,9 +1,24 @@
+## 简介
+
+[![Go](https://badgen.net/badge/Go/v1.19)](https://go.dev/learn/)
+[![TypeScript](https://badgen.net/badge/UI/antd)](https://ant.design/)
+[![License](https://badgen.net/badge/License/MIT/green)](https://github.com/iotames/miniutils)
+[![Support](https://badgen.net/badge/Support/linux,win/purple?list=|)]()
+
+lemocoder 是一个前后端分离的中后台Web应用框架。集成开发工具, 自动生成Web项目CURD源码。
+API鉴权使用 `JWT(JSON Web Tokens)` [标准规范](https://jwt.io/)。
+前端使用 `Ant Design` UI，基于 `React(umijs)` 架构。后端使用Go语言 `Gin` 框架。
+
+
 ## 环境配置
 
 1. 安装nodejs
 
-前往 https://nodejs.org/zh-cn/ 下载并安装node.
-Linux系统可尝试命令: `sudo apt install nodejs`
+前往 [https://nodejs.org/zh-cn/](https://nodejs.org/zh-cn/) 下载并安装 `node`
+
+Linux系统可尝试命令安装: 
+
+    sudo apt install nodejs
 
 安装完毕后，运行 `node -v` 确认是否安装成功
 
@@ -14,9 +29,11 @@ npm install -g yarn
 yarn --version
 ```
 
-设置yarn国内源: `yarn config set registry https://registry.npm.taobao.org -g`
+设置yarn国内源: 
+  
+    yarn config set registry https://registry.npm.taobao.org -g
 
-3. 安装golang开发环境
+3. 安装Go语言开发环境
 
 下载并安装Go: https://golang.google.cn/doc/install
 
@@ -76,18 +93,25 @@ go run . dbsync
 go build .
 ```
 
-重新执行主程序: `./lemocoder` 或 `lemocoder.exe`
+重新执行主程序: `./lemocoder`(linux, mac) 或 `lemocoder.exe`(windows)
 
 
 ## WebServer 服务端
 
-```
-go mod tidy
-go run . init
-go run .
-```
+启动Web服务，为客户端运行提供API接口
+
+运行参数:
+
+- `stop`  停止web服务端
+- `init`  创建 sqlite3 数据库文件，并编译Web客户端
+- `dbinit`  创建数据表
+- `dbsync`  同步数据表结构
+- `clientinit`  编译前端文件(Web客户端)
+- `-d`  启动Web服务并后台运行
+
 
 编译成可执行文件后执行
+
 ```
 go build .
 ./lemocoder init
@@ -111,4 +135,5 @@ yarn build
 -----------------------------------------------
 
 > antd pro组件总览: https://procomponents.ant.design/components
+
 > antd 组件总览: https://ant.design/components/overview-cn/

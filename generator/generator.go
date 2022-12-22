@@ -7,7 +7,7 @@ import (
 )
 
 // const commentStart = "// Code generated Begin; DO NOT EDIT."
-const commentEnd = "// Code generated End; DO NOT EDIT."
+const CommentEnd = "// Code generated End; DO NOT EDIT."
 
 func AddCodeToFile(filepath string, addCode string) error {
 	// 读取原文件内容
@@ -26,6 +26,6 @@ func AddCodeToFile(filepath string, addCode string) error {
 	if err != nil {
 		return err
 	}
-	f.Write(bytes.Replace(before, []byte(commentEnd), []byte(addCode + commentEnd), 1))
+	f.Write(bytes.Replace(before, []byte(CommentEnd), []byte(addCode + CommentEnd), 1))
 	return f.Close()
 }

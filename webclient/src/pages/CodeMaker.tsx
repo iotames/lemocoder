@@ -169,11 +169,11 @@ const {Title} = Typography;
   return (
     <PageContainer>
       
-      <CheckCard
+      {/* <CheckCard
         title={<Title level={5}>新建页面</Title>}
         description="创建网站后台页面. "
         onChange={()=>{setPageFormVisit(true)}}
-      />
+      /> */}
 
       {/* <CheckCard
         title={<Title level={5}>新建工程</Title>}
@@ -234,6 +234,7 @@ const {Title} = Typography;
 */}
 
     <ProTable<PageItem>
+      search={false}
       headerTitle="页面管理"
       columns={columns}
       actionRef={actionRef}

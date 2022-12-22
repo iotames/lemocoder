@@ -64,7 +64,7 @@ func TestAddApiRoutes(t *testing.T) {
 		panic(err)
 	}
 	f.Close()
-	commentEnd := "// Code generated End; DO NOT EDIT."
+	commentEnd := generator.CommentEnd
 	log.Println(strings.Replace(string(before), commentEnd, addCode+commentEnd, 1))
 }
 

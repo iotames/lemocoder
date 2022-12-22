@@ -38,13 +38,14 @@ func New() WebServer {
 		Handler:        h,
 		MaxHeaderBytes: 1 << 20,
 	}
+	app := config.GetApp()
 
 	fmt.Printf(`
 	欢迎使用 LemoCoder
-	当前版本:V1.0.1
-	服务端接口运行地址:http://127.0.0.1%s
-	客户端资源运行地址:http://127.0.0.1%s/client
-`, addr, addr)
+	当前版本: %s
+	服务端接口运行地址: http://127.0.0.1%s
+	客户端资源运行地址: http://127.0.0.1%s/client
+`, app.Version, addr, addr)
 
 	if !util.IsPathExists(config.ClientFilepath) {
 		fmt.Println("警告! 缺少客户端资源文件: " + config.ClientFilepath)

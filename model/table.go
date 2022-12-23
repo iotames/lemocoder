@@ -17,12 +17,13 @@ type TableItemOptionSchema struct {
 }
 
 type TableSchema struct {
-	ItemDataTypeName, ItemsDataUrl, ItemUpdateUrl, ItemDeleteUrl, ItemCreateUrl, RowKey string
-	Items                                                                               []TableItemSchema
-	ItemOptions                                                                         []TableItemOptionSchema
-	ItemForms                                                                           []ModalFormSchema
-	ToolBarForms                                                                        []ModalFormSchema
-	BatchOptButtons                                                                     []BatchOptButtonSchema
+	Searchable                                                                                 bool
+	Title, ItemDataTypeName, ItemsDataUrl, ItemUpdateUrl, ItemDeleteUrl, ItemCreateUrl, RowKey string
+	Items                                                                                      []TableItemSchema
+	ItemOptions                                                                                []TableItemOptionSchema
+	ItemForms                                                                                  []ModalFormSchema
+	ToolBarForms                                                                               []ModalFormSchema
+	BatchOptButtons                                                                            []BatchOptButtonSchema
 }
 
 type BatchOptButtonSchema struct {

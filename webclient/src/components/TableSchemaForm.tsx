@@ -193,8 +193,12 @@ export const NewDataTableForm = (props:{
       }}
     >
       <ProFormText name="PageID" hidden />
-      <ProFormText name={["StructSchema", "ItemDataTypeName"]} label="数据结构名" tooltip="例: Product, ProductReview" placeholder="例: Product, ProductReview" rules={[{ required: true }]} />
-
+      
+      <ProForm.Group>
+        <ProFormText width={150} name={["StructSchema", "ItemDataTypeName"]} label="数据结构名" tooltip="例: Product, ProductReview" placeholder="例: Product" rules={[{ required: true }]} />
+        <ProFormText name={["StructSchema", "Title"]} label="数据表格标题" placeholder="例: 商品列表" />
+        <ProFormSwitch name={["StructSchema", "Searchable"]} label="数据搜索" checkedChildren="已开启" unCheckedChildren="已禁用" initialValue={true} />
+      </ProForm.Group>
 
       <ProFormList name={["StructSchema", "Items"]} creatorButtonProps={{creatorButtonText: '添加数据字段'}}>
         <TableItemFormFields />

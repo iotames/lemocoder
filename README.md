@@ -2,8 +2,8 @@
 
 [![Go](https://badgen.net/badge/Go/v1.19)](https://go.dev/learn/)
 [![TypeScript](https://badgen.net/badge/UI/antd)](https://ant.design/)
-[![License](https://badgen.net/badge/License/MIT/green)](https://github.com/iotames/miniutils)
-[![Support](https://badgen.net/badge/Support/linux,win/purple?list=|)]()
+[![License](https://badgen.net/badge/License/MIT/green)](https://gitee.com/catmes/lemocoder)
+[![Support](https://badgen.net/badge/Support/linux,win/purple?list=|)](https://gitee.com/catmes/lemocoder)
 
 lemocoder 是一个前后端分离的中后台Web应用框架。集成开发工具, 自动生成Web项目CURD源码。
 API鉴权使用 `JWT(JSON Web Tokens)` [标准规范](https://jwt.io/)。

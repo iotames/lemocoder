@@ -66,11 +66,15 @@ export default () => {
 
         
         <ProForm.Group>
-          <ProFormText width={120} name={["StructSchema", "ItemDataTypeName"]} label="数据结构名" rules={[{ required: true }]} />
           <ProFormText width={180} name={["StructSchema", "ItemsDataUrl"]} label="数据源" rules={[{ required: true }]} />
           <ProFormText width={180} name={["StructSchema", "ItemCreateUrl"]} label="新增数据地址" />
           <ProFormText width={180} name={["StructSchema", "ItemUpdateUrl"]} label="更新数据地址" />
           <ProFormText width={180} name={["StructSchema", "ItemDeleteUrl"]} label="删除数据地址" /> 
+        </ProForm.Group>
+        <ProForm.Group>
+          <ProFormText width={120} name={["StructSchema", "ItemDataTypeName"]} label="数据结构名" rules={[{ required: true }]} />
+          <ProFormText name={["StructSchema", "Title"]} label="数据表格标题" placeholder="例: 商品列表" />
+          <ProFormSwitch name={["StructSchema", "Searchable"]} label="数据搜索" checkedChildren="已开启" unCheckedChildren="已禁用" initialValue={true} />
         </ProForm.Group>
 
         {/* <ProForm.Group label="数据字段"> */}
@@ -137,19 +141,19 @@ export default () => {
 
   return (
     <PageContainer>
-
       <Row>
-        <Col span={20}>
-          <Alert
-            message="后续操作"
-            description="生成代码后, 请重新编译前后端项目, 并同步数据表.  编译后的前端资源文件(如: umi.js), 如因缓存问题而没有生效, 请手动清除浏览器缓存."
-            type="warning" showIcon closable
-            style={{margin: -12, marginBottom: 24, }} />
-          <Col span={12} style={{ marginBlockEnd: 16 }}>
-          <span>{topBtn}{htlpBtn}</span>
-          </Col>
+        <Alert
+          message="后续操作"
+          description="生成代码后, 请重新编译前后端项目, 并同步数据表.  编译后的前端资源文件(如: umi.js), 如因缓存问题而没有生效, 请手动清除浏览器缓存."
+          type="warning" showIcon closable
+          style={{margin: -12, marginBottom: 24, }} />
+      </Row>
+      <Row  style={{ marginBlockEnd: 16 }}>
+        <span>{topBtn}{htlpBtn}</span>
+      </Row>
+      <Row>
+        {/* <Col span={20}></Col> */}
           {TableSchemaUpdateForm}
-        </Col>
       </Row>
       
 {/*     

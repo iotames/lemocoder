@@ -3,7 +3,7 @@ import { ProTable, ModalForm, ProFormText, ProFormSelect, TableDropdown, ProForm
 import { Button, Typography, message, Modal, InputNumber, Input, Select } from 'antd';
 import { useRef, useState } from 'react';
 import {post, postMsg, getTableData, postByBtn, get} from "@/services/api"
-import {TableSchemaForm, NewDataTableForm} from "@/components/TableSchemaForm"
+import {NewDataTableForm} from "@/components/TableSchemaForm"
 import type { TableSchema } from "@/components/TableSchemaForm"
 import { EyeOutlined, PlusOutlined } from '@ant-design/icons';
 import { history } from 'umi';

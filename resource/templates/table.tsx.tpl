@@ -109,6 +109,8 @@ export default () => {
     <PageContainer>
     <%{range .ItemForms}%>{<%{.Key}%>}<%{end}%>
     <ProTable<<%{.ItemDataTypeName}%>>
+      <%{if not .Searchable }%> search={false} <%{end}%>
+      headerTitle="<%{.Title}%>"
       columns={columns}
       rowSelection={{}}
       tableAlertRender={({ selectedRowKeys, selectedRows, onCleanSelected }) => (<Space><span>已选 {selectedRowKeys.length} 项<a onClick={onCleanSelected}>取消</a></span></Space>)}

@@ -57,6 +57,8 @@ type TableItemSchema = {
 }
 
 type StructSchema = {
+  Searchable: boolean;
+  Title: string;
   ItemDataTypeName: string;
   ItemsDataUrl: string;
   ItemUpdateUrl: string;

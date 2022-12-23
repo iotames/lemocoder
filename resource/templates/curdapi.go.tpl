@@ -94,13 +94,31 @@ func Update<%{.ItemDataTypeName}%>(c *gin.Context) {
 
 <%{ if ne .GetList "" }%>
 func GetList<%{.ItemDataTypeName}%>(c *gin.Context) {
-	items := make([]database.<%{.ItemDataTypeName}%>, 0)
+	ignoreFields := []string{"current", "pageSize", "page", "limit", "sort"}
+	var err error
+	var items []database.<%{.ItemDataTypeName}%>
+
 	limitStr := c.DefaultQuery("limit", "30")
 	pageStr := c.DefaultQuery("page", "1")
 	limit, _ := strconv.Atoi(limitStr)
 	page, _ := strconv.Atoi(pageStr)
 	log.Printf("----GetListItem--limit(%d)---page(%d)----", limit, page)
-	err := database.GetAll(&items, limit, page, "id > ?", 0)
+
+	searchMap := make(map[string]string)
+	querys := c.Request.URL.Query()
+	for k, v := range querys {
+		if util.GetIndexOf(k, ignoreFields) == -1 && len(v) == 1 {
+			searchMap[k] = v[0]
+		}
+	}
+	if len(searchMap) == 0 {
+		err = database.GetAll(&items, limit, page, "id > ?", 0)
+	} else {
+		qlike, qargs := database.GetWhereLikeArgs(searchMap)
+		fmt.Printf("\n-----query(%+v)----args(%+v)----\n", qlike, qargs)
+		err = database.GetAll(&items, limit, page, qlike, qargs...)
+	}
+
 	if err != nil {
 		c.JSON(http.StatusOK, ResponseFail("请求错误"+err.Error(), 404))
 		return

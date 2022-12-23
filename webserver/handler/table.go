@@ -166,7 +166,7 @@ func CreateTablePageCode(c *gin.Context) {
 	// 生成源代码文件 END
 
 	database.UpdateModel(&page, map[string]interface{}{"state": database.PAGE_STATE_CREATED})
-	c.JSON(http.StatusOK, ResponseOk("创建代码成功"))
+	c.JSON(http.StatusOK, ResponseOk("创建代码成功, 请进行后续操作!"))
 }
 
 func setDataTable(postData PostData, dtable *database.DataTable, isCreate bool) error {

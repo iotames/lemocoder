@@ -18,6 +18,15 @@ import (
 	"xorm.io/xorm/names"
 )
 
+const (
+	WHERE_COMPARE_EQUAL   = "="
+	WHERE_COMPARE_LIKE    = "LIKE"
+	WHERE_COMPARE_BETWEEN = "BETWEEN"
+	WHERE_COMPARE_IN      = "IN"
+	WHERE_LINK_AND        = "AND"
+	WHERE_LINK_OR         = "OR"
+)
+
 var (
 	once   sync.Once
 	engine *xorm.Engine
@@ -210,9 +219,68 @@ func GetModelWhere(m IModel, query interface{}, args ...interface{}) (bool, erro
 	return b, err
 }
 
+// 转化map为Like条件
+func GetWhereLikeArgs(filter map[string]string) (query interface{}, args []interface{}) {
+	q := ""
+	i := 0
+	for k, v := range filter {
+		if strings.TrimSpace(v) == "" {
+			continue
+		}
+		args = append(args, `%`+v+`%`)
+		field := ObjToTableCol(k)
+		qOne := fmt.Sprintf("%s LIKE ?", field)
+		if i > 0 {
+			q += fmt.Sprintf(" AND %s", qOne)
+		} else {
+			q += qOne
+		}
+		i++
+	}
+	query = q
+	return
+}
+
+func GetWhereOne(field, compare string, v interface{}) string {
+	field = ObjToTableCol(field)
+	result := fmt.Sprintf(`%s %s`, field, compare)
+	switch v.(type) {
+	case string:
+		if strings.TrimSpace(v.(string)) != "" {
+			val := v.(string)
+			if compare == WHERE_COMPARE_LIKE {
+				val = `'%` + val + `%'`
+			}
+			result += " " + val
+		}
+	case []string:
+		if len(v.([]string)) > 0 {
+			vals := v.([]string)
+			if compare == WHERE_COMPARE_IN {
+				val := "("
+				for i, inv := range vals {
+					if i < (len(vals) - 1) {
+						val += fmt.Sprintf(`'%s',`, inv)
+					} else {
+						val += fmt.Sprintf(`'%s'`, inv)
+					}
+				}
+				val += ")"
+				result += " " + val
+			}
+			if compare == WHERE_COMPARE_BETWEEN {
+				result += fmt.Sprintf(" %s AND %s", vals[0], vals[1])
+			}
+		}
+	}
+	return result
+}
+
 // GetAll 获取多条记录
 // users := make([]Userinfo, 0)
 // GetAll(&users, 50, 3, "age > ? or name = ?", 30, "xlw")
+//
+// GetAll(&users, 50, 3, map[string]interface{}{"Name": "jinzhu", "Age": 0})
 func GetAll(rows interface{}, limit, page int, query interface{}, args ...interface{}) error {
 	start := (page - 1) * limit
 	err := getEngine().Where(query, args...).Limit(limit, start).Find(rows)

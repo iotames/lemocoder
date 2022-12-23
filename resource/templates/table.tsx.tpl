@@ -82,7 +82,7 @@ export default () => {
         <%{- if .HideInSearch}%>hideInSearch: <%{.HideInSearch}%>,<%{end}%>
         <%{- if .HideInTable}%>hideInTable: <%{.HideInTable}%>,<%{end}%>
         // filters,
-        // search: { transform: (value: any) => any }
+        // search: false // undefined | false | { transform: (value: any) => any }
         // renderText, (text: any,record: T,index: number,action: UseFetchDataAction<T>) => string
       },
       <%{end}%>
@@ -101,16 +101,16 @@ export default () => {
       <%{end}%>]},
     },
   <%{end}%>
-
   ];
 
+  const pageSize = 10
 
   return (
     <PageContainer>
     <%{range .ItemForms}%>{<%{.Key}%>}<%{end}%>
     <ProTable<<%{.ItemDataTypeName}%>>
-      <%{if not .Searchable }%> search={false} <%{end}%>
-      headerTitle="<%{.Title}%>"
+      headerTitle="<%{.Title}%>" 
+      <%{- if not .Searchable }%> search={false} <%{end}%>
       columns={columns}
       rowSelection={{}}
       tableAlertRender={({ selectedRowKeys, selectedRows, onCleanSelected }) => (<Space><span>已选 {selectedRowKeys.length} 项<a onClick={onCleanSelected}>取消</a></span></Space>)}
@@ -179,11 +179,10 @@ export default () => {
       }}
       pagination={{
         showSizeChanger: true,
-        pageSize: 10,
+        pageSize: pageSize,
         onChange: (page) => console.log(page),
       }}
       dateFormatter="string"
-      headerTitle="高级表格"
       toolBarRender={() => [<%{range .ToolBarForms}%><%{.Key}%>,<%{end}%>]}
     />
     </PageContainer>

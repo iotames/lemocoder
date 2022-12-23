@@ -1,10 +1,10 @@
 import { ProCard, ProFormItem, ProFormSwitch, ProFormGroup, ProFormInstance, ProFormDigit, ProFormList, ProTable, ModalForm, ProFormText, ProForm, StepsForm, PageContainer, CheckCard } from '@ant-design/pro-components';
-import { Row, Col, Button, Alert, Popover, Popconfirm, message, Modal, InputNumber, Input, Select, Typography } from 'antd';
+import { Row, Col, Button, Alert, Popover, Popconfirm, message, Steps, Modal, InputNumber, Input, Select, Typography } from 'antd';
 import { useRef, useState, useEffect } from 'react';
 import {post, postMsg, getTableData, postByBtn, get} from "@/services/api"
 import type { TableSchema } from "@/components/TableSchemaForm"
 import { TableItemFormFields, TableItemOptFormFields } from "@/components/Form"
-import { PlayCircleOutlined, QuestionCircleOutlined } from '@ant-design/icons';
+import { PlayCircleOutlined, QuestionCircleOutlined, ArrowRightOutlined  } from '@ant-design/icons';
 import { history } from 'umi';
 
 const { Title, Paragraph, Text } = Typography;
@@ -149,10 +149,16 @@ export default () => {
           style={{margin: -12, marginBottom: 24, }} />
       </Row>
       <Row  style={{ marginBlockEnd: 16 }}>
-        <span>{topBtn}{htlpBtn}</span>
+
+<Col span={18}>
+
+      {/* <Steps size="small" current={1} items={[{title: (topBtn),},{title: 'In Progress',},]} /> */}
+
+        <span>{topBtn} <ArrowRightOutlined  /> {htlpBtn}</span>
+        </Col>
       </Row>
       <Row>
-        {/* <Col span={20}></Col> */}
+        
           {TableSchemaUpdateForm}
       </Row>
       

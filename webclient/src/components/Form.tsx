@@ -25,7 +25,7 @@ export const TableItemFormFields = () => {
             <ProFormText name="DataName" placeholder="英文字段名" label="字段名" rules={[{ required: true }]} width={120} tooltip="英文字母" /> 
             <ProFormText name="Title" placeholder="中英文均可" label="字段标题" rules={[{ required: true }]} width={120} tooltip="中英文均可" />
             <ProFormDigit label="宽度(px)" min={0} max={300} name="Width" placeholder="像素宽度" width={90} tooltip="整数(默认0).范围:0~300" />
-            <ProFormSwitch name="Editable" label="可编辑" checkedChildren="开" unCheckedChildren="关" initialValue={true} />
+            <ProFormSwitch name="Editable" label="可编辑" checkedChildren="是" unCheckedChildren="否" initialValue={true} />
             <ProFormSwitch name="Search" label="可搜索" checkedChildren="开" unCheckedChildren="关" initialValue={true} />
 
             {/* 
@@ -58,7 +58,7 @@ export const TableItemOptFormFields = () => {
                 {value:"edit", label:"快捷编辑"},
                 ]} rules={[{ required: true }]} />
             <ProFormText name="Title" label="操作标题" rules={[{ required: true }]} width={90} />
-            <ProFormText name="Key" label="操作名" rules={[{ required: true }]} width={90} tooltip="英文.更新行数据的表单提交, 操作名必须为update" />
+            <ProFormText name="Key" label="操作名" rules={[{ required: true }]} width={90} tooltip="填英文字母.(表单提交时, 关联表单标识Key)" />
             <ProFormText name="Url" label="地址" hidden={urlFieldHide} />
         </ProFormGroup>
     )

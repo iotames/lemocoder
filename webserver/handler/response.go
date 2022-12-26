@@ -58,7 +58,7 @@ func ItemsIDtoString[T database.IDitem](items []T) (result string, err error) {
 	encoder := json.NewEncoder(&buf)
 	err = encoder.Encode(items)
 	result = buf.String()
-	fmt.Printf("\n-------%s------\n", result)
+	// fmt.Printf("\n-------%s------\n", result)
 	for _, item := range items {
 		// fmt.Printf("---item---%+v--", item)
 		oldstr := fmt.Sprintf(`"ID":%d`, item.GetID())

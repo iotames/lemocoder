@@ -109,25 +109,50 @@ func AddApiRoutes(apiRoutes []model.ApiRoute) (routes []model.ApiRoute, err erro
 	return
 }
 
+func routeIsAction(route model.ApiRoute) bool {
+	if route.Method != "POST" {
+		return false
+	}
+	funcName := strings.Replace(route.FuncName, API_ROUTE_FUNC_PREFIX, "", 1)
+	if strings.Index(funcName, "Create") == 0 {
+		return false
+	}
+	if strings.Index(funcName, "Update") == 0 {
+		return false
+	}
+	if strings.Index(funcName, "Delete") == 0 {
+		return false
+	}
+	return true
+}
+
+type ApiTplData struct {
+	ItemDataTypeName, GetList, GetOne, Create, Update, Delete string
+	ItemOptFuncs                                              []string
+}
+
 // CreateCurdCode 创建CURD代码
 func CreateCurdCode(routes []model.ApiRoute, schema model.TableSchema) error {
-	tplData := map[string]string{"ItemDataTypeName": schema.ItemDataTypeName}
+	tplData := ApiTplData{ItemDataTypeName: schema.ItemDataTypeName}
 	for _, route := range routes {
 		funcName := strings.Replace(route.FuncName, API_ROUTE_FUNC_PREFIX, "", 1)
 		if strings.Index(funcName, "GetList") == 0 {
-			tplData["GetList"] = funcName
+			tplData.GetList = funcName
 		}
 		if strings.Index(funcName, "GetOne") == 0 {
-			tplData["GetOne"] = funcName
+			tplData.GetOne = funcName
 		}
 		if strings.Index(funcName, "Create") == 0 {
-			tplData["Create"] = funcName
+			tplData.Create = funcName
 		}
 		if strings.Index(funcName, "Update") == 0 {
-			tplData["Update"] = funcName
+			tplData.Update = funcName
 		}
 		if strings.Index(funcName, "Delete") == 0 {
-			tplData["Delete"] = funcName
+			tplData.Delete = funcName
+		}
+		if routeIsAction(route) {
+			tplData.ItemOptFuncs = append(tplData.ItemOptFuncs, funcName)
 		}
 		fmt.Println(funcName)
 	}

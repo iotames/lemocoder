@@ -98,7 +98,13 @@ export default () => {
       render: (text, record, _, action) => {
       return [<%{range .ItemOptions}%>
       <%{if eq .Type "edit"}%><a key="<%{.Key}%>" onClick={() => {action?.startEditable?.(record.<%{$.RowKey}%>);}}><%{.Title}%></a>,<%{end}%>
-      <%{if eq .Type "action"}%><Button key="<%{.Key}%>" type='primary'  onClick={async (e)=>{await postByBtn(e, "<%{.Url}%>", record);}} ><%{.Title}%></Button>,<%{end}%>
+      <%{if eq .Type "action"}%><Button key="<%{.Key}%>" type='primary'  onClick={async (e)=>{
+        const resp = await postByBtn(e, "<%{.Url}%>", record);
+        if (resp.Code == 200) {
+          actionRef.current?.reload()
+          return true;
+        }
+        }} ><%{.Title}%></Button>,<%{end}%>
       <%{if eq .Type "form"}%><Button key="<%{.Key}%>" type="primary" onClick={() => {setRowRecord(record);itemFormRef.current?.setFieldsValue(record);setModal<%{.Key}%>Visit(true)}}><%{.Title}%></Button>,<%{end}%>
       <%{if eq .Type "redirect"}%><Button key="<%{.Key}%>" type='primary' onClick={(e)=>{ history.push("<%{.Url}%>"); }}><%{.Title}%></Button>,<%{end}%>
       <%{end}%>]},
@@ -118,7 +124,14 @@ export default () => {
       rowSelection={{}}
       tableAlertRender={({ selectedRowKeys, selectedRows, onCleanSelected }) => (<Space><span>已选 {selectedRowKeys.length} 项<a onClick={onCleanSelected}>取消</a></span></Space>)}
       tableAlertOptionRender={({ selectedRowKeys, selectedRows, onCleanSelected }) => {
-        return (<Space><%{range .BatchOptButtons}%><Button onClick={async (e)=>{await postByBtn(e, "<%{.Url}%>", {items:selectedRows})}}><%{.Title}%></Button><%{end}%></Space>);
+        return (<Space><%{range .BatchOptButtons}%><Button onClick={async (e)=>{
+          const resp = await postByBtn(e, "<%{.Url}%>", {items:selectedRows});
+          if (resp.Code == 200) {
+            onCleanSelected()
+            actionRef.current?.reload()
+            return true;
+          }
+        }}><%{.Title}%></Button><%{end}%></Space>);
       }}
       actionRef={actionRef}
       cardBordered

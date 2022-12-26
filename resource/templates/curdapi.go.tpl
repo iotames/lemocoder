@@ -34,13 +34,12 @@ func Delete<%{$.ItemDataTypeName}%>(c *gin.Context) {
 		return
 	}
 	var result int64
-	items, ok := data["items"]
 	m := new(database.<%{$.ItemDataTypeName}%>)
+	codes, ok := data.GetCodeList()
 	if ok {
-		var codes []string
-		for _, v := range items.([]interface{}) {
-			code := v.(map[string]interface{})["ID"].(string)
-			codes = append(codes, code)
+		if len(codes) == 0 {
+			ErrorArgs(c, fmt.Errorf("删除对象ID列表为空"))
+			return
 		}
 		result, err = database.BatchDelete(m, codes)
 	} else {
@@ -93,6 +92,33 @@ func Update<%{.ItemDataTypeName}%>(c *gin.Context) {
 	c.JSON(http.StatusOK, ResponseOk("数据更新成功"))
 }<%{end}%>
 
+<%{ if ne .GetOne "" }%>
+func GetOne<%{.ItemDataTypeName}%>(c *gin.Context) {
+	idstr := c.DefaultQuery("id", "0")
+	if idstr == "0"{
+		ErrorArgs(c, fmt.Errorf("id参数错误."))
+		return
+	}
+	id, err := strconv.ParseInt(idstr, 10, 64) // strconv.Atoi(idstr)
+	if err != nil{
+		ErrorArgs(c, fmt.Errorf("id参数解析错误:%w", err))
+		return
+	}
+
+	modelFind := database.<%{.ItemDataTypeName}%>{}
+	modelFind.ID = id
+	has, err := database.GetModel(&modelFind)
+	if err != nil {
+		ErrorServer(c, err)
+		return
+	}
+	if !has {
+		ErrorNotFound(c)
+		return
+	}
+	c.JSON(http.StatusOK, Response(modelFind, "success", 200))
+}<%{end}%>
+
 <%{ if ne .GetList "" }%>
 func GetList<%{.ItemDataTypeName}%>(c *gin.Context) {
 	ignoreFields := []string{"current", "pageSize", "page", "limit", "sort"}
@@ -131,3 +157,40 @@ func GetList<%{.ItemDataTypeName}%>(c *gin.Context) {
 	}
 	c.String(200, ResponseItems(itemsStr).(string))
 }<%{end}%>
+
+<%{range .ItemOptFuncs }%>
+func <%{ . -}%>(c *gin.Context) {
+	data := PostData{}
+	err := CheckBindArgs(&data, c)
+	if err != nil {
+		return
+	}
+	var result int64
+	m := new(database.<%{$.ItemDataTypeName}%>)
+	codes, ok := data.GetCodeList()
+	if ok {
+		if len(codes) == 0 {
+			ErrorArgs(c, fmt.Errorf("删除对象ID列表为空"))
+			return
+		}
+		fmt.Println("TODO: 请填充服务端代码, 操作数据. ID列表: ", codes)
+		// TODO 批量操作 result, err = database.BatchDelete(m, codes)
+	} else {
+		postID := data.GetID()
+		if postID == 0 {
+			ErrorArgs(c, fmt.Errorf("删除对象的ID不能为0"))
+			return
+		}
+		m.ID = data.GetID()
+		fmt.Println("TODO: 请填充服务端代码, 操作数据: ", m)
+		// TODO 操作单条数据 result, err = database.DeleteModel(m)
+	}
+	if err != nil {
+		ErrorServer(c, err)
+		return
+	}
+	// msg := fmt.Sprintf("%d条记录操作成功", result)
+	msg := fmt.Sprintf("TODO: 请填充【服务端代码】.(已操作%d条记录)", result)
+	c.JSON(http.StatusOK, ResponseOk(msg))
+}
+<%{end}%>

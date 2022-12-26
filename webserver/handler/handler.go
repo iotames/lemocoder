@@ -55,6 +55,18 @@ func (p PostData) Debug() {
 	}
 }
 
+func (p PostData) GetCodeList() ([]string, bool) {
+	var codes []string
+	items, ok := p["items"]
+	if ok {
+		for _, v := range items.([]interface{}) {
+			code := v.(map[string]interface{})["ID"].(string)
+			codes = append(codes, code)
+		}
+	}
+	return codes, ok
+}
+
 func getBaseUrl() string {
 	w := config.GetWebServer()
 	return w.GetAddr()

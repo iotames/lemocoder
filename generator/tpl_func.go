@@ -69,11 +69,14 @@ func newTpl(name string) *template.Template {
 }
 
 func getDataTypeForJS(t string) string {
-	numbers := []string{"int", "float", "smallint"}
-	if util.GetIndexOf(t, numbers) > -1 {
+	numbers := []string{TYPE_DB_INT, TYPE_DB_SMALLINT, TYPE_DB_FLOAT}
+	if util.GetIndexOf(strings.ToUpper(t), numbers) > -1 {
 		return "number"
 	}
-	return t
+	if util.GetIndexOf(strings.ToUpper(t), []string{TYPE_DB_STRING, TYPE_DB_TEXT}) > -1 {
+		return "string"
+	}
+	return "string"
 }
 
 func getFormFieldHtml(field model.FormFieldSchema) string {
@@ -117,18 +120,10 @@ func getFormFieldsHtml(fields []model.FormFieldSchema) string {
 func dbtype(t string) string {
 	result := "VARCHAR(255)"
 	switch strings.ToUpper(t) {
-	case TYPE_DB_INT:
-		result = "INT"
-	case TYPE_DB_SMALLINT:
-		result = "SMALLINT"
-	case TYPE_DB_BIGINT:
-		result = "BIGINT"
-	case TYPE_DB_FLOAT:
-		result = "FLOAT"
 	case TYPE_DB_STRING:
-		result = "VARCHAR"
-	case TYPE_DB_TEXT:
-		result = "TEXT"
+		result = "VARCHAR(255)"
+	case TYPE_DB_INT, TYPE_DB_SMALLINT, TYPE_DB_BIGINT, TYPE_DB_FLOAT, TYPE_DB_TEXT:
+		result = strings.ToUpper(t)
 	}
 	return result
 }
@@ -143,15 +138,16 @@ func dbdefault(t string) string {
 }
 
 func gotype(t string) string {
+	result := "string"
 	switch strings.ToUpper(t) {
 	case TYPE_DB_FLOAT:
-		t = "float64"
+		result = "float64"
 	case TYPE_DB_BIGINT:
-		t = "int64"
+		result = "int64"
 	case TYPE_DB_INT, TYPE_DB_SMALLINT:
-		t = "int"
+		result = "int"
 	case TYPE_DB_TEXT, TYPE_DB_STRING:
-		t = "string"
+		result = "string"
 	}
-	return t
+	return result
 }

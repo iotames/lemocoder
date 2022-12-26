@@ -183,6 +183,7 @@ func setDataTable(postData PostData, dtable *database.DataTable, isCreate bool) 
 	if err != nil {
 		return err
 	}
+	tschema.ItemDataTypeName = database.TableColToObj(tschema.ItemDataTypeName)
 	if tschema.RowKey == "" {
 		tschema.RowKey = "ID"
 	}

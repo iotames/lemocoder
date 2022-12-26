@@ -26,6 +26,56 @@ func readFileOS(file string) (name string, b []byte, err error) {
 	return
 }
 
+func parseFiles(filenames ...string) (*template.Template, error) {
+	if len(filenames) == 0 {
+		// Not really a problem, but be consistent.
+		return nil, fmt.Errorf("template: no files named in call to ParseFiles")
+	}
+
+	var t *template.Template
+	for _, filename := range filenames {
+		name, b, err := readFileOS(filename)
+		if err != nil {
+			return nil, err
+		}
+		s := string(b)
+		var tmpl *template.Template
+		if t == nil {
+			t = newTpl(name)
+		}
+		if name == t.Name() {
+			tmpl = t
+		} else {
+			tmpl = t.New(name) // .Funcs(tplFuncs)
+		}
+		_, err = tmpl.Parse(s)
+		if err != nil {
+			return nil, err
+		}
+	}
+	return t, nil
+}
+
+func newTpl(name string) *template.Template {
+	tplFuncs := template.FuncMap{
+		"getDataTypeForJS":  getDataTypeForJS,
+		"getFormFieldsHtml": getFormFieldsHtml,
+		"toObjStr":          database.TableColToObj,
+		"dbtype":            dbtype,
+		"dbdefault":         dbdefault,
+		"gotype":            gotype,
+	}
+	return template.New(name).Funcs(tplFuncs).Delims("<%{", "}%>")
+}
+
+func getDataTypeForJS(t string) string {
+	numbers := []string{"int", "float", "smallint"}
+	if util.GetIndexOf(t, numbers) > -1 {
+		return "number"
+	}
+	return t
+}
+
 func getFormFieldHtml(field model.FormFieldSchema) string {
 	html := ""
 	grouplen := len(field.Group)
@@ -64,46 +114,8 @@ func getFormFieldsHtml(fields []model.FormFieldSchema) string {
 	return html
 }
 
-func getDataTypeForJS(t string) string {
-	numbers := []string{"int", "float"}
-	if util.GetIndexOf(t, numbers) > -1 {
-		return "number"
-	}
-	return t
-}
-
-func parseFiles(filenames ...string) (*template.Template, error) {
-	if len(filenames) == 0 {
-		// Not really a problem, but be consistent.
-		return nil, fmt.Errorf("template: no files named in call to ParseFiles")
-	}
-
-	var t *template.Template
-	for _, filename := range filenames {
-		name, b, err := readFileOS(filename)
-		if err != nil {
-			return nil, err
-		}
-		s := string(b)
-		var tmpl *template.Template
-		if t == nil {
-			t = newTpl(name)
-		}
-		if name == t.Name() {
-			tmpl = t
-		} else {
-			tmpl = t.New(name) // .Funcs(tplFuncs)
-		}
-		_, err = tmpl.Parse(s)
-		if err != nil {
-			return nil, err
-		}
-	}
-	return t, nil
-}
-
 func dbtype(t string) string {
-	result := "VARCHAR"
+	result := "VARCHAR(255)"
 	switch strings.ToUpper(t) {
 	case TYPE_DB_INT:
 		result = "INT"
@@ -123,31 +135,23 @@ func dbtype(t string) string {
 
 func dbdefault(t string) string {
 	result := ""
-	switch t {
-	case "float":
-		result = "default(0)"
-	case "int":
+	switch strings.ToUpper(t) {
+	case TYPE_DB_FLOAT, TYPE_DB_BIGINT, TYPE_DB_INT, TYPE_DB_SMALLINT:
 		result = "default(0)"
 	}
 	return result
 }
 
 func gotype(t string) string {
-	switch t {
-	case "float":
+	switch strings.ToUpper(t) {
+	case TYPE_DB_FLOAT:
 		t = "float64"
+	case TYPE_DB_BIGINT:
+		t = "int64"
+	case TYPE_DB_INT, TYPE_DB_SMALLINT:
+		t = "int"
+	case TYPE_DB_TEXT, TYPE_DB_STRING:
+		t = "string"
 	}
 	return t
-}
-
-func newTpl(name string) *template.Template {
-	tplFuncs := template.FuncMap{
-		"getDataTypeForJS":  getDataTypeForJS,
-		"getFormFieldsHtml": getFormFieldsHtml,
-		"toObjStr":          database.TableColToObj,
-		"dbtype":            dbtype,
-		"dbdefault":         dbdefault,
-		"gotype":            gotype,
-	}
-	return template.New(name).Funcs(tplFuncs).Delims("<%{", "}%>")
 }

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"lemocoder/database"
 	gen "lemocoder/generator"
+	"lemocoder/status"
 	"lemocoder/util"
 	"net/http"
 	"os"
@@ -87,9 +88,11 @@ type DevTool struct {
 }
 
 type PlatformStatus struct {
-	HostName, OS, Arch string
-	DevTools           []DevTool
-	CpuNum             int
+	HostName, OS, Arch, CpuName, MemoryTotalText, MemoryFreeText string
+	CpuUsedPercent, MemoryUsedPercent                            float64
+	CpuNum, MemoryTotal, MemoryFree                              int
+	DevTools                                                     []DevTool
+	DiskInfo                                                     []status.DiskPartInfo
 }
 
 func GetOsStatus(c *gin.Context) {
@@ -123,12 +126,22 @@ func GetOsStatus(c *gin.Context) {
 	hostname, _ := os.Hostname()
 	// memStat := new(runtime.MemStats)
 	// runtime.ReadMemStats(memStat)
+	cpuInfo := status.GetCpuInfo()
+	minfo := status.GetMemoryInfo()
 	data := PlatformStatus{
-		HostName: hostname,
-		CpuNum:   runtime.NumCPU(),
-		OS:       runtime.GOOS,   // 操作系统 win
-		Arch:     runtime.GOARCH, // 体系架构 amd64
-		DevTools: devTools,
+		HostName:          hostname,
+		CpuName:           cpuInfo.Name,
+		CpuNum:            cpuInfo.Num,
+		CpuUsedPercent:    cpuInfo.UsedPercent,
+		MemoryUsedPercent: minfo.UsedPercent,
+		MemoryTotal:       int(minfo.Total),
+		MemoryFree:        int(minfo.Free),
+		MemoryTotalText:   minfo.TotalText(),
+		MemoryFreeText:    minfo.FreeText(),
+		DiskInfo:          status.GetDiskInfo(),
+		OS:                runtime.GOOS,   // 操作系统 win
+		Arch:              runtime.GOARCH, // 体系架构 amd64
+		DevTools:          devTools,
 	}
 	c.JSON(http.StatusOK, Response(data, "success", http.StatusOK))
 }

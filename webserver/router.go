@@ -48,7 +48,7 @@ func setRouters(g *gin.Engine) {
 	auth := api.Group("")
 	auth.Use(prepare.HandlerJWT())
 
-	api.GET("/os/getstatus", handler.GetOsStatus)
+	auth.GET("/os/getstatus", handler.GetOsStatus)
 
 	auth.POST("/coder/project/rebuild", handler.RebuildProject)
 	auth.POST("/coder/page/create", handler.CreateWebPage)

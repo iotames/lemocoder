@@ -1,11 +1,13 @@
-import { PageContainer, ProList } from '@ant-design/pro-components';
+import { PageContainer, ProCard } from '@ant-design/pro-components';
 
-import { Alert, Card, Typography, Row, Timeline, Col, Space, Tag, message } from 'antd';
+import { Alert, Card, List, Typography, Row, Timeline, Col, Space, Tag, message } from 'antd';
 // import React, {  } from 'react';
 import { useState, useEffect } from 'react';
+
 import { SmileOutlined } from '@ant-design/icons';
 import {post, postMsg, getTableData, postByBtn,get} from "@/services/api"
 // import styles from './Welcome.less';
+const {Title} = Typography;
 
 // const CodePreview: React.FC = ({ children }) => (
 //   <pre className={styles.pre}>
@@ -20,10 +22,26 @@ type DevTool = {
   Version: string;
   Url: string;
 }
+type DiskPart = {
+  Device: string;
+  MountPoint: string;
+  UsedPrecent: number;
+  Total: number;
+  Free: number; 
+}
 type Status = {
   HostName: string;
   OS: string;
   Arch: string;
+  CpuName: string;
+  CpuNum: number;
+  CpuUsedPercent: number;
+  MemoryUsedPercent: number;
+  MemoryTotal: number;
+  MemoryFree: number;
+  MemoryTotalText: string;
+  MemoryFreeText: string;
+  DiskInfo: DiskPart[]
   DevTools: DevTool[]
 }
 
@@ -34,8 +52,6 @@ type Status = {
   const [isload, setIsload] = useState<boolean>(false);
   const [status, setStatus] = useState<Status>();
   
-
-
   const refresh = async () => {
     const resp = await get<{Code: number; Data: Status; Msg: string}>("/api/os/getstatus")
     if (resp.Code!=200){
@@ -56,49 +72,38 @@ type Status = {
     <PageContainer>
 
         {/* <Alert message={"开发神器: 代码自动生成工具"} type="success" showIcon banner style={{margin: -12, marginBottom: 24, }} /> */}
-        <Row>
-          <Col span={12}>
+        <Row style={{ marginBlockEnd: 16 }}>
+          
+          <ProCard title="主机信息" style={{ maxWidth: 600 }}>
+            <div>{status?.HostName}</div>
+            <div>{status?.CpuName}</div>
+          </ProCard>
 
-          <ProList<DevTool> rowKey="Name" headerTitle="开发工具" dataSource={status?.DevTools} // showActions="hover"
-      // onDataSourceChange={}
-      metas={{
-        title: {
-          dataIndex: 'Name',
-        },
-        // avatar: {
-        //   dataIndex: 'image',
-        //   editable: false,
-        // },
-        // description: {
-        //   dataIndex: 'desc',
-        // },
-        subTitle: {
-          render: (e, d) => {
-            let color = "blue"
-            let version = d.Version
-            if (d.Version == "") {
-              color = "red"
-              version = "未发现"
-            }
-            return (
-              <Space size={0}>
+        </Row>
+        <Row>
+          <Col span={8}>
+
+          <List header={<Title level={5}>开发工具</Title>} bordered dataSource={status?.DevTools}
+            renderItem={(d)=>{
+              let color = "blue"
+              let version = d.Version
+              let btn = (<></>)
+              if (d.Version == "") {
+                color = "red"
+                version = "未发现"
+                btn = (<a href={d.Url} target="__blank" >下载</a>) // <a onClick={() => {}} key="link">  安装 </a>,
+              }
+              return (
+                <List.Item>
+                <Space>
+                  {d.Name}
                 <Tag color={color}>{version}</Tag>
-                {/* <Tag color="#5BD8A6">TechUI</Tag> */}
-              </Space>
-            );
-          },
-        },
-        actions: {
-          render: (text, row, index, action) => {
-            let btn = (<></>)
-            if (row.Version == "") {
-              btn = (<a href={row.Url} target="__blank" >下载</a>) // <a onClick={() => {}} key="link">  安装 </a>,
-            }
-            return ([btn])
-          },
-        },
-      }}
-    />
+                {btn}
+                </Space>
+                </List.Item>
+              )
+            }}
+          />
 
             <Timeline>
               {/* <Timeline.Item color={osstatus.vgo == "" ? "red" : "green"}>go {osstatus.vgo}</Timeline.Item>

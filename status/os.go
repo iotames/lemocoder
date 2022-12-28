@@ -12,7 +12,7 @@ import (
 // https://blog.csdn.net/whatday/article/details/109620192
 
 func byteToGB(b uint64) float64 {
-	return float64(b / (1024 * 1024 * 1024))
+	return float64(b) / (1024 * 1024 * 1024)
 }
 
 type CpuInfo struct {
@@ -66,6 +66,11 @@ func GetCpuInfo() CpuInfo {
 	}
 	return CpuInfo{Num: cpuNum, UsedPercent: cpuPercent, Name: cpuName}
 }
+
+// for{
+// 	info, _ := cpu.Percent(time.Duration(time.Second), false)
+// 	fmt.Println(info)
+// }
 
 func GetDiskInfo() []DiskPartInfo {
 	var dps []DiskPartInfo

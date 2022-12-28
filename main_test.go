@@ -8,6 +8,7 @@ import (
 	"lemocoder/database"
 	"lemocoder/generator"
 	"lemocoder/model"
+	"lemocoder/status"
 	"log"
 	"net"
 	"os"
@@ -15,11 +16,6 @@ import (
 	"runtime"
 	"strings"
 	"testing"
-	"time"
-
-	"github.com/shirou/gopsutil/v3/cpu"
-	"github.com/shirou/gopsutil/v3/disk"
-	"github.com/shirou/gopsutil/v3/mem"
 )
 
 // AddApiRoutes 去除API路由的 `/api` 前缀
@@ -181,18 +177,11 @@ func TestStatus(t *testing.T) {
 	t.Logf("\n--hostname(%s)--cpuNum(%d)--os(%s)-arch(%s)--%s-\n", hostname, cpuNum, os, arch, netInfo)
 
 	// https://blog.csdn.net/whatday/article/details/109620192
-	cpup, _ := cpu.Percent(time.Second, false)
-	vm, _ := mem.VirtualMemory()
-	parts, _ := disk.Partitions(true)
-	t.Log(parts)
-	diskInfo, _ := disk.Usage(parts[0].Mountpoint)
-	cpuInfo, _ := cpu.Info()
-	cpuNumReal, _ := cpu.Counts(false)
-	cpuLogicNum, _ := cpu.Counts(true)
-	t.Logf("cpu percent:%.2f%%", cpup[0])
-	t.Log("VirtualMemory", vm.UsedPercent, vm.Total, vm.Free, vm.Active, vm.Available)
-	t.Logf("diskInfo--%.2f%%--Total(%.2f)--Free(%.2f)--", diskInfo.UsedPercent, float64(diskInfo.Total/(1024*1024*1024)), float64(diskInfo.Free/(1024*1024*1024)))
-	t.Log("CPU info:", cpuInfo, "real CPU num:", cpuNumReal, "CPU logic num:", cpuLogicNum)
+	cpuInfo := status.GetCpuInfo()
+	t.Log("cpuInfo:", cpuInfo)
+	memInfo := status.GetMemoryInfo()
+	t.Log(memInfo.TotalText(), memInfo.FreeText())
+
 	// [{"cpu":0,"vendorId":"GenuineIntel","family":"205","model":"","stepping":0,"physicalId":"BFEBFBFF000A0653","coreId":"","cores":12,"modelName":"Intel(R) Core(TM) i5-10400 CPU @ 2.90GHz","mhz":2904,"cacheSize":0,"flags":[],"microcode":""}]
 	// for{
 	// 	info, _ := cpu.Percent(time.Duration(time.Second), false)

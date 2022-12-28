@@ -82,66 +82,43 @@ type Status = {
         </Row>
         <Row>
           <Col span={8}>
-
-          <List header={<Title level={5}>开发工具</Title>} bordered dataSource={status?.DevTools}
-            renderItem={(d)=>{
-              let color = "blue"
-              let version = d.Version
-              let btn = (<></>)
-              if (d.Version == "") {
-                color = "red"
-                version = "未发现"
-                btn = (<a href={d.Url} target="__blank" >下载</a>) // <a onClick={() => {}} key="link">  安装 </a>,
-              }
-              return (
-                <List.Item>
-                <Space>
-                  {d.Name}
-                <Tag color={color}>{version}</Tag>
-                {btn}
-                </Space>
-                </List.Item>
-              )
-            }}
-          />
-
-            <Timeline>
-              {/* <Timeline.Item color={osstatus.vgo == "" ? "red" : "green"}>go {osstatus.vgo}</Timeline.Item>
-              <Timeline.Item color={osstatus.vnode == "" ? "red" : "green"}>node {osstatus.vnode}</Timeline.Item>
-              <Timeline.Item color={osstatus.vyarn == "" ? "red" : "green"}>yarn {osstatus.vyarn}</Timeline.Item>
-              <Timeline.Item color={osstatus.vgit == "" ? "red" : "green"}>git {osstatus.vgit}</Timeline.Item> */}
-              {/* <Timeline.Item color="gray">
-                <p>Technical testing 1</p>
-                <p>Technical testing 2</p>
-                <p>Technical testing 3 2015-09-01</p>
-              </Timeline.Item>
-
-              <Timeline.Item color="#00CCFF" dot={<SmileOutlined />}>
-                <p>Custom color testing</p>
-              </Timeline.Item> */}
-
-            </Timeline>
-
+            <List header={<Title level={5}>开发工具</Title>} bordered dataSource={status?.DevTools} style={{background:"#fff"}}
+              renderItem={(d)=>{
+                let color = "blue"
+                let version = d.Version
+                let btn = (<></>)
+                if (d.Version == "") {
+                  color = "red"
+                  version = "未发现"
+                  btn = (<a href={d.Url} target="__blank" >下载</a>) // <a onClick={() => {}} key="link">  安装 </a>,
+                }
+                return (
+                  <List.Item>
+                    <Space>
+                      {d.Name}
+                      <Tag color={color}>{version}</Tag>
+                    </Space>
+                    {btn}
+                  </List.Item>
+                )
+              }}
+            />
           </Col>
-          <Col span={4}></Col>
+          <Col span={8}></Col>
           <Col span={8}>
-            <Card title="开发文档">
-            <Row style={{ marginBlockEnd: 16 }}>
-              <Typography.Text strong>
-                  <a href="https://gin-gonic.com/zh-cn/docs/" target="__blank" >Gin开发框架</a>
-              </Typography.Text>
-            </Row>
-            <Row style={{ marginBlockEnd: 16 }}>
-              <Typography.Text strong>
-                <a href="https://procomponents.ant.design/components" target="__blank" >Ant Design Pro 组件</a>
-              </Typography.Text>
-            </Row>
-            <Row style={{ marginBlockEnd: 16 }}>
-              <Typography.Text strong>
-                  <a href="https://ant.design/components/overview-cn/" target="__blank" >Ant Design 组件</a>
-              </Typography.Text>
-            </Row>
-            </Card>
+            <List header={<Title level={5}>开发文档</Title>} bordered dataSource={[
+              {title:"Gin开发框架", url:"https://gin-gonic.com/zh-cn/docs/"},
+              {title:"Ant Design Pro 组件", url:"https://procomponents.ant.design/components"},
+              {title:"Ant Design 组件", url:"https://ant.design/components/overview-cn/"},
+              ]} style={{background:"#fff"}}
+              renderItem={(d)=>{
+                return (
+                  <List.Item>
+                    <a href={d.url} target="__blank" >{d.title}</a>
+                    </List.Item>
+                )
+              }}
+            />
           </Col>
         </Row>
 

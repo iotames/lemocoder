@@ -5,6 +5,7 @@ import (
 	"lemocoder/util"
 	"os"
 	"strconv"
+	"text/template"
 
 	"github.com/joho/godotenv"
 )
@@ -28,17 +29,65 @@ const DRIVER_POSTGRES = "postgres"
 const SQLITE_FILENAME = "sqlite3.db"
 
 func LoadEnv() {
-	if !util.IsPathExists(".env") {
-		f, err := os.Create(".env")
+	if !util.IsPathExists(EnvFilepath) {
+		f, err := os.Create(EnvFilepath)
 		if err != nil {
 			panic("Create .env Error: " + err.Error())
 		}
 		f.Close()
 	}
-	err := godotenv.Load(".env", "env.default")
+	err := godotenv.Load(EnvFilepath, "env.default")
 	if err != nil {
 		panic("godotenv Error: " + err.Error())
 	}
+}
+
+type ClientConfig struct {
+	IsLocked                                                                                   bool
+	Title, Logo, DbDriver, DbHost, DbName, DbPassword, DbUsername, LoginAccount, LoginPassword string
+	DbNodeId, DbPort, WebServerPort                                                            int
+}
+
+func (c *ClientConfig) Load() ClientConfig {
+	d := GetDatabase()
+	s := GetWebServer()
+	a := GetApp()
+	c.IsLocked = util.IsPathExists("app.lock")
+	c.Title = a.Title
+	c.Logo = a.Logo
+	c.DbDriver = d.Driver
+	c.DbHost = d.Host
+	c.DbName = d.Name
+	c.DbUsername = d.Username
+	c.DbPassword = d.Password
+	c.DbNodeId = d.NodeID
+	c.DbPort = d.Port
+	c.WebServerPort = s.Port
+	return *c
+}
+
+func (c *ClientConfig) SetDefaultIfEmpty() {
+	if c.Logo == "" {
+		a := GetApp()
+		c.Logo = a.Logo
+	}
+	if c.WebServerPort == 0 {
+		c.WebServerPort = DEFAULT_WEB_SERVER_PORT
+	}
+}
+
+func (c ClientConfig) Save() error {
+	f, err := os.OpenFile(EnvFilepath, os.O_RDWR, 0644)
+	if err != nil {
+		// open .env File Error
+		return err
+	}
+	defer f.Close()
+	t, err := template.ParseFiles(TplDirPath + "/env.tpl")
+	if err != nil {
+		return err
+	}
+	return t.Execute(f, c)
 }
 
 type Database struct {

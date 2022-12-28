@@ -24,8 +24,7 @@ type PageItem = {
 export default () => {
   const [pageFormVisit, setPageFormVisit] = useState(false);
   const [tableFormVisit, setTableFormVisit] = useState(false);
-  // const [rowRecord, setRowRecord] = useState<PageItem>();
-  // const [tableSchema, setTableSchema] = useState<TableSchema>();
+  const [pageID, setPageID] = useState<string>("");
   const tableFormRef = useRef<ProFormInstance<TableSchema>>();
   const actionRef = useRef<ActionType>();
 
@@ -117,8 +116,8 @@ const columns: ProColumns<PageItem>[] = [
             initDt.PageID = record.ID
             if (resp.Code == 404){
               // 添加数据
-              // setTableSchema(initDt)
               setTableFormVisit(true) // 显示表单应该在设置表单数据之前，否则第一次弹层表单会无数据
+              setPageID(initDt.PageID) // TODO 丢失 tableFormRef.current
               tableFormRef.current?.setFieldsValue(initDt);
               return
             }
@@ -168,20 +167,7 @@ const {Title} = Typography;
 
   return (
     <PageContainer>
-      
-      {/* <CheckCard
-        title={<Title level={5}>新建页面</Title>}
-        description="创建网站后台页面. "
-        onChange={()=>{setPageFormVisit(true)}}
-      /> */}
-
-      {/* <CheckCard
-        title={<Title level={5}>新建工程</Title>}
-        description="创建Web后台项目. 包含前端和后端源码"
-        onChange={()=>{history.push("/welcome")}}
-      /> */}
-      <NewDataTableForm formRef={tableFormRef} setModalVisit={setTableFormVisit} modalVisit={tableFormVisit}  />
-
+      <NewDataTableForm pageID={pageID} formRef={tableFormRef} setModalVisit={setTableFormVisit} modalVisit={tableFormVisit}  />
       <ModalForm
         title="新建页面"
         visible={pageFormVisit}

@@ -44,24 +44,33 @@ func CreateTableServer(t model.TableSchema) error {
 	hasPaths := []string{t.ItemsDataUrl, t.ItemCreateUrl, t.ItemUpdateUrl, t.ItemDeleteUrl}
 	// type: edit,action,form,redirect
 	for _, opt := range t.ItemOptions {
-		// TODO
-		if opt.Type == "action" {
-			funcName := database.TableColToObj(opt.Key) + dataTypeName
-			apiRoutes = append(apiRoutes, model.ApiRoute{Method: "POST", Path: opt.Url, FuncName: funcName})
-			hasPaths = append(hasPaths, opt.Url)
+		if opt.Type != model.TABLE_ITEM_OPT_ACTION {
+			continue
 		}
+		if util.GetIndexOf(opt.Url, hasPaths) > -1 {
+			continue
+		}
+		funcName := database.TableColToObj(opt.Key) + dataTypeName
+		apiRoutes = append(apiRoutes, model.ApiRoute{Method: "POST", Path: opt.Url, FuncName: "OptItem" + funcName})
+		hasPaths = append(hasPaths, opt.Url)
 	}
 	for _, batch := range t.BatchOptButtons {
 		if util.GetIndexOf(batch.Url, hasPaths) > -1 {
 			continue
 		}
-		urlSplit := strings.Split(batch.Url, `/`)
-		fkey := urlSplit[len(urlSplit)-1]
-		funcName := database.TableColToObj(fkey) + dataTypeName
-		apiRoutes = append(apiRoutes, model.ApiRoute{Method: "POST", Path: batch.Url, FuncName: funcName})
+		funcName := getFuncName(batch.Url, dataTypeName)
+		apiRoutes = append(apiRoutes, model.ApiRoute{Method: "POST", Path: batch.Url, FuncName: "BatchOptItem" + funcName})
+	}
+	for _, fh := range t.ItemForms {
+		form := fh.Form
+		if util.GetIndexOf(form.SubmitUrl, hasPaths) > -1 {
+			continue
+		}
+		funcName := getFuncName(form.SubmitUrl, dataTypeName)
+		apiRoutes = append(apiRoutes, model.ApiRoute{Method: "POST", Path: form.SubmitUrl, FuncName: "FormSubmit" + funcName})
 	}
 
-	// 添加路由到服务端路由文件中 routesadd.go, 并创建CURD代码
+	// 添加路由到服务端路由文件中 routesadd.go
 	routes, err := AddApiRoutes(apiRoutes)
 	if err != nil {
 		return err
@@ -69,4 +78,10 @@ func CreateTableServer(t model.TableSchema) error {
 
 	// 创建CURD代码
 	return CreateCurdCode(routes, t)
+}
+
+func getFuncName(url, dataTypeName string) string {
+	urlSplit := strings.Split(url, `/`)
+	fkey := urlSplit[len(urlSplit)-1]
+	return database.TableColToObj(fkey) + dataTypeName
 }

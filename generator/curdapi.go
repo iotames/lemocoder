@@ -109,26 +109,9 @@ func AddApiRoutes(apiRoutes []model.ApiRoute) (routes []model.ApiRoute, err erro
 	return
 }
 
-func routeIsAction(route model.ApiRoute) bool {
-	if route.Method != "POST" {
-		return false
-	}
-	funcName := strings.Replace(route.FuncName, API_ROUTE_FUNC_PREFIX, "", 1)
-	if strings.Index(funcName, "Create") == 0 {
-		return false
-	}
-	if strings.Index(funcName, "Update") == 0 {
-		return false
-	}
-	if strings.Index(funcName, "Delete") == 0 {
-		return false
-	}
-	return true
-}
-
 type ApiTplData struct {
 	ItemDataTypeName, GetList, GetOne, Create, Update, Delete string
-	ItemOptFuncs                                              []string
+	FuncsItemOpt, FuncsItemsBatchOpt, FuncsFormSubmit         []string
 }
 
 // CreateCurdCode 创建CURD代码
@@ -151,8 +134,14 @@ func CreateCurdCode(routes []model.ApiRoute, schema model.TableSchema) error {
 		if strings.Index(funcName, "Delete") == 0 {
 			tplData.Delete = funcName
 		}
-		if routeIsAction(route) {
-			tplData.ItemOptFuncs = append(tplData.ItemOptFuncs, funcName)
+		if strings.Index(funcName, "OptItem") == 0 {
+			tplData.FuncsItemOpt = append(tplData.FuncsItemOpt, funcName)
+		}
+		if strings.Index(funcName, "BatchOptItem") == 0 {
+			tplData.FuncsItemsBatchOpt = append(tplData.FuncsItemsBatchOpt, funcName)
+		}
+		if strings.Index(funcName, "FormSubmit") == 0 {
+			tplData.FuncsFormSubmit = append(tplData.FuncsFormSubmit, funcName)
 		}
 		fmt.Println(funcName)
 	}

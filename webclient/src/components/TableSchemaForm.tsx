@@ -165,11 +165,12 @@ export const TableSchemaForm = (props:{
 }
 
 export const NewDataTableForm = (props:{
-  // tableData: TableSchema,
-  formRef: React.MutableRefObject<FormInstance<any> | undefined | null>,
+  pageID: string,
+  formRef: React.MutableRefObject<ProFormInstance<TableSchema> | undefined | null>,
   modalVisit: boolean,
   setModalVisit: React.Dispatch<React.SetStateAction<boolean>>,
 }) => {
+  const pageID = props.pageID
   const formRef = props.formRef
   // const formRef = useRef<ProFormInstance<TableSchema>>();
   // const tableData = props.tableData
@@ -194,7 +195,7 @@ export const NewDataTableForm = (props:{
         return false;
       }}
     >
-      <ProFormText name="PageID" hidden />
+      <ProFormText name="PageID" initialValue={pageID} />
       
       <ProForm.Group>
         <ProFormText width={150} name={["StructSchema", "ItemDataTypeName"]} label="数据结构名" tooltip="例: Product, ProductReview" placeholder="例: Product" rules={[{ required: true }]} />

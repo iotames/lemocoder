@@ -158,7 +158,31 @@ func GetList<%{.ItemDataTypeName}%>(c *gin.Context) {
 	c.String(200, ResponseItems(itemsStr).(string))
 }<%{end}%>
 
-<%{range .ItemOptFuncs }%>
+<%{range .FuncsItemOpt }%>
+func <%{ . -}%>(c *gin.Context) {
+	data := PostData{}
+	err := CheckBindArgs(&data, c)
+	if err != nil {
+		return
+	}
+	var result int64
+	m := new(database.<%{$.ItemDataTypeName}%>)
+	postID := data.GetID()
+	if postID == 0 {
+		ErrorArgs(c, fmt.Errorf("删除对象的ID不能为0"))
+		return
+	}
+	m.ID = data.GetID()
+	fmt.Println("TODO: 请填充服务端代码, 操作数据: ", m)
+	// TODO 操作单条数据 result, err = database.DeleteModel(m)
+
+	// msg := fmt.Sprintf("%d条记录操作成功", result)
+	msg := fmt.Sprintf("TODO: 请填充【服务端代码】.(已操作%d条记录)", result)
+	c.JSON(http.StatusOK, ResponseOk(msg))
+}
+<%{end}%>
+
+<%{range .FuncsItemsBatchOpt }%>
 func <%{ . -}%>(c *gin.Context) {
 	data := PostData{}
 	err := CheckBindArgs(&data, c)
@@ -176,19 +200,33 @@ func <%{ . -}%>(c *gin.Context) {
 		fmt.Println("TODO: 请填充服务端代码, 操作数据. ID列表: ", codes)
 		// TODO 批量操作 result, err = database.BatchDelete(m, codes)
 	} else {
-		postID := data.GetID()
-		if postID == 0 {
-			ErrorArgs(c, fmt.Errorf("删除对象的ID不能为0"))
-			return
-		}
-		m.ID = data.GetID()
-		fmt.Println("TODO: 请填充服务端代码, 操作数据: ", m)
-		// TODO 操作单条数据 result, err = database.DeleteModel(m)
-	}
-	if err != nil {
-		ErrorServer(c, err)
+		ErrorArgs(c, fmt.Errorf("删除对象ID列表不存在"))
 		return
 	}
+	// msg := fmt.Sprintf("%d条记录操作成功", result)
+	msg := fmt.Sprintf("TODO: 请填充【服务端代码】.(已操作%d条记录)", result)
+	c.JSON(http.StatusOK, ResponseOk(msg))
+}
+<%{end}%>
+
+<%{range .FuncsFormSubmit }%>
+func <%{ . -}%>(c *gin.Context) {
+	data := PostData{}
+	err := CheckBindArgs(&data, c)
+	if err != nil {
+		return
+	}
+	var result int64
+	m := new(database.<%{$.ItemDataTypeName}%>)
+	postID := data.GetID()
+	if postID == 0 {
+		ErrorArgs(c, fmt.Errorf("删除对象的ID不能为0"))
+		return
+	}
+	m.ID = data.GetID()
+	fmt.Println("TODO: 请填充服务端代码, 操作数据: ", m)
+	// TODO 操作单条数据 result, err = database.DeleteModel(m)
+
 	// msg := fmt.Sprintf("%d条记录操作成功", result)
 	msg := fmt.Sprintf("TODO: 请填充【服务端代码】.(已操作%d条记录)", result)
 	c.JSON(http.StatusOK, ResponseOk(msg))

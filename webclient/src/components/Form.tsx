@@ -43,20 +43,27 @@ export const TableItemOptFormFields = () => {
     return (
         <ProFormGroup>
             <ProFormSelect name="Type" label="操作类型" initialValue="action"
-                onChange={(value)=>{
+                onChange={(value: string)=>{
                     if (value=="form" || value=="edit"){
                         setUrlFieldHide(true)
                     }
                     if (value=="action" || value=="redirect"){
                         setUrlFieldHide(false)
                     }
-                }} 
-            options={[
-                {value:"action", label:"POST数据"},
-                {value:"redirect", label:"路由跳转"},
-                {value:"form", label:"表单提交"},
-                {value:"edit", label:"快捷编辑"},
-                ]} rules={[{ required: true }]} />
+                }}
+                request={async () => [
+                    {value:"action", label:"POST数据"},
+                    {value:"redirect", label:"路由跳转"},
+                    {value:"form", label:"表单提交"},
+                    {value:"edit", label:"快捷编辑"},
+                  ]}
+                // options={[
+                //     {value:"action", label:"POST数据"},
+                //     {value:"redirect", label:"路由跳转"},
+                //     {value:"form", label:"表单提交"},
+                //     {value:"edit", label:"快捷编辑"},
+                // ]} 
+                rules={[{ required: true }]} />
             <ProFormText name="Title" label="操作标题" rules={[{ required: true }]} width={90} />
             <ProFormText name="Key" label="操作名" rules={[{ required: true }]} width={90} tooltip="填英文字母.(表单提交时, 关联表单标识Key)" />
             <ProFormText name="Url" label="地址" hidden={urlFieldHide} />

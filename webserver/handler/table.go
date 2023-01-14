@@ -235,6 +235,20 @@ func setDataTable(postData PostData, dtable *database.DataTable, isCreate bool) 
 				{Title: "批量删除", Url: tschema.ItemDeleteUrl},
 			}
 		}
+	} else {
+		for i, f := range tschema.ItemForms {
+			hasID := false
+			for _, field := range f.Form.FormFields {
+				// 行数据表单
+				if field.Name == "ID" {
+					hasID = true
+				}
+			}
+			if !hasID {
+				tschema.ItemForms[i].Form.FormFields = append(tschema.ItemForms[i].Form.FormFields, model.FormFieldSchema{Name: "ID", Component: gen.FORM_COMPONENT_TEXT})
+			}
+		}
+
 	}
 	log.Println("------ItemOptions-----BatchOptButtons---------", tschema.ItemOptions, tschema.BatchOptButtons)
 	return dtable.SetStructSchema(tschema)

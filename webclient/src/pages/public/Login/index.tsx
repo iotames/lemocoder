@@ -49,6 +49,8 @@ const Login: React.FC = () => {
           history.push(redirect || '/');
           return;
         } else {
+          // TODO 登录后未自动跳转到首页。 initialState == undefined
+          location.reload();
           message.error('AuthToken or initialState is undefined');
           return;
         }

@@ -98,7 +98,7 @@ func getFormFieldHtml(field model.FormFieldSchema) string {
 		if field.Width != "" {
 			html += ` width="` + field.Width + `"`
 		}
-		if field.Component == "ProFormSelect" {
+		if field.Component == FORM_COMPONENT_SELECT {
 			html += ` request={async()=>[{value:"value1", label:"label1"},{value:"value2", label:"label2"}]}`
 		}
 		if field.Placeholder != "" {

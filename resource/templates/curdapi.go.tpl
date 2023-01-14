@@ -6,7 +6,6 @@ import (
 	"lemocoder/util"
 	"log"
 	"net/http"
-	"strings"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -170,7 +169,7 @@ func <%{ . -}%>(c *gin.Context) {
 	m := new(database.<%{$.ItemDataTypeName}%>)
 	postID := data.GetID()
 	if postID == 0 {
-		ErrorArgs(c, fmt.Errorf("删除对象的ID不能为0"))
+		ErrorArgs(c, fmt.Errorf("请求对象的ID不能为0"))
 		return
 	}
 	m.ID = data.GetID()
@@ -223,7 +222,7 @@ func <%{ . -}%>(c *gin.Context) {
 	m := new(database.<%{$.ItemDataTypeName}%>)
 	postID := data.GetID()
 	if postID == 0 {
-		ErrorArgs(c, fmt.Errorf("删除对象的ID不能为0"))
+		ErrorArgs(c, fmt.Errorf("请求对象的ID不能为0"))
 		return
 	}
 	m.ID = data.GetID()

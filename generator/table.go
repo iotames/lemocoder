@@ -62,12 +62,18 @@ func CreateTableServer(t model.TableSchema) error {
 		apiRoutes = append(apiRoutes, model.ApiRoute{Method: "POST", Path: batch.Url, FuncName: FUNC_BATCH_OPT_ITEM + funcName})
 	}
 	for _, fh := range t.ItemForms {
-		form := fh.Form
-		if util.GetIndexOf(form.SubmitUrl, hasPaths) > -1 {
+		skip, apiRoute := addFormRoute(fh, hasPaths, dataTypeName)
+		if skip {
 			continue
 		}
-		funcName := getFuncName(form.SubmitUrl, dataTypeName)
-		apiRoutes = append(apiRoutes, model.ApiRoute{Method: "POST", Path: form.SubmitUrl, FuncName: FUNC_FORM_SUBMIT + funcName})
+		apiRoutes = append(apiRoutes, apiRoute)
+	}
+	for _, ff := range t.ToolBarForms {
+		skip, apiRoute := addFormRoute(ff, hasPaths, dataTypeName)
+		if skip {
+			continue
+		}
+		apiRoutes = append(apiRoutes, apiRoute)
 	}
 
 	// 添加路由到服务端路由文件中 routesadd.go
@@ -78,6 +84,17 @@ func CreateTableServer(t model.TableSchema) error {
 
 	// 创建CURD代码
 	return CreateCurdCode(routes, t)
+}
+
+func addFormRoute(f model.ModalFormSchema, hasPaths []string, dataTypeName string) (skip bool, apiRoute model.ApiRoute) {
+	form := f.Form
+	if util.GetIndexOf(form.SubmitUrl, hasPaths) > -1 {
+		skip = true
+		return
+	}
+	funcName := getFuncName(form.SubmitUrl, dataTypeName)
+	apiRoute = model.ApiRoute{Method: "POST", Path: form.SubmitUrl, FuncName: FUNC_FORM_SUBMIT + funcName}
+	return
 }
 
 func getFuncName(url, dataTypeName string) string {

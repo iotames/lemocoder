@@ -105,7 +105,7 @@ export default () => {
           return true;
         }
         }} ><%{.Title}%></Button>,<%{end}%>
-      <%{if eq .Type "form"}%><Button key="<%{.Key}%>" type="primary" onClick={() => {setRowRecord(record);itemFormRef.current?.setFieldsValue(record);setModal<%{.Key}%>Visit(true)}}><%{.Title}%></Button>,<%{end}%>
+      <%{if eq .Type "form"}%><Button key="<%{.Key}%>" type="primary" onClick={() => {setModal<%{.Key}%>Visit(true);setRowRecord(record);itemFormRef.current?.setFieldsValue(record)}}><%{.Title}%></Button>,<%{end}%>
       <%{if eq .Type "redirect"}%><Button key="<%{.Key}%>" type='primary' onClick={(e)=>{ history.push("<%{.Url}%>"); }}><%{.Title}%></Button>,<%{end}%>
       <%{end}%>]},
     },

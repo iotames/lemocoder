@@ -105,14 +105,40 @@ export default () => {
           </ProFormList>
         </ProCard>
 
-        <ProCard title="表单提交" style={{ marginBlock: 16 }}>
+        <ProCard title="行数据表单" style={{ marginBlock: 16 }} tooltip="必须包含一个字段名为ID" >
           <ProFormList name={["StructSchema", "ItemForms"]} creatorButtonProps={{creatorButtonText: '添加表单'}}>
+
             <ProFormGroup>
                 <ProFormText name="Key" label="表单标识(操作名Key)" placeholder="表单标识(操作名Key)" rules={[{ required: true }]} />
                 <ProFormText name={["Form", "SubmitUrl"]} label="表单提交地址" placeholder="表单提交地址" rules={[{ required: true }]} />
                 <ProFormText name={["Form", "Title"]} label="表单标题"  placeholder="表单标题" />
             </ProFormGroup>
+            <ProFormList name={["Form", "FormFields"]} creatorButtonProps={{creatorButtonText: '添加表单域'}}>
+              <ProFormGroup>
+                  <ProFormText name="Name" label="字段名" width={100} rules={[{ required: true }]} />
+                  <ProFormText name="Label" label="标题" width={100} />
+                  <ProFormSelect name="Component" label="组件" width={120} rules={[{ required: true }]} options={[
+                    {value:"ProFormText", label:"文本框"},
+                    {value:"ProFormTextArea", label:"文本(TextArea)"},
+                    {value:"ProFormDigit", label:"数字输入框"},
+                    {value:"ProFormSelect", label:"选择框"},
+                    ]} />
+                  <ProFormText name="Placeholder" label="Placeholder" width={90} />
+                  <ProFormText name="Width" label="宽度" width={90} />
+              </ProFormGroup>
+            </ProFormList>
 
+          </ProFormList>
+        </ProCard>
+
+        <ProCard title="顶栏表单" style={{ marginBlock: 16 }}>
+          <ProFormList name={["StructSchema", "ToolBarForms"]} creatorButtonProps={{creatorButtonText: '添加表单'}}>
+
+            <ProFormGroup>
+                <ProFormText name="Key" label="表单标识(操作名Key)" placeholder="表单标识(操作名Key)" rules={[{ required: true }]} />
+                <ProFormText name={["Form", "SubmitUrl"]} label="表单提交地址" placeholder="表单提交地址" rules={[{ required: true }]} />
+                <ProFormText name={["Form", "Title"]} label="表单标题"  placeholder="表单标题" />
+            </ProFormGroup>
             <ProFormList name={["Form", "FormFields"]} creatorButtonProps={{creatorButtonText: '添加表单域'}}>
               <ProFormGroup>
                   <ProFormText name="Name" label="字段名" width={100} rules={[{ required: true }]} />

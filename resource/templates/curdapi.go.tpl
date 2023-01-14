@@ -190,7 +190,7 @@ func <%{ . -}%>(c *gin.Context) {
 		return
 	}
 	var result int64
-	m := new(database.<%{$.ItemDataTypeName}%>)
+	// m := new(database.<%{$.ItemDataTypeName}%>)
 	codes, ok := data.GetCodeList()
 	if ok {
 		if len(codes) == 0 {

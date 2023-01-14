@@ -195,7 +195,7 @@ export const NewDataTableForm = (props:{
         return false;
       }}
     >
-      <ProFormText name="PageID" initialValue={pageID} />
+      <ProFormText name="PageID" initialValue={pageID} hidden />
       
       <ProForm.Group>
         <ProFormText width={150} name={["StructSchema", "ItemDataTypeName"]} label="数据结构名" tooltip="例: Product, ProductReview" placeholder="例: Product" rules={[{ required: true }]} />

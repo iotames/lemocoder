@@ -120,8 +120,9 @@ type Percent = {
         {/* <Alert message={"开发神器: 代码自动生成工具"} type="success" showIcon banner style={{margin: -12, marginBottom: 24, }} /> */}
         <Row style={{ marginBlockEnd: 12 }}>
 
-        <Col span={6}>
-            <List header={<Title level={5}>开发环境</Title>} bordered dataSource={status?.DevTools} style={{background:"#fff", marginRight: 8,}}
+          <Col span={8}>
+
+            <List header={<Title level={5}>开发环境</Title>} bordered dataSource={status?.DevTools} style={{background:"#fff", marginRight: 8, marginBlockEnd: 8}}
                   renderItem={(d)=>{
                     let color = "blue"
                     let version = d.Version
@@ -142,9 +143,27 @@ type Percent = {
                     )
                   }}
             />
+
+            <List header={<Title level={5}>开发文档</Title>} bordered dataSource={[
+              {title:"Gin 开发框架", url:"https://gin-gonic.com/zh-cn/docs/"},
+              {title: "Ant Design Pro 前端框架", url: "https://pro.ant.design/zh-CN/docs/overview"},
+              {title:"Ant Design Pro 高级组件", url:"https://procomponents.ant.design/components"},
+              {title:"Ant Design 基础组件", url:"https://ant.design/components/overview-cn/"},
+              {title:"Ant Design Charts 图表组件", url:"https://charts.ant.design/"},
+              ]} style={{background:"#fff", marginRight: 8 }}
+              renderItem={(d)=>{
+                return (
+                  <List.Item>
+                    <a href={d.url} target="__blank" >{d.title}</a>
+                  </List.Item>
+                )
+              }}
+            />
+
           </Col>
 
-          <Col span={8} >
+          <Col span={10} >
+
             <Card title={"主机: "+ status?.HostName} style={{ marginRight: 8, marginBlockEnd: 8}} >
               <List bordered dataSource={[
                 {title:"OS", info: status?.OS + " " + status?.Arch},
@@ -161,43 +180,7 @@ type Percent = {
               />
 
             </Card>
-          </Col>
 
-
-          <Col span={5}>
-            <Card title={"CPU: " + status?.CpuNum + " cores"} style={{ marginBlockEnd: 16, marginRight: 8 }}>
-                <Gauge width={100} height={150} percent={percent.cpuNum} {...configMem} />
-            </Card>
-          </Col>
-          <Col span={5}>
-
-            <Card title={"内存: "+ memInfo.used + "/" + memInfo.total}>
-            <Liquid width={100} height={150} percent={percent.memNum} statistic={memStatistic} wave={{length: 180}} />
-            </Card>
-          </Col>
-
-        </Row>
-        <Row>
-
-        <Col span={7}>
-            <List header={<Title level={5}>开发文档</Title>} bordered dataSource={[
-              {title:"Gin 开发框架", url:"https://gin-gonic.com/zh-cn/docs/"},
-              {title: "Ant Design Pro 前端框架", url: "https://pro.ant.design/zh-CN/docs/overview"},
-              {title:"Ant Design Pro 高级组件", url:"https://procomponents.ant.design/components"},
-              {title:"Ant Design 基础组件", url:"https://ant.design/components/overview-cn/"},
-              {title:"Ant Design Charts 图表组件", url:"https://charts.ant.design/"},
-              ]} style={{background:"#fff", marginRight: 8 }}
-              renderItem={(d)=>{
-                return (
-                  <List.Item>
-                    <a href={d.url} target="__blank" >{d.title}</a>
-                  </List.Item>
-                )
-              }}
-            />
-          </Col>
-
-          <Col span={10}>
             <List header={<Title level={5}>磁盘</Title>} bordered dataSource={status?.DiskInfo} style={{background:"#fff", marginRight: 12}}
                 renderItem={(d)=>{
                   let tagName = d.Device
@@ -209,15 +192,24 @@ type Percent = {
                   let used = ((d.Total-d.Free)/(1024*1024*1024)).toFixed(2) + "GB"
                   return (
                     <List.Item>
-                      <Space>
-                        <Tag color="blue">{tagName}</Tag>
-                        <Progress width={300} height={50} autoFit={false} barWidthRatio={0.2} percent={percent} color={['#F4664A', '#93dfb8']} />
-                        {used}/{total}
-                      </Space>
+                      <Tag color="blue">{tagName}</Tag>{used}/{total}
+                      {/* <Space> */}
+                      <Progress width={300} height={50} autoFit={false} barWidthRatio={0.2} percent={percent} color={['#F4664A', '#93dfb8']} />
+                      {/* </Space> */}
                     </List.Item>
                   )
                 }}
               />
+
+          </Col>
+
+          <Col span={6}>
+            <Card title={"CPU: " + status?.CpuNum + " cores"} style={{ marginBlockEnd: 16, marginRight: 8 }}>
+                <Gauge width={100} height={150} percent={percent.cpuNum} {...configMem} />
+            </Card>
+            <Card title={"内存: "+ memInfo.used + "/" + memInfo.total}>
+              <Liquid width={100} height={150} percent={percent.memNum} statistic={memStatistic} wave={{length: 180}} />
+            </Card>
           </Col>
 
         </Row>

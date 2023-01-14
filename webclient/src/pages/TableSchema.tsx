@@ -108,9 +108,9 @@ export default () => {
         <ProCard title="表单提交" style={{ marginBlock: 16 }}>
           <ProFormList name={["StructSchema", "ItemForms"]} creatorButtonProps={{creatorButtonText: '添加表单'}}>
             <ProFormGroup>
-                <ProFormText name="Key" label="表单标识(Key)" rules={[{ required: true }]} />
-                <ProFormText name={["Form", "SubmitUrl"]} label="表单提交地址" rules={[{ required: true }]} />
-                <ProFormText name={["Form", "Title"]} label="表单标题" />
+                <ProFormText name="Key" label="表单标识(Key)" placeholder="表单标识(Key)" rules={[{ required: true }]} />
+                <ProFormText name={["Form", "SubmitUrl"]} label="表单提交地址" placeholder="表单提交地址" rules={[{ required: true }]} />
+                <ProFormText name={["Form", "Title"]} label="表单标题"  placeholder="表单标题" />
             </ProFormGroup>
 
             <ProFormList name={["Form", "FormFields"]} creatorButtonProps={{creatorButtonText: '添加表单域'}}>

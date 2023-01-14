@@ -19,10 +19,11 @@ const initPath = "/public/init";
 export async function getInitialState(): Promise<{
   settings: Partial<LayoutSettings>;
   config: API.ClientConfig;
-  currentUser?: API.CurrentUser;
+  currentUser: API.CurrentUser;
   menuItems?: API.MenuItem[];
   loading?: boolean;
 }> {
+  const currentUser = {Id: 0, Account: ""}
   const config = (await getClientConfig()).Data
   if (history.location.pathname !== loginPath) {
     // 如果不是登录页面，执行
@@ -38,6 +39,7 @@ export async function getInitialState(): Promise<{
   return {
     config,
     settings: defaultSettings,
+    currentUser,
   };
 }
 

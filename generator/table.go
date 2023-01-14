@@ -36,10 +36,10 @@ func CreateTableServer(t model.TableSchema) error {
 
 	apiRoutes := []model.ApiRoute{
 		// {Method: "GET", Path: "", FuncName: "Get"+dataTypeName,
-		{Method: "GET", Path: t.ItemsDataUrl, FuncName: "GetList" + dataTypeName},
-		{Method: "POST", Path: t.ItemCreateUrl, FuncName: "Create" + dataTypeName},
-		{Method: "POST", Path: t.ItemUpdateUrl, FuncName: "Update" + dataTypeName},
-		{Method: "POST", Path: t.ItemDeleteUrl, FuncName: "Delete" + dataTypeName},
+		{Method: "GET", Path: t.ItemsDataUrl, FuncName: FUNC_GET_LIST + dataTypeName},
+		{Method: "POST", Path: t.ItemCreateUrl, FuncName: FUNC_CREATE + dataTypeName},
+		{Method: "POST", Path: t.ItemUpdateUrl, FuncName: FUNC_UPDATE + dataTypeName},
+		{Method: "POST", Path: t.ItemDeleteUrl, FuncName: FUNC_DELETE + dataTypeName},
 	}
 	hasPaths := []string{t.ItemsDataUrl, t.ItemCreateUrl, t.ItemUpdateUrl, t.ItemDeleteUrl}
 	// type: edit,action,form,redirect
@@ -51,7 +51,7 @@ func CreateTableServer(t model.TableSchema) error {
 			continue
 		}
 		funcName := database.TableColToObj(opt.Key) + dataTypeName
-		apiRoutes = append(apiRoutes, model.ApiRoute{Method: "POST", Path: opt.Url, FuncName: "OptItem" + funcName})
+		apiRoutes = append(apiRoutes, model.ApiRoute{Method: "POST", Path: opt.Url, FuncName: FUNC_OPT_ITEM + funcName})
 		hasPaths = append(hasPaths, opt.Url)
 	}
 	for _, batch := range t.BatchOptButtons {
@@ -59,7 +59,7 @@ func CreateTableServer(t model.TableSchema) error {
 			continue
 		}
 		funcName := getFuncName(batch.Url, dataTypeName)
-		apiRoutes = append(apiRoutes, model.ApiRoute{Method: "POST", Path: batch.Url, FuncName: "BatchOptItem" + funcName})
+		apiRoutes = append(apiRoutes, model.ApiRoute{Method: "POST", Path: batch.Url, FuncName: FUNC_BATCH_OPT_ITEM + funcName})
 	}
 	for _, fh := range t.ItemForms {
 		form := fh.Form
@@ -67,7 +67,7 @@ func CreateTableServer(t model.TableSchema) error {
 			continue
 		}
 		funcName := getFuncName(form.SubmitUrl, dataTypeName)
-		apiRoutes = append(apiRoutes, model.ApiRoute{Method: "POST", Path: form.SubmitUrl, FuncName: "FormSubmit" + funcName})
+		apiRoutes = append(apiRoutes, model.ApiRoute{Method: "POST", Path: form.SubmitUrl, FuncName: FUNC_FORM_SUBMIT + funcName})
 	}
 
 	// 添加路由到服务端路由文件中 routesadd.go

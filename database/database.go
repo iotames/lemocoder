@@ -312,6 +312,10 @@ func BatchDelete(m IModel, codes []string) (int64, error) {
 	return getEngine().In("ID", codes).Delete(m)
 }
 
+func BatchUpdate(m IModel, codes []string) (int64, error) {
+	return getEngine().In("ID", codes).Update(m)
+}
+
 func NewSession() *xorm.Session {
 	return getEngine().NewSession()
 }

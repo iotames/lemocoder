@@ -32,6 +32,16 @@ func (p PostData) ParseTo(result interface{}) error {
 	return util.JsonDecodeUseNumber(bts, result)
 }
 
+func (p PostData) GetUpdateData() map[string]interface{} {
+	data := make(map[string]interface{}, len(p)-1)
+	for k, v := range p {
+		if k != "ID" {
+			data[k] = v
+		}
+	}
+	return data
+}
+
 func (p PostData) GetID() int64 {
 	id, ok := p["ID"]
 	if !ok {

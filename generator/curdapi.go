@@ -13,6 +13,14 @@ import (
 )
 
 const API_ROUTE_FUNC_PREFIX = "handler."
+const FUNC_GET_LIST = "GetList"
+const FUNC_GET_ONE = "GetOne"
+const FUNC_CREATE = "Create"
+const FUNC_UPDATE = "Update"
+const FUNC_DELETE = "Delete"
+const FUNC_OPT_ITEM = "OptItem"
+const FUNC_BATCH_OPT_ITEM = "BatchOptItem"
+const FUNC_FORM_SUBMIT = "FormSubmit"
 
 func AddDbModel(fields []model.TableItemSchema, structName string) error {
 	j := 0
@@ -119,28 +127,28 @@ func CreateCurdCode(routes []model.ApiRoute, schema model.TableSchema) error {
 	tplData := ApiTplData{ItemDataTypeName: schema.ItemDataTypeName}
 	for _, route := range routes {
 		funcName := strings.Replace(route.FuncName, API_ROUTE_FUNC_PREFIX, "", 1)
-		if strings.Index(funcName, "GetList") == 0 {
+		if strings.Index(funcName, FUNC_GET_LIST) == 0 {
 			tplData.GetList = funcName
 		}
-		if strings.Index(funcName, "GetOne") == 0 {
+		if strings.Index(funcName, FUNC_GET_ONE) == 0 {
 			tplData.GetOne = funcName
 		}
-		if strings.Index(funcName, "Create") == 0 {
+		if strings.Index(funcName, FUNC_CREATE) == 0 {
 			tplData.Create = funcName
 		}
-		if strings.Index(funcName, "Update") == 0 {
+		if strings.Index(funcName, FUNC_UPDATE) == 0 {
 			tplData.Update = funcName
 		}
-		if strings.Index(funcName, "Delete") == 0 {
+		if strings.Index(funcName, FUNC_DELETE) == 0 {
 			tplData.Delete = funcName
 		}
-		if strings.Index(funcName, "OptItem") == 0 {
+		if strings.Index(funcName, FUNC_OPT_ITEM) == 0 {
 			tplData.FuncsItemOpt = append(tplData.FuncsItemOpt, funcName)
 		}
-		if strings.Index(funcName, "BatchOptItem") == 0 {
+		if strings.Index(funcName, FUNC_BATCH_OPT_ITEM) == 0 {
 			tplData.FuncsItemsBatchOpt = append(tplData.FuncsItemsBatchOpt, funcName)
 		}
-		if strings.Index(funcName, "FormSubmit") == 0 {
+		if strings.Index(funcName, FUNC_FORM_SUBMIT) == 0 {
 			tplData.FuncsFormSubmit = append(tplData.FuncsFormSubmit, funcName)
 		}
 		fmt.Println(funcName)

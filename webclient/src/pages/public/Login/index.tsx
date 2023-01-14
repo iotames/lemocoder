@@ -32,7 +32,7 @@ const Login: React.FC = () => {
       const resp = await login({ ...values, LoginWay});
       setUserLoginState(resp);
       if (resp.Code === 200) {
-        if (resp.Data.Token) {
+        if (resp.Data.Token && initialState) {
           localStorage.setItem('AuthToken', resp.Data.Token);
           const defaultLoginSuccessMessage = "登录成功";
           message.success(defaultLoginSuccessMessage);
@@ -49,7 +49,7 @@ const Login: React.FC = () => {
           history.push(redirect || '/');
           return;
         } else {
-          message.error('AuthToken error');
+          message.error('AuthToken or initialState is undefined');
           return;
         }
       }else{
@@ -59,6 +59,7 @@ const Login: React.FC = () => {
     } catch (error) {
       const defaultLoginFailureMessage = "登录失败，请重试！";
       message.error(defaultLoginFailureMessage);
+      console.log(error);
     }
   };
 

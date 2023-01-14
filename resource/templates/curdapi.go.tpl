@@ -6,13 +6,14 @@ import (
 	"lemocoder/util"
 	"log"
 	"net/http"
+	"strings"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
 // TODO 数值型字段在POST时，会变为字符串
 <%{ if ne .Create "" }%>
-func Create<%{$.ItemDataTypeName}%>(c *gin.Context) {
+func <%{.Create}%>(c *gin.Context) {
 	item := database.<%{$.ItemDataTypeName}%>{}
 	err := CheckBindArgs(&item, c)
 	if err != nil {
@@ -27,7 +28,7 @@ func Create<%{$.ItemDataTypeName}%>(c *gin.Context) {
 }<%{end}%>
 
 <%{ if ne .Delete "" }%>
-func Delete<%{$.ItemDataTypeName}%>(c *gin.Context) {
+func <%{.Delete}%>(c *gin.Context) {
 	data := PostData{}
 	err := CheckBindArgs(&data, c)
 	if err != nil {
@@ -60,7 +61,7 @@ func Delete<%{$.ItemDataTypeName}%>(c *gin.Context) {
 }<%{end}%>
 
 <%{ if ne .Update "" }%>
-func Update<%{.ItemDataTypeName}%>(c *gin.Context) {
+func <%{.Update}%>(c *gin.Context) {
 	postData := PostData{}
 	err := postData.ParseBody(c.Request.Body)
 	if err != nil {
@@ -93,7 +94,7 @@ func Update<%{.ItemDataTypeName}%>(c *gin.Context) {
 }<%{end}%>
 
 <%{ if ne .GetOne "" }%>
-func GetOne<%{.ItemDataTypeName}%>(c *gin.Context) {
+func <%{.GetOne}%>(c *gin.Context) {
 	idstr := c.DefaultQuery("id", "0")
 	if idstr == "0"{
 		ErrorArgs(c, fmt.Errorf("id参数错误."))
@@ -120,7 +121,7 @@ func GetOne<%{.ItemDataTypeName}%>(c *gin.Context) {
 }<%{end}%>
 
 <%{ if ne .GetList "" }%>
-func GetList<%{.ItemDataTypeName}%>(c *gin.Context) {
+func <%{.GetList}%>(c *gin.Context) {
 	ignoreFields := []string{"current", "pageSize", "page", "limit", "sort"}
 	var err error
 	var items []database.<%{.ItemDataTypeName}%>
@@ -175,6 +176,7 @@ func <%{ . -}%>(c *gin.Context) {
 	m.ID = data.GetID()
 	fmt.Println("TODO: 请填充服务端代码, 操作数据: ", m)
 	// TODO 操作单条数据 result, err = database.DeleteModel(m)
+	// TODO 操作单条数据 result, err = database.UpdateModel(m, data.GetUpdateData())
 
 	// msg := fmt.Sprintf("%d条记录操作成功", result)
 	msg := fmt.Sprintf("TODO: 请填充【服务端代码】.(已操作%d条记录)", result)
@@ -190,7 +192,6 @@ func <%{ . -}%>(c *gin.Context) {
 		return
 	}
 	var result int64
-	// m := new(database.<%{$.ItemDataTypeName}%>)
 	codes, ok := data.GetCodeList()
 	if ok {
 		if len(codes) == 0 {
@@ -199,6 +200,8 @@ func <%{ . -}%>(c *gin.Context) {
 		}
 		fmt.Println("TODO: 请填充服务端代码, 操作数据. ID列表: ", codes)
 		// TODO 批量操作 result, err = database.BatchDelete(m, codes)
+		// TODO 批量操作 result, err = database.BatchUpdate(m, codes)
+		// TODO 批量操作 result, err = database.Exec(fmt.Sprintf("UPDATE <%{$.ItemDataTypeName}%> set state = 1 where id IN (%s)", strings.Join(codes, ",")))
 	} else {
 		ErrorArgs(c, fmt.Errorf("删除对象ID列表不存在"))
 		return
@@ -225,7 +228,7 @@ func <%{ . -}%>(c *gin.Context) {
 	}
 	m.ID = data.GetID()
 	fmt.Println("TODO: 请填充服务端代码, 操作数据: ", m)
-	// TODO 操作单条数据 result, err = database.DeleteModel(m)
+	// TODO 操作单条数据 result, err = database.UpdateModel(&updateModel)
 
 	// msg := fmt.Sprintf("%d条记录操作成功", result)
 	msg := fmt.Sprintf("TODO: 请填充【服务端代码】.(已操作%d条记录)", result)

@@ -170,7 +170,7 @@ const {Title} = Typography;
       <NewDataTableForm pageID={pageID} formRef={tableFormRef} setModalVisit={setTableFormVisit} modalVisit={tableFormVisit}  />
       <ModalForm
         title="新建页面"
-        visible={pageFormVisit}
+        open={pageFormVisit}
         // width={600}
         onFinish={async (values) => {
           const resp = await postMsg("/api/coder/page/create", values)
@@ -180,7 +180,7 @@ const {Title} = Typography;
           }
           return false;
         }}
-        onVisibleChange={setPageFormVisit}
+        onOpenChange={setPageFormVisit}
       >
         <ProForm.Group>
         <ProFormSelect initialValue={0} width="sm" name="project_id" label="工程项目" required

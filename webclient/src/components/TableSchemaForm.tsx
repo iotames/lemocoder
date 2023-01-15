@@ -183,8 +183,8 @@ export const NewDataTableForm = (props:{
     <ModalForm 
       title="新建数据表格"
       width={900}
-      visible={modalVisit}
-      onVisibleChange={setModalVisit}
+      open={modalVisit}
+      onOpenChange={setModalVisit}
       formRef={formRef}
       onFinish={async (values) => {
         const resp = await postMsg(postUrl, values)

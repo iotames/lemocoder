@@ -44,9 +44,9 @@ export default () => {
   const editform1 = (<ModalForm
     title="编辑数据"
     formRef={itemFormRef}
-    visible={modaleditform1Visit}
+    open={modaleditform1Visit}
     initialValues={rowRecord}
-    onVisibleChange={setModaleditform1Visit}
+    onOpenChange={setModaleditform1Visit}
     onFinish={async (values) => {
       console.log(values);
       await postMsg("/api/demo/post", values)

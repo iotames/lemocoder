@@ -199,6 +199,7 @@ func <%{ . -}%>(c *gin.Context) {
 		}
 		fmt.Println("TODO: 请填充服务端代码, 操作数据. ID列表: ", codes)
 		// TODO 批量操作 result, err = database.BatchDelete(m, codes)
+		// TODO 批量操作 m := new(database.<%{$.ItemDataTypeName}%>)
 		// TODO 批量操作 result, err = database.BatchUpdate(m, codes)
 		// TODO 批量操作 result, err = database.Exec(fmt.Sprintf("UPDATE <%{$.ItemDataTypeName}%> set state = 1 where id IN (%s)", strings.Join(codes, ",")))
 	} else {

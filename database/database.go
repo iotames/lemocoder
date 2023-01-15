@@ -229,7 +229,7 @@ func GetWhereLikeArgs(filter map[string]string) (query interface{}, args []inter
 		}
 		args = append(args, `%`+v+`%`)
 		field := ObjToTableCol(k)
-		qOne := fmt.Sprintf("%s LIKE ?", field)
+		qOne := fmt.Sprintf("`%s` LIKE ?", field)
 		if i > 0 {
 			q += fmt.Sprintf(" AND %s", qOne)
 		} else {

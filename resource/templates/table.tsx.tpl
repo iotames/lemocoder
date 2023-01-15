@@ -47,9 +47,9 @@ export default () => {
   const <%{.Key}%> = (<ModalForm
     title="<%{.Form.Title}%>"
     formRef={itemFormRef}
-    visible={modal<%{.Key}%>Visit}
+    open={modal<%{.Key}%>Visit}
     initialValues={rowRecord}
-    onVisibleChange={setModal<%{.Key}%>Visit}
+    onOpenChange={setModal<%{.Key}%>Visit}
     onFinish={async (values) => {
       console.log(values);
       const resp = await postMsg("<%{.Form.SubmitUrl}%>", values)

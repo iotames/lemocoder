@@ -75,7 +75,8 @@ func engineInit(engine *xorm.Engine) {
 	log.Println("Init engineInit Begin")
 	ormMap := names.GonicMapper{}
 	engine.SetMapper(ormMap)
-	// engine.TZLocation, _ = time.LoadLocation("Asia/Shanghai")
+	engine.TZLocation, _ = time.LoadLocation("Asia/Shanghai")
+	engine.DatabaseTZ, _ = time.LoadLocation("Asia/Shanghai")
 	engine.SetTableMapper(ormMap)
 	engine.SetColumnMapper(ormMap)
 	engine.ShowSQL(true)
@@ -296,6 +297,8 @@ func CreateModel(m IModel) (int64, error) {
 	return getEngine().Insert(m)
 }
 
+// UpdateModel 更新数据
+// dt参数指定更新的字段，字段名用数据库中的字段名，不用go结构体字段名，如 ExecutedAt -> executed_at
 func UpdateModel(m IModel, dt map[string]interface{}) (int64, error) {
 	modelID := m.GetID() // m.ParseID().Int64()
 	if dt == nil {

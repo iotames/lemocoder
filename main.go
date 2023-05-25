@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"lemocoder/config"
 	"lemocoder/database"
 	"lemocoder/generator"
@@ -9,6 +10,7 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"runtime"
 	"time"
 )
 
@@ -23,10 +25,7 @@ func main() {
 			args[k] = ""
 		}
 		if v == "stop" {
-			err = killWebServer()
-			if err != nil {
-				log.Println("killWebServer Error:", err)
-			}
+			stopApp()
 			return
 		}
 		if v == "init" {
@@ -58,15 +57,23 @@ func main() {
 			return
 		}
 	}
-
 	if daemon {
 		var newArgs []string
 		if len(args) > 1 {
 			newArgs = args[1:]
 		}
-		cmd := exec.Command(args[0], newArgs...)
+		var cmd *exec.Cmd
+		if runtime.GOOS == "windows" {
+			newArgs = append([]string{"/c"}, args...)
+			cmd = exec.Command("cmd", newArgs...)
+		} else {
+			cmd = exec.Command(args[0], newArgs...)
+		}
 		cmd.Env = os.Environ()
-		cmd.Start()
+		err = cmd.Start()
+		if err != nil {
+			fmt.Println("app run fail:", err, args)
+		}
 		return
 	}
 

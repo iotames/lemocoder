@@ -1,10 +1,13 @@
 package webserver
 
 import (
+	"context"
 	"fmt"
 	"lemocoder/config"
 	"lemocoder/util"
+	"lemocoder/webserver/handler"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -38,6 +41,16 @@ func New() WebServer {
 		Handler:        h,
 		MaxHeaderBytes: 1 << 20,
 	}
+	go func() {
+		<-handler.StopChan
+		time.Sleep(5 * time.Second)
+		ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
+		defer cancel()
+		err := server.Shutdown(ctx)
+		if err != nil {
+			panic(err)
+		}
+	}()
 	app := config.GetApp()
 
 	fmt.Printf(`

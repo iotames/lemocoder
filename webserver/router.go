@@ -44,6 +44,7 @@ func setRouters(g *gin.Engine) {
 	local.Use(localhostNetwork())
 	local.POST("/upload", handler.UploadFile)
 	local.POST("/excelspider", handler.ExcelSpider)
+	local.POST("/stop", handler.StopApp)
 
 	auth := api.Group("")
 	auth.Use(prepare.HandlerJWT())

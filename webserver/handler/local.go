@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"io/ioutil"
 	"lemocoder/util"
 	"log"
 	"net/http"
@@ -27,6 +28,16 @@ func UploadFile(c *gin.Context) {
 	c.SaveUploadedFile(file, dst)
 	upf := UploadFileInfo{ID: filename}
 	c.JSON(200, Response(upf, "success", 200))
+}
+
+var StopChan chan string = make(chan string)
+
+func StopApp(c *gin.Context) {
+	postData, _ := ioutil.ReadAll(c.Request.Body)
+	c.JSON(200, ResponseOk("App Stop Done! postData:"+string(postData)))
+	go func() {
+		StopChan <- "stop"
+	}()
 }
 func ExcelSpider(c *gin.Context) {
 	form := new(ExcelSpiderForm)

@@ -12,6 +12,8 @@ import (
 	"os/exec"
 	"runtime"
 	"strconv"
+	"strings"
+	"sync"
 
 	"github.com/gin-gonic/gin"
 )
@@ -95,34 +97,45 @@ type PlatformStatus struct {
 	DiskInfo                                                     []status.DiskPartInfo
 }
 
+func getVersion(b []byte, rege string) string {
+	v := string(b)
+	if rege != "" && len(b) != 0 {
+		vstr := (util.NewStrfind(v)).SetRegexp(rege).DoFind().GetOne(false)
+		if vstr != "" {
+			v = strings.TrimSpace(vstr)
+		}
+	}
+	return v
+}
+
+type CmdInfo struct {
+	Name, Url, Version string
+	Args               []string
+	Result             []byte
+	TextRege           string
+}
+
 func GetOsStatus(c *gin.Context) {
-	vGo, _ := util.RunCmd("go", "version")
-	gov := ""
-	if len(vGo) != 0 {
-		gov = (util.NewStrfind(string(vGo))).SetRegexp(`(\d+\.\d+)`).DoFind().GetOne(false)
+	var cmdlist []CmdInfo = []CmdInfo{
+		{Name: "go", Args: []string{"version"}, TextRege: `(\d+\.\d+)`, Url: "https://golang.google.cn/doc/install"},
+		{Name: "node", Args: []string{"--version"}, TextRege: `(\d+\.\d+\.\d+)`, Url: "https://nodejs.org/zh-cn/download/"},
+		{Name: "yarn", Args: []string{"--version"}, TextRege: "", Url: "https://yarn.bootcss.com/docs/install"},
+		{Name: "git", Args: []string{"--version"}, TextRege: `(\d+\.\d+\.\d+)`, Url: "https://git-scm.com/downloads"},
 	}
-
-	vNode, _ := util.RunCmd("node", "--version")
-	nodev := ""
-	if len(vNode) != 0 {
-		nodev = (util.NewStrfind(string(vNode))).SetRegexp(`(\d+\.\d+\.\d+)`).DoFind().GetOne(false)
+	wg := sync.WaitGroup{}
+	var devTools []DevTool
+	for i, cmd := range cmdlist {
+		wg.Add(1)
+		go func(cmd CmdInfo, ii int) {
+			cmd.Result, _ = util.RunCmd(cmd.Name, cmd.Args...)
+			cmd.Version = getVersion(cmd.Result, cmd.TextRege)
+			fmt.Println("-------", ii, cmd.Name, cmd.Version)
+			// cmdlist[ii] = cmd
+			devTools = append(devTools, DevTool{Name: cmd.Name, Version: cmd.Version, Url: cmd.Url})
+			wg.Done()
+		}(cmd, i)
 	}
-
-	vYarn, _ := util.RunCmd("yarn", "--version")
-	yarnv := string(vYarn)
-
-	vGit, _ := util.RunCmd("git", "--version")
-	gitv := ""
-	if len(vGit) != 0 {
-		gitv = (util.NewStrfind(string(vGit))).SetRegexp(`(\d+\.\d+\.\d+)`).DoFind().GetOne(false)
-	}
-
-	devTools := []DevTool{
-		{Name: "Go", Version: gov, Url: "https://golang.google.cn/doc/install"},
-		{Name: "Node", Version: nodev, Url: "https://nodejs.org/zh-cn/download/"},
-		{Name: "Yarn", Version: yarnv, Url: "https://yarn.bootcss.com/docs/install"},
-		{Name: "Git", Version: gitv, Url: "https://git-scm.com/downloads"},
-	}
+	wg.Wait()
 	hostname, _ := os.Hostname()
 	// memStat := new(runtime.MemStats)
 	// runtime.ReadMemStats(memStat)

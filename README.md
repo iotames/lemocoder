@@ -47,6 +47,8 @@ go env -w GOPROXY=https://goproxy.cn,direct
 
 ## 快速开始
 
+注：编译前端，可能需要清除浏览器缓存。如：`umi.js` 会直接从缓存读取，导致前端重新编译后无法生效。
+
 ```
 # 加载依赖包
 go mod tidy

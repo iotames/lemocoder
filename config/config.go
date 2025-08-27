@@ -76,6 +76,7 @@ func (c *ClientConfig) SetDefaultIfEmpty() {
 	}
 }
 
+// Save 保存配置文件的更改
 func (c ClientConfig) Save() error {
 	f, err := os.OpenFile(EnvFilepath, os.O_RDWR, 0644)
 	if err != nil {
@@ -87,6 +88,7 @@ func (c ClientConfig) Save() error {
 	if err != nil {
 		return err
 	}
+	// TODO 此步骤环境变量文件生成有问题，tpl目标里面的变量不会被真实值替换
 	return t.Execute(f, c)
 }
 
